@@ -1,0 +1,4 @@
+开源的xml读写控件
+1.XMLParser   http://www.destructor.de/
+2.omnixml     http://www.omnixml.com/
+3.XDOM        http://www.philo.de/xml/

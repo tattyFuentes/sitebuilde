@@ -1,0 +1,55 @@
+<FISHLIST>
+ <DATA1>
+  <FISH>
+    <NAME>Angel Fish</NAME>
+    <SIZE>2</SIZE>
+    <WEIGHT>2</WEIGHT>
+    <AREA>Computer Aquariums</AREA>
+  </FISH>
+  <FISH>
+    <NAME>Boa</NAME>
+    <SIZE>10</SIZE>
+    <WEIGHT>10</WEIGHT>
+    <AREA>South America</AREA>
+  </FISH>
+  <FISH>
+    <NAME>Critters</NAME>
+    <SIZE>30</SIZE>
+    <WEIGHT>30</WEIGHT>
+    <AREA>Screen Savers</AREA>
+  </FISH>
+  <FISH>
+    <NAME>House Cat</NAME>
+    <SIZE>10</SIZE>
+    <WEIGHT>10</WEIGHT>
+    <AREA>New Orleans</AREA>
+  </FISH>
+  <FISH>
+    <NAME>Ocelot</NAME>
+    <SIZE>40</SIZE>
+    <WEIGHT>40</WEIGHT>
+    <AREA>Africa and Asia</AREA>
+  </FISH>
+  <FISH>
+    <NAME>Parrot</NAME>
+    <SIZE>5</SIZE>
+    <WEIGHT>5</WEIGHT>
+    <AREA>South America</AREA>
+  </FISH>
+  <FISH>
+    <NAME>Tetras</NAME>
+    <SIZE>2</SIZE>
+    <WEIGHT>2</WEIGHT>
+    <AREA>Fish Bowls</AREA>
+  </FISH>
+ </DATA1>
+ <DATA2>
+  <FISH NAME="Angel Fish" SIZE="2" WEIGHT="2" AREA="Computer Aquariums"/>
+  <FISH NAME="Boa" SIZE="10" WEIGHT="10" AREA="South America"/>
+  <FISH NAME="Critters" SIZE="30" WEIGHT="30" AREA="Screen Savers"/>
+  <FISH NAME="House Cat" SIZE="10" WEIGHT="10" AREA="New Orleans"/>
+  <FISH NAME="Ocelot" SIZE="40" WEIGHT="40" AREA="Africa and Asia"/>
+  <FISH NAME="Parrot" SIZE="5" WEIGHT="5" AREA="South America"/>
+  <FISH NAME="Tetras" SIZE="2" WEIGHT="2" AREA="Fish Bowls"/>
+ </DATA2>
+</FISHLIST>
