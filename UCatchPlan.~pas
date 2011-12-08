@@ -8,7 +8,7 @@ uses
   StdCtrls, ImgList,UEngine, Menus, TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatGroupBoxUnit, TFlatEditUnit, TFlatButtonUnit,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
-  TFlatSpeedButtonUnit, TFlatTabControlUnit;
+  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids;
 
 type
   TfrmCatchPlan = class(TForm)
@@ -174,6 +174,18 @@ type
     FlatMemo8: TFlatMemo;
     Label29: TLabel;
     FlatMemo13: TFlatMemo;
+    Label30: TLabel;
+    FlatListBox3: TFlatListBox;
+    FlatButton31: TFlatButton;
+    FlatButton32: TFlatButton;
+    FlatButton33: TFlatButton;
+    FlatButton34: TFlatButton;
+    FlatButton35: TFlatButton;
+    Label31: TLabel;
+    FlatEdit14: TFlatEdit;
+    FlatComboBox2: TFlatComboBox;
+    DBGrid1: TDBGrid;
+    StringGrid1: TStringGrid;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -186,6 +198,8 @@ type
     procedure RadioButtonCaiJi2Click(Sender: TObject);
     procedure RadioButtonLuoJiClick(Sender: TObject);
     procedure RadioButtonCaiJiClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FlatButton4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -319,6 +333,22 @@ procedure TfrmCatchPlan.RadioButtonCaiJiClick(Sender: TObject);
 begin
    panel6.Visible:=true;
   panel5.Visible:=false;
+end;
+
+procedure TfrmCatchPlan.FormCreate(Sender: TObject);
+begin
+  StringGrid1.Options:=StringGrid1.Options+[goEditing];
+
+  StringGrid1.EditorMode:=true;
+  StringGrid1.Cells[0,0]:= '序号';
+  StringGrid1.Cells[1,0]:= '原文代码';
+  StringGrid1.Cells[2,0]:= '替换为';
+
+end;
+
+procedure TfrmCatchPlan.FlatButton4Click(Sender: TObject);
+begin
+  StringGrid1.RowCount:=StringGrid1.RowCount+10;
 end;
 
 end.

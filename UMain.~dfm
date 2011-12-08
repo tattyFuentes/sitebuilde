@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 183
-  Top = 282
-  Width = 1628
-  Height = 862
+  Left = 213
+  Top = 193
+  Width = 1292
+  Height = 812
   Caption = 'SiteBuild '#31449#32676#21457#24067#31995#32479
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 0
     Width = 193
-    Height = 808
+    Height = 758
     Align = alLeft
     Images = ImageList1
     Indent = 19

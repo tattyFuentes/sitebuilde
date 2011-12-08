@@ -22,11 +22,11 @@ function getDigitalByTakenXML(strBeginDate:String;strEndDate:String):String;
 var
   doc :IXMLDocument;
 begin
-  doc:=createRoot('download');
+  {doc:=createRoot('download');
   addElementEx(doc,doc.DocumentElement,'sessionid',GSessionId);
   addElementEx(doc,doc.DocumentElement,'begindate',strBeginDate);
   addElementEx(doc,doc.DocumentElement,'enddate',strEndDate);
-  Result:=doc.XML;
+  Result:=doc.XML;}
 end;
 
 //根据digital id 列表获得照片列表 id 用 逗号间隔
@@ -36,7 +36,7 @@ var
   i:integer;
   strTemp:String;
 begin
-  strTemp:='';
+  {strTemp:='';
   doc:=createRoot('download');
   addElementEx(doc,doc.DocumentElement,'sessionid',GSessionId);
   for i:=0 to strIdList.Count-1 do
@@ -47,7 +47,7 @@ begin
        strTemp:=strTemp+';'+strIdList[i];
   end;
   addElementEx(doc,doc.DocumentElement,'ids',strTemp);
-  Result:=doc.XML;
+  Result:=doc.XML;    }
 end;
 
 
@@ -56,11 +56,11 @@ function getLoginXML(strUserName:String;strPassword:String):String;
 var
   doc :IXMLDocument;
 begin
-  doc:=createRoot('login');
+  {doc:=createRoot('login');
   addElementEx(doc,doc.DocumentElement,'version',VERSION);
   addElementEx(doc,doc.DocumentElement,'username',strUserName);
   addElementEx(doc,doc.DocumentElement,'password',strPassword);
-  Result:=doc.XML;
+  Result:=doc.XML;}
 end;
 
 {
@@ -100,9 +100,9 @@ var
   i,j:integer;
   doc :IXMLDocument;
   root:IXMLNode;
-  objDigital:digitalDetailStru;
+  //objDigital:digitalDetailStru;
 begin
-  if strXML='' then
+  {if strXML='' then
   begin
     raise Exception.Create(ERROR_NETWORKERROR);
   end;
@@ -126,7 +126,7 @@ begin
       objDigital.sets[j].title:=root.ChildNodes.Item[i].ChildNodes.item[5].ChildNodes.item[j].ChildNodes.Item[1].Text;
     end;
     GDigitalDetailList[length(GDigitalDetailList)-1]:=objDigital;
-  end;
+  end;   }
 end;
 
 {
@@ -148,9 +148,9 @@ var
   i:integer;
   doc :IXMLDocument;
   root:IXMLNode;
-  objDigital:digitalStru;
+  //objDigital:digitalStru;
 begin
-  if strXML='' then
+  {if strXML='' then
   begin
     raise Exception.Create(ERROR_NETWORKERROR);
   end;
@@ -170,7 +170,7 @@ begin
     //objDigital.path:='http://www.bababian.com/a.jpg';
     GDigitalList[length(GDigitalList)-1]:=objDigital;
   end;
-  writeConfig();
+  writeConfig();}
 end;
 
 
@@ -194,7 +194,7 @@ var
   doc :IXMLDocument;
   root:IXMLNode;
 begin
-  if strXML='' then
+  {if strXML='' then
   begin
     raise Exception.Create(ERROR_NETWORKERROR);
   end;
@@ -212,7 +212,7 @@ begin
   GDownTimes:=root.ChildNodes.Item[5].Text;
   GMaxDownTimes:=root.ChildNodes.Item[6].Text;
   GAd:=root.ChildNodes.Item[7].Text;
-  GAdUrl:=root.ChildNodes.Item[8].Text;
+  GAdUrl:=root.ChildNodes.Item[8].Text;  }
 end;
 
 procedure checkHttpResponse(strXML:WideString);
@@ -220,13 +220,13 @@ var
   doc:IXMLDocument;
   errorMessage:String;
 begin
-  doc:=CreateXMLDoc;
+  {doc:=CreateXMLDoc;
   doc.LoadXML(strXML);
   if doc.DocumentElement.NodeName=XML_ERROR_NODE then
   begin
     errorMessage:=doc.DocumentElement.Text;
     raise Exception.Create(ERROR_USERDEFINEHEAD+errorMessage);
-  end;
+  end;}
 end;
 
 //创建以rootName为根的结点

@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 277
-  Top = 154
+  Left = 417
+  Top = 222
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 688
@@ -14,6 +14,7 @@ object frmCatchPlan: TfrmCatchPlan
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -99,8 +100,8 @@ object frmCatchPlan: TfrmCatchPlan
     Top = 35
     Width = 705
     Height = 607
-    ActivePage = TabSheet6
-    TabIndex = 5
+    ActivePage = TabSheet7
+    TabIndex = 6
     TabOrder = 4
     object TabSheet2: TTabSheet
       Caption = #22522#26412#35774#32622
@@ -1787,6 +1788,185 @@ object frmCatchPlan: TfrmCatchPlan
     object TabSheet7: TTabSheet
       Caption = #25968#25454#25972#29702
       ImageIndex = 6
+      object Label30: TLabel
+        Left = 22
+        Top = 16
+        Width = 161
+        Height = 13
+        AutoSize = False
+        Caption = #25972#29702#32452':'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label31: TLabel
+        Left = 24
+        Top = 269
+        Width = 161
+        Height = 13
+        AutoSize = False
+        Caption = #24403#21069#32452#26631#39064':'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -8
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+      end
+      object FlatListBox3: TFlatListBox
+        Left = 22
+        Top = 36
+        Width = 547
+        Height = 213
+      end
+      object FlatButton31: TFlatButton
+        Left = 587
+        Top = 37
+        Width = 73
+        Height = 25
+        Color = clBtnFace
+        Caption = #22686#21152
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentColor = False
+        TabOrder = 1
+      end
+      object FlatButton32: TFlatButton
+        Left = 587
+        Top = 83
+        Width = 73
+        Height = 25
+        Color = clBtnFace
+        Caption = #22797#21046
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentColor = False
+        TabOrder = 2
+      end
+      object FlatButton33: TFlatButton
+        Left = 587
+        Top = 129
+        Width = 73
+        Height = 25
+        Color = clBtnFace
+        Caption = #23548#20837
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentColor = False
+        TabOrder = 3
+      end
+      object FlatButton34: TFlatButton
+        Left = 587
+        Top = 175
+        Width = 73
+        Height = 25
+        Color = clBtnFace
+        Caption = #23548#20986
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentColor = False
+        TabOrder = 4
+      end
+      object FlatButton35: TFlatButton
+        Left = 587
+        Top = 222
+        Width = 73
+        Height = 25
+        Color = clBtnFace
+        Caption = #21024#38500
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentColor = False
+        TabOrder = 5
+      end
+      object FlatEdit14: TFlatEdit
+        Left = 95
+        Top = 266
+        Width = 315
+        Height = 26
+        ColorFlat = clWhite
+        TabOrder = 6
+      end
+      object FlatComboBox2: TFlatComboBox
+        Left = 468
+        Top = 266
+        Width = 193
+        Height = 21
+        Style = csDropDownList
+        Color = clWindow
+        ItemHeight = 13
+        TabOrder = 7
+        ItemIndex = -1
+      end
+      object DBGrid1: TDBGrid
+        Left = 24
+        Top = 464
+        Width = 633
+        Height = 95
+        TabOrder = 8
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            Width = 42
+            Visible = True
+          end
+          item
+            Expanded = False
+            Title.Alignment = taCenter
+            Title.Caption = #21407#25991#20195#30721
+            Width = 269
+            Visible = True
+          end
+          item
+            Expanded = False
+            Title.Alignment = taCenter
+            Title.Caption = #26367#25442#20026
+            Width = 277
+            Visible = True
+          end>
+      end
+      object StringGrid1: TStringGrid
+        Left = 24
+        Top = 304
+        Width = 617
+        Height = 105
+        ColCount = 3
+        FixedCols = 0
+        ScrollBars = ssVertical
+        TabOrder = 9
+        ColWidths = (
+          64
+          261
+          267)
+      end
     end
     object TabSheet8: TTabSheet
       Caption = #30331#24405#35774#32622
@@ -1832,11 +2012,12 @@ object frmCatchPlan: TfrmCatchPlan
       Height = 25
       Caption = #24212#29992
       TabOrder = 3
+      OnClick = FlatButton4Click
     end
   end
   object ImageList1: TImageList
-    Left = 832
-    Top = 16
+    Left = 680
+    Top = 8
     Bitmap = {
       494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
