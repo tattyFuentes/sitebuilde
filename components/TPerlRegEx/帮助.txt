@@ -1,0 +1,238 @@
+一、工具选择
+
+在 Delphi 中使用正则表达式, 目前 PerlRegEx 应该是首选, 准备彻底而细致地研究它.
+
+官方网站: http://www.regular-e-xpressions.info/delphi.html
+直接下载: http://www.regular-e-xpressions.info/download/TPerlRegEx.zip
+
+二、安装方法:
+1、先把解压的 TPerlRegEx 文件夹放一个合适的地方, 我放在了 Delphi 的 Imports 目录中.
+
+2、目前最新 For Win32 的版本是对 Delphi 2006 的, 2007 也能用. 
+     打开 PerlRegExD2006.dpk, 提示缺少资源文件, 没关系; 
+     在 Project Manager 窗口中的 PerlRegExD2006.bpl 上点击右键, 执行 Install;
+     这时在 Tool Palette 的列表中已经有了 TPerlRegEx, 在 JGsoft 组.
+
+3、Tools -> Options -> Environment Options -> Delphi Options -> Library-Win32 -> Library path -> 
+     添加路径: ...\Imports\TPerlRegEx
+
+4、可以使用了! 直接 uses PerlRegEx 或从 Tool Palette 添加都可以. 
+     如果不喜欢 Tool Palette 的添加方式可以省略第二步.
+
+三、使用方法
+PerlRegEx提供了TPerlRegEx类。主要用法是：
+RegEx : TPerlRegEx;
+....
+RegEx := TPerlRegEx;
+try
+   RegEx.Subject := '要匹配的正文';
+   RegEx.RegEx := '正则表达式';
+   if RegEx.Match then ....
+finally
+   RegEx.free
+end;
+如果要多次匹配并做一些处理，可以:
+Matched : boolean;
+....
+RegEx.Match;
+while RegEx.FoundMatch do
+begin
+   ....
+   RegEx.MatchAgain;
+end;
+如果要替换匹配到的内容，可以
+RegEx.Subject := '要匹配的正文';
+RegEx.RegEx := '正则表达式';
+RegEx.Replace := '替换的字符串'
+if RegEx.Match then RegEx.ReplaceAll;   //结果在RegEx.subject
+或者 if RegEx.Match then Result := RegEx.Replacement;
+匹配到的字符串放在RegEx.MatchedExpression中，长度在RegEx.MatchedExpressionLength中，上一次匹配的结束位置在RegEx.Stop中
+匹配到的子串放在RegEx.SubExpressions中，子串个数在RegEx.SubExpressionCount中。
+如果正则式很复杂而且常用，可创建一个生存期相对长的TPerlRegEx实例．设置好RegEx属性后，使用.Study方法对正则表达式进行预处理．据帮助文档说，文档资料会大大提高效率．
+
+详情可参考文档。有一点文档上没有提到（又或者我看漏了），在第一次匹配之后，如果没有重新赋值subject，下一次匹配无论用Match或者MatchAgain，都是从上次的结束位置开始。所以如果要重新开始匹配，应先把RegEx.Start := 0;
+
+四、正则单元
+ 程序代码
+unit UnitRegEx;
+
+interface
+uses
+   PerlRegEx;
+
+function CheckEmail(EmailAddr: string): Boolean;
+function CheckStrOrNumber(Str: string): Boolean;
+
+var
+   PerlRegEx: TPerlRegEx;
+
+implementation
+
+//Email电子邮箱检测
+
+function CheckEmail(EmailAddr: string): Boolean;
+begin
+   PerlRegEx := TPerlRegEx.Create(nil);
+   PerlRegEx.Subject := EmailAddr;
+   PerlRegEx.RegEx := '\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*';
+   Result := PerlRegEx.Match;
+end;
+
+//字符、数字检测
+
+function CheckStrOrNumber(Str: string): Boolean;
+begin
+   PerlRegEx := TPerlRegEx.Create(nil);
+   PerlRegEx.Subject := Str;
+   PerlRegEx.RegEx := '^[A-Za-z0-9]+$';
+   Result := PerlRegEx.Match;
+end;
+
+end.
+
+五、使用实例
+ 程序代码
+procedure TFrmRegister.btnNextClick(Sender: TObject);
+begin
+   try
+     if not CheckStrOrNumber(edtUser.Text) then
+     begin
+       Application.MessageBox(PChar('请您正确输入用户名。'), '系统提示', 64);
+       edtUser.SetFocus;
+       edtUser.SelText;
+       Exit;
+     end
+     else if not CheckEmail(edtEmail.Text) then
+     begin
+       Application.MessageBox(PChar('请您正确输入常用的电子邮箱。'), '系统提示', 64);
+       edtEmail.SetFocus;
+       edtEmail.SelText;
+       Exit;
+     end;
+   except
+     on E: Exception do
+       Application.MessageBox(PChar(E.Message), '系统提示', 64)
+   end;
+end;
+
+
+六、常用正则表式
+
+正则表达式用于字符串处理、表单验证等场合，实用高效。现将一些常用的表达式收集于此，以备不时之需。
+
+匹配中文字符的正则表达式： [\u4e00-\u9fa5]
+
+评注：匹配中文还真是个头疼的事，有了这个表达式就好办了
+
+匹配双字节字符(包括汉字在内)：[^\x00-\xff]
+
+评注：可以用来计算字符串的长度（一个双字节字符长度计2，ASCII字符计1）
+
+匹配空白行的正则表达式：\n\s*\r
+
+评注：可以用来删除空白行
+
+匹配HTML标记的正则表达式：<(\S*?)[^>]*>.*?</\1>|<.*? />
+
+评注：网上流传的版本太糟糕，上面这个也仅仅能匹配部分，对于复杂的嵌套标记依旧无能为力
+
+匹配首尾空白字符的正则表达式：^\s*|\s*$
+
+评注：可以用来删除行首行尾的空白字符(包括空格、制表符、换页符等等)，非常有用的表达式
+
+匹配Email地址的正则表达式：\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
+
+评注：表单验证时很实用
+
+匹配网址URL的正则表达式：[a-zA-z]+://[^\s]*
+
+评注：网上流传的版本功能很有限，上面这个基本可以满足需求
+
+匹配帐号是否合法(字母开头，允许5-16字节，允许字母数字下划线)：^[a-zA-Z][a-zA-Z0-9_]{4,15}$
+
+评注：表单验证时很实用
+
+匹配国内电话号码：\d{3}-\d{8}|\d{4}-\d{7}
+
+评注：匹配形式如 0511-4405222 或 021-87888822
+
+匹配腾讯QQ号：[1-9][0-9]{4,}
+
+评注：腾讯QQ号从10000开始
+
+匹配中国邮政编码：[1-9]\d{5}(?!\d)
+
+评注：中国邮政编码为6位数字
+
+匹配身份证：\d{15}|\d{18}
+
+评注：中国的身份证为15位或18位
+
+匹配ip地址：\d+\.\d+\.\d+\.\d+
+
+评注：提取ip地址时有用。
+
+匹配特定数字：
+
+^[1-9]\d*$　 　 //匹配正整数
+
+^-[1-9]\d*$ 　 //匹配负整数
+
+^-?[1-9]\d*$　　 //匹配整数
+
+^[1-9]\d*|0$　 //匹配非负整数（正整数 + 0）
+
+^-[1-9]\d*|0$　　 //匹配非正整数（负整数 + 0）
+
+^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$　　 //匹配正浮点数
+
+^-([1-9]\d*\.\d*|0\.\d*[1-9]\d*)$　 //匹配负浮点数
+
+^-?([1-9]\d*\.\d*|0\.\d*[1-9]\d*|0?\.0+|0)$　 //匹配浮点数
+
+^[1-9]\d*\.\d*|0\.\d*[1-9]\d*|0?\.0+|0$　　 //匹配非负浮点数（正浮点数 + 0）
+
+^(-([1-9]\d*\.\d*|0\.\d*[1-9]\d*))|0?\.0+|0$　　//匹配非正浮点数（负浮点数 + 0）
+
+评注：处理大量数据时有用，具体应用时注意修正。
+
+匹配特定字符串：
+
+^[A-Za-z]+$　　//匹配由26个英文字母组成的字符串
+
+^[A-Z]+$　　//匹配由26个英文字母的大写组成的字符串
+
+^[a-z]+$　　//匹配由26个英文字母的小写组成的字符串
+
+^[A-Za-z0-9]+$　　//匹配由数字和26个英文字母组成的字符串
+
+^\w+$　　//匹配由数字、26个英文字母或者下划线组成的字符串
+
+评注：最基本也是最常用的一些表达式。
+
+--------------------------------------
+
+试验:删除http所有标签
+
+var
+reg: TPerlRegEx;
+str:string;
+begin
+str:=memo1.Text; //有<>等内容
+reg := TPerlRegEx.Create(nil);
+
+reg.Subject := memo1.Text; 
+reg.RegEx   := '\<[^>]+()\>';
+
+while reg.MatchAgain do
+begin
+    str:=StringReplace(str,reg.SubExpressions[0],'',[rfReplaceAll]); //删除HTTP标签
+
+end;
+ShowMessage(str); 
+
+FreeAndNil(reg);
+
+end;
+
+结果:正确!

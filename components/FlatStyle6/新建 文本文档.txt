@@ -1,0 +1,21 @@
+附带通用控件安装方法：
+----------------------------------------------------------------
+基本安装
+1、对于单个控件，Componet-->install component..-->PAS或DCU文件-->install;
+2、对于带*.dpk文件的控件包，File-->Open(下拉列表框中选*.dpk)-->install即可；
+3、对于带*.bpl文件的控件包，Install Packages-->Add-->bpl文件名即可；
+4、如果以上Install按钮为失效的话，试试Compile按钮；
+5、是run time lib则在option下的packages下的runtimepackes加之。
+    如果编译时提示文件找不到的话，一般是控件的安装目录不在Delphi的Lib目录中，有两种方法可以解决：
+1、反安装的源文件拷入到Delphi的Lib目录下；
+2、或者Tools-->Environment Options中把控件源代码路径加入到Delphi的Lib目录中即可。
+注意：所安装的控件是否与你所用的Delphi版本相适应。
+----------------------------------------------------------------
+控件删除
+在Component/Install Packages中删除。 
+选Component/configure Palette…
+有pages和components两个区域
+双击components区域，选中要删除得控件，下面有得Delete按钮
+但系统提供的控件只能Hide，不能delete。
+打开控件所在的包文件(*.dpk)，从中删除控件那个文件，再重新编译该包即可。
+如果是整个控件包都要删除的话,project->Option->Packages,删掉那个packages,收工。
