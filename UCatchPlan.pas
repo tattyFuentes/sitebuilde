@@ -8,9 +8,9 @@ uses
   StdCtrls, ImgList,UEngine, Menus, TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatGroupBoxUnit, TFlatEditUnit, TFlatButtonUnit,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
-  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids;
-
+  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic;
 type
+  
   TfrmCatchPlan = class(TForm)
     checkBoxTreePlanCategory: TCheckBoxTreeView;
     Panel1: TPanel;
@@ -61,7 +61,7 @@ type
     BtnSave: TFlatButton;
     BtnCancel: TFlatButton;
     BtnApply: TFlatButton;
-    Label8: TLabel;
+    LabelRuleName: TLabel;
     TabSheet1: TTabSheet;
     Label9: TLabel;
     Label10: TLabel;
@@ -93,41 +93,41 @@ type
     BtnAddDataItem: TFlatButton;
     BtnDelDataItem: TFlatButton;
     Label17: TLabel;
-    FlatEdit10: TFlatEdit;
+    EdtDataItemName: TFlatEdit;
     Label18: TLabel;
-    FlatComboBox1: TFlatComboBox;
+    ComboLinkArrangeGroup: TFlatComboBox;
     FlatGroupBox5: TFlatGroupBox;
-    FlatCheckBox6: TFlatCheckBox;
-    FlatCheckBox7: TFlatCheckBox;
-    FlatCheckBox8: TFlatCheckBox;
-    FlatCheckBox9: TFlatCheckBox;
+    ChkMatchManyRows: TFlatCheckBox;
+    ChkPseudoOriginal: TFlatCheckBox;
+    ChkIncludeDownFile: TFlatCheckBox;
+    ChkAsDownUrl: TFlatCheckBox;
     Label19: TLabel;
-    FlatEdit11: TFlatEdit;
+    EdtFileExtension: TFlatEdit;
     Label20: TLabel;
     FlatButton15: TFlatButton;
     FlatButton16: TFlatButton;
-    FlatMemo5: TFlatMemo;
+    MemDataItemCatchRule: TFlatMemo;
     BtnSaveDataItem: TFlatButton;
-    FlatCheckListBox2: TFlatCheckListBox;
+    ChkListBoxCatchPage: TFlatCheckListBox;
     FlatButton18: TFlatButton;
     FlatButton19: TFlatButton;
     Label21: TLabel;
-    FlatEdit12: TFlatEdit;
+    EdtCatchPageName: TFlatEdit;
     Label22: TLabel;
-    FlatListBox1: TFlatListBox;
-    FlatListBox2: TFlatListBox;
+    ListBoxCatchDataItems: TFlatListBox;
+    ListBoxCatchDataItemsForSelect: TFlatListBox;
     Label23: TLabel;
     FlatSpeedButton1: TFlatSpeedButton;
     FlatSpeedButton2: TFlatSpeedButton;
     Label24: TLabel;
     FlatButton20: TFlatButton;
     FlatButton21: TFlatButton;
-    FlatMemo6: TFlatMemo;
+    MemNextLevelPageUrl: TFlatMemo;
     Label25: TLabel;
-    FlatEdit13: TFlatEdit;
+    EdtNewNextLevelPageUrl: TFlatEdit;
     FlatButton22: TFlatButton;
     Label35: TLabel;
-    Panel5: TPanel;
+    PanelArticleSplitPageLogic: TPanel;
     Label38: TLabel;
     Label39: TLabel;
     Label40: TLabel;
@@ -139,63 +139,65 @@ type
     Label46: TLabel;
     Label47: TLabel;
     Label48: TLabel;
-    FlatEdit20: TFlatEdit;
-    FlatEdit21: TFlatEdit;
-    FlatEdit22: TFlatEdit;
-    FlatEdit23: TFlatEdit;
-    FlatEdit24: TFlatEdit;
-    FlatEdit25: TFlatEdit;
-    FlatMemo9: TFlatMemo;
-    FlatMemo10: TFlatMemo;
-    Panel6: TPanel;
+    EdtUrlDecompose: TFlatEdit;
+    EdtArticleIdFrom: TFlatEdit;
+    EdtArticleIdTo: TFlatEdit;
+    EdtArticleIdStep: TFlatEdit;
+    EdtArticleUrlGenerate: TFlatEdit;
+    MemValidPageFeatureCode: TFlatMemo;
+    MemNotLastPageFeatureCode: TFlatMemo;
+    PanelArticleSplitPageCatch: TPanel;
     Label49: TLabel;
     Label55: TLabel;
     Label56: TLabel;
     Label57: TLabel;
     Label58: TLabel;
-    FlatEdit31: TFlatEdit;
-    FlatMemo11: TFlatMemo;
-    FlatMemo12: TFlatMemo;
+    EdtArticlePageRuleGenerate: TFlatEdit;
+    MemArticlePageUrlRule: TFlatMemo;
+    MemArticlePageContentRule: TFlatMemo;
     FlatButton23: TFlatButton;
     FlatButton24: TFlatButton;
     FlatButton25: TFlatButton;
     FlatButton26: TFlatButton;
     FlatButton27: TFlatButton;
-    RadioButtonLuoJi: TFlatRadioButton;
-    RadioButtonCaiJi: TFlatRadioButton;
+    RadioArticleUseLogic: TFlatRadioButton;
+    RadioArticleUseCatch: TFlatRadioButton;
     FlatButton28: TFlatButton;
     FlatButton29: TFlatButton;
     FlatButton30: TFlatButton;
     Label26: TLabel;
-    FlatCheckBox10: TFlatCheckBox;
+    ChkEnableDownload: TFlatCheckBox;
     Label27: TLabel;
-    FlatMemo7: TFlatMemo;
+    MemFileHtmlName: TFlatMemo;
     Label28: TLabel;
-    FlatMemo8: TFlatMemo;
+    MemFileExtensions: TFlatMemo;
     Label29: TLabel;
-    FlatMemo13: TFlatMemo;
+    MemDynamicDownFileUrls: TFlatMemo;
     Label30: TLabel;
-    FlatListBox3: TFlatListBox;
-    FlatButton31: TFlatButton;
-    FlatButton32: TFlatButton;
-    FlatButton33: TFlatButton;
-    FlatButton34: TFlatButton;
-    FlatButton35: TFlatButton;
+    ListBoxArrangeGroups: TFlatListBox;
+    btnAddGroup: TFlatButton;
+    btnCopyGroup: TFlatButton;
+    btnImportGroup: TFlatButton;
+    btnExportGroup: TFlatButton;
+    btnDeleteGroup: TFlatButton;
     Label31: TLabel;
-    FlatEdit14: TFlatEdit;
-    FlatComboBox2: TFlatComboBox;
-    StringGrid1: TStringGrid;
+    EdtGroupName: TFlatEdit;
+    ComboBoxDataArrangeTagList: TFlatComboBox;
+    StringGridGroupContent: TStringGrid;
     FlatButton36: TFlatButton;
     FlatButton37: TFlatButton;
     FlatButton38: TFlatButton;
     Label32: TLabel;
     Label33: TLabel;
-    FlatEdit15: TFlatEdit;
+    EdtCookiesUrl: TFlatEdit;
     Label34: TLabel;
-    FlatMemo14: TFlatMemo;
+    MemCookies: TFlatMemo;
     FlatButton39: TFlatButton;
     Label36: TLabel;
     Label37: TLabel;
+    Label50: TLabel;
+    Label51: TLabel;
+    FlatSpeedButton3: TFlatSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -206,12 +208,15 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure RadioButtonLuoJi2Click(Sender: TObject);
     procedure RadioButtonCaiJi2Click(Sender: TObject);
-    procedure RadioButtonLuoJiClick(Sender: TObject);
-    procedure RadioButtonCaiJiClick(Sender: TObject);
+    procedure RadioArticleUseLogicClick(Sender: TObject);
+    procedure RadioArticleUseCatchClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BtnApplyClick(Sender: TObject);
+    procedure FlatSpeedButton3Click(Sender: TObject);
+    procedure BtnSaveClick(Sender: TObject);
   private
     { Private declarations }
+    procedure ShowHelp(title:string;content:String);
   public
     { Public declarations }
   end;
@@ -220,8 +225,17 @@ var
   frmCatchPlan: TfrmCatchPlan;
 
 implementation
-
+uses UHelp;
 {$R *.dfm}
+
+procedure TfrmCatchPlan.ShowHelp(title:string;content:String);
+begin
+  frmHelp.Caption:=title;
+  frmHelp.panelhelp.Caption:=title;
+  frmHelp.MemHelp.Lines.Clear;
+  frmHelp.MemHelp.Lines.Append(content);
+  frmHelp.ShowModal;
+end;
 
 procedure TfrmCatchPlan.FormShow(Sender: TObject);
 begin
@@ -323,42 +337,62 @@ end;
 
 procedure TfrmCatchPlan.RadioButtonLuoJi2Click(Sender: TObject);
 begin
-  panel5.Visible:=true;
-  panel6.Visible:=false;
+  PanelArticleSplitPageLogic.Visible:=true;
+  PanelArticleSplitPageCatch.Visible:=false;
 end;
 
 procedure TfrmCatchPlan.RadioButtonCaiJi2Click(Sender: TObject);
 begin
-    panel6.Visible:=true;
-  panel5.Visible:=false;
+  PanelArticleSplitPageLogic.Visible:=false;
+  PanelArticleSplitPageCatch.Visible:=true;
 end;
 
-procedure TfrmCatchPlan.RadioButtonLuoJiClick(Sender: TObject);
+procedure TfrmCatchPlan.RadioArticleUseLogicClick(Sender: TObject);
 begin
-  panel5.Visible:=true;
-  panel6.Visible:=false;
+  PanelArticleSplitPageLogic.Visible:=true;
+  PanelArticleSplitPageCatch.Visible:=false;
 end;
 
-procedure TfrmCatchPlan.RadioButtonCaiJiClick(Sender: TObject);
+procedure TfrmCatchPlan.RadioArticleUseCatchClick(Sender: TObject);
 begin
-   panel6.Visible:=true;
-  panel5.Visible:=false;
+  PanelArticleSplitPageLogic.Visible:=false;
+  PanelArticleSplitPageCatch.Visible:=true;
 end;
 
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
-  StringGrid1.Options:=StringGrid1.Options+[goEditing];
+  StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
 
-  StringGrid1.EditorMode:=true;
-  StringGrid1.Cells[0,0]:= '序号';
-  StringGrid1.Cells[1,0]:= '原文代码';
-  StringGrid1.Cells[2,0]:= '替换为';
+  StringGridGroupContent.EditorMode:=true;
+  StringGridGroupContent.Cells[0,0]:= '序号';
+  StringGridGroupContent.Cells[1,0]:= '原文代码';
+  StringGridGroupContent.Cells[2,0]:= '替换为';
 
 end;
 
 procedure TfrmCatchPlan.BtnApplyClick(Sender: TObject);
 begin
-  StringGrid1.RowCount:=StringGrid1.RowCount+10;
+  StringGridGroupContent.RowCount:=StringGridGroupContent.RowCount+10;
+end;
+
+procedure TfrmCatchPlan.FlatSpeedButton3Click(Sender: TObject);
+begin
+  ShowHelp('帮助：基本设置-HTML有效网址属性名','有效网址HTML属性名本项为必填项，用以指定在网页源代码中，什么HTML属性参数的值为网址，系统会据此判断并自动修正相对网址为完整网址；　　如：href 、src 、data 等，多个属性参数名请以换行分隔；');
+end;
+
+
+procedure TfrmCatchPlan.BtnSaveClick(Sender: TObject);
+var
+  i:integer;
+  controlArray:TWinControlArray;
+begin
+  //self.Controls
+  GetChildControls(tabsheet2,controlArray);
+  MemHtmlAttibute.Clear;
+  for i:=0 to length(controlArray)-1 do
+  begin
+     MemHtmlAttibute.Lines.Append(inttostr(i)+':'+controlArray[i].Name);
+  end;
 end;
 
 end.
