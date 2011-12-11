@@ -3,7 +3,7 @@ unit UEngine;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ComCtrls,CommCtrl,UDatabase,CheckBoxTreeView,SqlExpr,DB;
+  Dialogs, Menus, ComCtrls,CommCtrl,UDatabase,CheckBoxTreeView,SqlExpr,DB,DBXpress;
 
 function createCateGory(parentId:integer;name:string;desc:string):integer;
 procedure updateCateGory(id:integer;name:string;desc:string);
@@ -11,15 +11,54 @@ procedure deleteCategory(id:integer);
 
 implementation
 
-procedure deleteCategory(id:integer);
+
+procedure deleteOneCategory(conn:TSQLConnection;id:integer);
 var
   sql:string;
   params:TParams;
+  sqlDataset:TSQLDataSet;
+  tempCateId:Integer;
 begin
   params:=TParams.Create();
   addParam(params,'id',id,ftInteger,ptInput);
   sql:='delete from category where id=:id';
-  execUpdate(sql,params);
+  execUpdateWithConn(sql,conn,params);
+
+  sql:='delete from plan where categoryid=:id';
+  execUpdateWithConn(sql,conn,params);
+  
+  sql:='select * from category where parentid=:id';
+  sqlDataset:=execQueryWithConn(sql,conn,params);
+  while not sqlDataset.Eof do
+  begin
+    tempCateId:= strtoint(getFieldText(sqlDataSet,'id'));
+    deleteOneCategory(conn,tempCateId);
+    sqlDataset.Next;
+  end;
+end;
+
+//ÐèÒªµÝ¹éÉ¾³ý
+procedure deleteCategory(id:integer);
+var
+  sql:string;
+  params:TParams;
+  conn:TSQLConnection;
+  td:TTransactionDesc;
+  sqlDataset:TSQLDataSet;
+begin
+  conn:=GetNewDatabaseConnection(DBHost,DBUser,DBPassword,DBName);
+  td:=beginConnTran(conn);
+  try
+    deleteOneCategory(conn,id);
+    conn.Commit(td);   {on   success,   commit   the   changes};
+    //SQLDataSet.Close;
+  except
+    on e:Exception do
+    begin
+      conn.Rollback(td);   {on   failure,   undo   the   changes};
+      raise;
+    end;
+  end;
 end;
 
 function createCateGory(parentId:integer;name:string;desc:string):integer;

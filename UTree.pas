@@ -23,12 +23,14 @@ var
   sqlDataSet:TSQLDataSet;
   tempCateId:Integer;
   tmpTreeNode:TTreeNode;
+  nodeData:TTreeNodeData;
 begin
   sqlDataSet:=execQuery('select * from '+cateTableName+' where parentid='+inttostr(rootId),nil);
   while not sqlDataSet.Eof do
   begin
     tempCateId:= strtoint(getFieldText(sqlDataSet,'id'));
-    tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),inttostr(tempCateId),parentNode);
+    nodeData.Data:=inttostr(tempCateId);
+    tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),nodeData,parentNode);
     tmpTreeNode.ImageIndex:=0;
     buildChildTree(checkboxTreeView,cateTableName,planTableName,tempCateId,tmpTreeNode);
     sqlDataSet.Next;
@@ -38,7 +40,8 @@ begin
   sqlDataSet:=execQuery('select * from '+planTableName+' where categoryid='+inttostr(rootId),nil);
   while not sqlDataSet.Eof do
   begin
-    tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),getFieldText(sqlDataSet,'id'),parentNode);
+    nodeData.Data:=getFieldText(sqlDataSet,'id');
+    tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),nodeData,parentNode);
     tmpTreeNode.ImageIndex:=1;
     tmpTreeNode.SelectedIndex:=1;
     sqlDataSet.Next;
@@ -54,6 +57,7 @@ var
   tempCateId:Integer;
   tmpTreeNode:TTreeNode;
   params:TParams;
+  nodeData:TTreeNodeData;
 begin
   params:=TParams.Create();
   addParam(params,'id',inttostr(rootId),ftInteger,ptInput);
@@ -62,7 +66,8 @@ begin
   if(not sqlDataSet.Eof) then
   begin
     tempCateId:= strtoint(getFieldText(sqlDataSet,'id'));
-    tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),inttostr(tempCateId),parentNode);
+    nodeData.Data:= getFieldText(sqlDataSet,'id');
+    tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),nodeData,parentNode);
     tmpTreeNode.ImageIndex:=0;
   end;
   sqlDataSet.Close;

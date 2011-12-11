@@ -8,7 +8,7 @@ uses
   StdCtrls, ImgList,UEngine, Menus, TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatGroupBoxUnit, TFlatEditUnit, TFlatButtonUnit,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
-  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic;
+  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML;
 type
   
   TfrmCatchPlan = class(TForm)
@@ -214,8 +214,12 @@ type
     procedure BtnApplyClick(Sender: TObject);
     procedure FlatSpeedButton3Click(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+    procedure BtnCancelClick(Sender: TObject);
   private
     { Private declarations }
+    arrayListBoxStoreData:THashedStringList;
+    procedure initListBoxData();
+    procedure CreateCatchRule();
     procedure ShowHelp(title:string;content:String);
   public
     { Public declarations }
@@ -227,6 +231,10 @@ var
 implementation
 uses UHelp;
 {$R *.dfm}
+procedure TfrmCatchPlan.CreateCatchRule();
+begin
+  
+end;
 
 procedure TfrmCatchPlan.ShowHelp(title:string;content:String);
 begin
@@ -249,22 +257,23 @@ var
   node:TTreeNode;
   parentNodeData:string;
   newNodeId:integer;
+  nodeData:TTreeNodeData;
 begin
   checkBoxTreePlanCategory.Selected.Expanded:=true;
-  node:=checkBoxTreePlanCategory.AddTreeNode('新组名称','0',checkBoxTreePlanCategory.Selected);
-  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected);
+  nodeData.Data:='0';
+  node:=checkBoxTreePlanCategory.AddTreeNode('新组名称',nodeData,checkBoxTreePlanCategory.Selected);
+  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
   newNodeId:=createCateGory(strtoint(parentNodeData),'新组名称','');
-  checkBoxTreePlanCategory.ModifyTreeNodeData(Node,inttostr(newNodeId));
+  nodeData.Data:=inttostr(newNodeId);
+  checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
   node.Focused:=true;
   node.Selected:=true;
   node.EditText;
-
 end;
 
 procedure TfrmCatchPlan.pop_deletegroupClick(Sender: TObject);
 begin
-  checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected);
-  deleteCategory(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected)));
+  deleteCategory(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
   checkBoxTreePlanCategory.Selected.Delete;
 end;
 
@@ -308,24 +317,26 @@ procedure TfrmCatchPlan.checkBoxTreePlanCategoryEdited(Sender: TObject;
 var
   sql:string;
   newNodeId:Integer;
-  nodeData,parentNodeData:string;
+  parentNodeData,nodeId:string;
+  nodeData:TTreeNodeData;
 begin
   if(not isGroupNode(node)) then
   begin
     s:=Node.Text;
     exit;
   end;
-  nodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node);
-  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent);
-  if(nodeData='0') then  //新加节点
+  nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
+  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
+  if(nodeId='0') then  //新加节点
   begin
     if(isGroupNode(node)) then
     begin
       newNodeId:=createCateGory(strtoint(parentNodeData),s,'');
-      checkBoxTreePlanCategory.ModifyTreeNodeData(Node,inttostr(newNodeId));
+      nodeData.Data:=inttostr(newNodeId);
+      checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
     end;
   end else
-    updateCateGory(strtoint(nodeData),s,'');
+    updateCateGory(strtoint(nodeId),s,'');
 
 end;
 
@@ -359,10 +370,26 @@ begin
   PanelArticleSplitPageCatch.Visible:=true;
 end;
 
+procedure TfrmCatchPlan.initListBoxData();
+var
+  i:integer;
+  controlArray:TWinControlArray;
+begin
+  GetChildControls(self,controlArray);
+  arrayListBoxStoreData:=THashedStringList.create;
+  for i:=0 to length(controlArray)-1 do
+  begin
+    if(controlArray[i] is TFlatCheckListBox )or (controlArray[i] is TFlatListBox) then
+    begin
+      arrayListBoxStoreData.AddObject(controlArray[i].Name,THashedStringList.create);
+    end;
+  end;
+end;
+
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
+  initListBoxData();
   StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
-
   StringGridGroupContent.EditorMode:=true;
   StringGridGroupContent.Cells[0,0]:= '序号';
   StringGridGroupContent.Cells[1,0]:= '原文代码';
@@ -385,14 +412,31 @@ procedure TfrmCatchPlan.BtnSaveClick(Sender: TObject);
 var
   i:integer;
   controlArray:TWinControlArray;
+  a:THashedStringList;
 begin
+  a:= THashedStringList.Create;
+
+   //RadioAutoCode.Checked
   //self.Controls
-  GetChildControls(tabsheet2,controlArray);
+  GetChildControls(self,controlArray);
   MemHtmlAttibute.Clear;
-  for i:=0 to length(controlArray)-1 do
+  MemHtmlAttibute.Lines.Add(SaveControlsToXml('',controlArray,arrayListBoxStoreData));
+end;
+
+procedure TfrmCatchPlan.BtnCancelClick(Sender: TObject);
+var
+  doc :IXMLDocument;
+  nodelist:IXMLNodeList;
+  i:integer;
+begin
+  doc :=CreateXMLDoc;
+  doc.LoadXML(MemHtmlAttibute.Lines.Text);
+  nodelist:=doc.GetElementsByTagName('control');
+  for i:=0 to nodelist.Length-1 do
   begin
-     MemHtmlAttibute.Lines.Append(inttostr(i)+':'+controlArray[i].Name);
+    showmessage(nodelist.Item[i].ChildNodes.Item[2].FirstChild.nodevalue);
   end;
+
 end;
 
 end.

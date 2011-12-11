@@ -15,10 +15,10 @@ type
   public
     destructor Destroy; override;
     procedure CreateParams(var Params: TCreateParams);override;
-    function AddTreeNode(nodeName:String;nodeData:string;parentNode:TTreeNode):TTreeNode;
+    function AddTreeNode(nodeName:String;nodeData:TTreeNodeData;parentNode:TTreeNode):TTreeNode;
     function GetTreeViewSelectedNodes:TTreeNodeArr;
-    function GetTreeViewNodeData(node:TTreeNode):String;
-    procedure ModifyTreeNodeData(node:TTreeNode;nodeData:string);
+    function GetTreeViewNodeData(node:TTreeNode):TTreeNodeData;
+    procedure ModifyTreeNodeData(node:TTreeNode;nodeData:TTreeNodeData);
   published
     property Align;
     property Anchors;
@@ -147,27 +147,27 @@ begin
 end;
 
 
-function TCheckBoxTreeView.GetTreeViewNodeData(node:TTreeNode):String;
+function TCheckBoxTreeView.GetTreeViewNodeData(node:TTreeNode):TTreeNodeData;
 begin
-  result:=PTreeNodeData(node.Data)^.Data;
+  result:=PTreeNodeData(node.Data)^;
 end;
 
 
-procedure TCheckBoxTreeView.ModifyTreeNodeData(node:TTreeNode;nodeData:string);
+procedure TCheckBoxTreeView.ModifyTreeNodeData(node:TTreeNode;nodeData:TTreeNodeData);
 var
   treeNodeData: PTreeNodeData;
 begin
   treeNodeData:=node.Data;
-  treeNodeData^.Data:= nodeData;
+  treeNodeData^.Data:= nodeData.Data;
 end;
 
-function TCheckBoxTreeView.AddTreeNode(nodeName:String;nodeData:string;parentNode:TTreeNode):TTreeNode;
+function TCheckBoxTreeView.AddTreeNode(nodeName:String;nodeData:TTreeNodeData;parentNode:TTreeNode):TTreeNode;
 var
   treeNodeData: PTreeNodeData;
 begin
   result:=nil;
   New(treeNodeData);
-  treeNodeData^.Data := nodeData;
+  treeNodeData^.Data := nodeData.Data;
   with self do
   begin
     if parentNode=nil then

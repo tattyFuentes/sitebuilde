@@ -14,8 +14,14 @@ function execUpdate(sql:string;params:TParams):integer;
 function execUpdateWithTran(sql:TStrings):integer;
 function execUpdateWithTranAndConn(sql:TStrings;conn:TSQLConnection):integer;
 function getFieldText(sqlDataSet:TSQLDataSet;fieldName:String):String;
+function getSQLDataset(conn:TSQLConnection):TSQLDataSet;
+function beginConnTran(conn:TSQLConnection):TTransactionDesc;
 var
   DBConnection: TSQLConnection;
+  DBHost:String;
+  DBUser:String;
+  DBPassword:String;
+  DBName:String;
 
 implementation
 
@@ -97,6 +103,21 @@ begin
   result:=execUpdateWithConn(sql,DBConnection,params);
 end;
 
+function beginConnTran(conn:TSQLConnection):TTransactionDesc;
+begin
+  result.TransactionID:=1;
+  result.IsolationLevel   :=   xilREADCOMMITTED;
+  conn.StartTransaction(result);
+end;
+
+function getSQLDataset(conn:TSQLConnection):TSQLDataSet;
+begin
+  result:=TSQLDataSet.Create(nil);
+  result.SQLConnection:=conn;
+  result.CommandType:=ctQuery;
+
+end;
+
 function execUpdateWithTranAndConn(sql:TStrings;conn:TSQLConnection):integer;
 var
   SQLDataSet:TSQLDataSet;
@@ -109,21 +130,21 @@ begin
   SQLDataSet.CommandType:=ctQuery;
   TD.TransactionID   :=   1;
   TD.IsolationLevel   :=   xilREADCOMMITTED;
-  DBConnection.StartTransaction(TD);
+  conn.StartTransaction(TD);
   try
     for i:=0 to sql.Count-1 do
     begin
       SQLDataSet.CommandText:=sql.Strings[i];
       SQLDataSet.ExecSQL(true);
     end;
-    DBConnection.Commit(TD);   {on   success,   commit   the   changes};
+    conn.Commit(TD);   {on   success,   commit   the   changes};
     sql.free;
     SQLDataSet.Close;
     result:=1;
   except
     on e:Exception do
     begin
-      DBConnection.Rollback(TD);   {on   failure,   undo   the   changes};
+      conn.Rollback(TD);   {on   failure,   undo   the   changes};
       sql.free;
       raise;
     end;

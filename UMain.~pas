@@ -59,6 +59,7 @@ type
     procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
+    procedure CreateCatchRule();
   public
     { Public declarations }
   end;
@@ -72,8 +73,11 @@ uses UCatchPlan;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  InitDatabaseConnection('localhost','root','root','sitebuilde');
-  //showmessage(execQuery('select * from category where id<3 limit 3'));
+  DBHost:='localhost';
+  DBUser:='root';
+  DBPassword:='root';
+  DBName:='sitebuilde';
+  InitDatabaseConnection(DBHost,DBUser,DBPassword,DBName);
 end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
@@ -174,24 +178,26 @@ procedure TfrmMain.checkBoxTreePlanCategoryEdited(Sender: TObject;
 var
   sql:string;
   newNodeId:Integer;
-  nodeData,parentNodeData:string;
+  nodeId,parentNodeData:string;
+  nodeData:TTreeNodeData;
 begin
   if(not isGroupNode(node)) then
   begin
     s:=Node.Text;
     exit;
   end;
-  nodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node);
-  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent);
-  if(nodeData='0') then  //新加节点
+  nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
+  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
+  if(nodeId='0') then  //新加节点
   begin
     if(isGroupNode(node)) then
     begin
       newNodeId:=createCateGory(strtoint(parentNodeData),s,'');
-      checkBoxTreePlanCategory.ModifyTreeNodeData(Node,inttostr(newNodeId));
+      nodeData.Data:=inttostr(newNodeId);
+      checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
     end;
   end else
-    updateCateGory(strtoint(nodeData),s,'');
+    updateCateGory(strtoint(nodeId),s,'');
 end;
 
 procedure TfrmMain.pop_creategroupClick(Sender: TObject);
@@ -199,12 +205,15 @@ var
   node:TTreeNode;
   parentNodeData:string;
   newNodeId:integer;
+  nodeData:TTreeNodeData;
 begin
   checkBoxTreePlanCategory.Selected.Expanded:=true;
-  node:=checkBoxTreePlanCategory.AddTreeNode('新组名称','0',checkBoxTreePlanCategory.Selected);
-  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected);
+  nodeData.Data:='0';
+  node:=checkBoxTreePlanCategory.AddTreeNode('新组名称',nodeData,checkBoxTreePlanCategory.Selected);
+  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
   newNodeId:=createCateGory(strtoint(parentNodeData),'新组名称','');
-  checkBoxTreePlanCategory.ModifyTreeNodeData(Node,inttostr(newNodeId));
+  nodeData.Data:=inttostr(newNodeId);
+  checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
   node.Focused:=true;
   node.Selected:=true;
   node.EditText;
@@ -213,7 +222,7 @@ end;
 procedure TfrmMain.pop_deletegroupClick(Sender: TObject);
 begin
   checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected);
-  deleteCategory(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected)));
+  deleteCategory(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
   checkBoxTreePlanCategory.Selected.Delete;
 end;
 

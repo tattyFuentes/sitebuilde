@@ -2,19 +2,11 @@ unit uXML;
 
 interface
 uses
-  Classes,OmniXML,SysUtils,Dialogs,uPublic;
-
-function getLoginXML(strUserName:String;strPassword:String):String;
-procedure checkHttpResponse(strXML:WideString);
-procedure analyzeDigitalByIdsXML(strXML:WideString);
-procedure analyzeDigitalByTakenXML(strXML:WideString);
-procedure analyzeLoginXML(strXML:WideString);
+  Classes,OmniXML,SysUtils,Dialogs;
 
 function createRoot(rootName:String):IXMLDocument;
 function addElement(doc:IXMLDocument;node:IXMLElement;tag:String):IXMLElement;
 function addElementEx(doc:IXMLDocument;node:IXMLElement;tag:String;value:String):IXMLElement;
-function getDigitalByIdsXML(strIdList:TStrings):String;
-function getDigitalByTakenXML(strBeginDate:String;strEndDate:String):String;
 implementation
 
 //根据takentime获得照片列表
@@ -22,6 +14,7 @@ function getDigitalByTakenXML(strBeginDate:String;strEndDate:String):String;
 var
   doc :IXMLDocument;
 begin
+  
   {doc:=createRoot('download');
   addElementEx(doc,doc.DocumentElement,'sessionid',GSessionId);
   addElementEx(doc,doc.DocumentElement,'begindate',strBeginDate);
