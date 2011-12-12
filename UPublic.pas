@@ -12,10 +12,13 @@ type
   TWinControlArray=Array of TControl;
   
   
-
+function FindControlByName(controls:TWinControlArray;name:String):TControl;
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
 procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray);
-
+function readFile(aFileName:string):string;
+function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
+function isFileExist(aFileName:string):boolean;
+function GetFileSize(const FileName: String): LongInt; 
 const
   TVS_CHECKBOXES22 = $00000100;
 
@@ -23,6 +26,73 @@ const
 implementation
 
 uses uXML;
+
+function GetFileSize(const FileName: String): LongInt; 
+var
+  SearchRec: TSearchRec;
+begin
+  if FindFirst(ExpandFileName(FileName), faAnyFile, SearchRec) = 0 then
+     Result := SearchRec.Size
+  else
+     Result := -1;
+end;
+
+function isFileExist(aFileName:string):boolean;
+begin
+  if(fileexists(aFileName)) then
+  begin
+    if(GetFileSize(aFileName)>0) then
+      result:=true
+    else
+      result:=false;
+  end else
+    result:=false;
+end;
+
+function readFile(aFileName:string):string;
+var 
+  MyFile:TMemoryStream;
+  Filebuf: array of pchar; //这里声明的是动态数组
+  iLen:Int64;
+Begin
+  if(not isFileExist(aFileName)) then
+    exit;
+  iLen:=0;
+  MyFile:=TMemoryStream.Create;
+  MyFile.LoadFromFile(aFileName);
+  iLen:=MyFile.Size;
+  SetLength(FileBuf,iLen);//设置动态数组的长度；
+  //Myfile.Seek(1024, soFromBeginning);//从文件头开始计算到1024个字节处
+  MyFile.ReadBuffer(FileBuf[0],iLen);//从seek设置的当前位置往后读取1024字节
+  result:= string(FileBuf);
+  FreeAndNil(MyFile);
+end;
+
+function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
+var
+  intpos:integer;
+  intpos2:integer;
+  strTemp:string;
+begin
+  result:='';
+  strTemp:=aSourceStr;
+  intpos:=pos(aBegin,strTemp);
+  if(intpos>0) then
+  begin
+    strTemp:=copy(strTemp,intpos+length(aBegin),length(strTemp));
+    intpos2:=pos(aEnd,strTemp);
+    if(intpos2>0) then
+    begin
+      result:=copy(strTemp,1,intpos2-1);
+      aSourceStr:=copy(strTemp,intpos2,length(strTemp));
+    end;
+  end;
+end;
+
+
+
+
+
 
 procedure CreateOneControlXmlNode(doc :IXMLDocument;name:String;controlType:String;controlValue:String);
 var
@@ -34,6 +104,9 @@ begin
   addElementEx(doc,tmpElement,'value',controlValue)
 end;
 
+
+procedure SaveList
+
 procedure SaveListBoxData(doc :IXMLDocument;control:TControl;listBoxDataHashMap:THashedStringList);
 var
   dataHashMap:THashedStringList;
@@ -41,7 +114,6 @@ var
   i,index:integer;
   tmpCheckList:TFlatCheckListBox;
   tmpList:TFlatListBox;
-
 begin
   //result:='';
   tmpElement:=addElement(doc,doc.DocumentElement,'control');
@@ -77,6 +149,76 @@ begin
   end;
 end;
 
+
+function FindControlByName(controls:TWinControlArray;name:String):TControl;
+var
+  i:integer;
+begin
+  for i:=0 to length(controls)-1 do
+  begin
+    if(controls[i].Name=name) then
+    begin
+      result:=controls[i];
+      exit;
+    end;
+  end;
+end;
+
+procedure LoadXmlInitControls(xmlFile:string;controls:TWinControlArray;listBoxDataHashMap:THashedStringList);
+var
+  xml,controlName,controlClassType,controlValue:string;
+  doc :IXMLDocument;
+  root:IXMLNode;
+  nodeList:IXMLNodeList;
+  i:integer;
+begin  
+  xml:=readfile(xmlFile);
+  if(xml='') then
+    exit;
+  doc:=CreateXMLDoc;
+  doc.LoadXML(xml);
+  nodeList:=doc.GetElementsByTagName('control');
+  for i:=0 to nodeList.Length-1 do
+  begin
+    controlName:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'name'));
+    controlClassType:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'type'));
+    if(controlClassType='TFlatCheckBox') then
+    begin
+      controlValue:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      if (controlValue='1') then
+        (controls[i] as TFlatCheckBox).Checked:=true
+      else
+        (controls[i] as TFlatCheckBox).Checked:=false;
+    end
+    else if (controlClassType = 'TFlatRadioButton') then
+    begin
+      controlValue:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      if (controlValue='1') then
+        (controls[i] as TFlatRadioButton).Checked:=true
+      else
+        (controls[i] as TFlatRadioButton).Checked:=false;
+    end
+    else if (controlClassType='TFlatEdit') then
+    begin
+      (controls[i] as TFlatEdit).Text:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+    end
+    else if (controlClassType='TFlatMemo') then
+    begin
+      (controls[i] as TFlatMemo).Text:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+    end
+    else if (controlClassType='TFlatComboBox') then
+    begin
+      (controls[i] as TFlatComboBox).Text:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+    end;
+
+
+
+  end;
+
+end;
+
+
+
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
 var
   i:integer;
@@ -107,7 +249,7 @@ begin
         CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,'1')
       else
         CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,'0');
-    end    
+    end
     else if (controls[i] is TFlatEdit) then
     begin
       CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,(controls[i] as TFlatEdit).Text);
