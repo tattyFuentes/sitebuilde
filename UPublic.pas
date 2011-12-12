@@ -39,6 +39,9 @@ var
   dataHashMap:THashedStringList;
   tmpElement,valueElement,itemElement:IXMLElement;
   i,index:integer;
+  tmpCheckList:TFlatCheckListBox;
+  tmpList:TFlatListBox;
+
 begin
   //result:='';
   tmpElement:=addElement(doc,doc.DocumentElement,'control');
@@ -49,13 +52,29 @@ begin
   if(index<0) then
     exit;
   dataHashMap:=listBoxDataHashMap.Objects[index] as THashedStringList;
-  for i:=0 to dataHashMap.Count-1 do
+  if (control is TFlatCheckListBox) then
   begin
-    itemElement:=addElement(doc,valueElement,'item');
-    addElementEx(doc,itemElement,'name',dataHashMap.Names[i]);
-    addElementEx(doc,itemElement,'value',dataHashMap.Strings[i]);
+    tmpCheckList:= control as TFlatCheckListBox;
+    for i:=0 to tmpCheckList.Items.Count-1 do
+    begin
+      itemElement:=addElement(doc,valueElement,'item');
+      addElementEx(doc,itemElement,'name',tmpCheckList.Items[i]);
+      index:=dataHashMap.IndexOfName(tmpCheckList.Items[i]);
+      if(index>=0) then
+        addElementEx(doc,itemElement,'value',dataHashMap.Strings[index]);
+    end;
+  end else
+  begin
+    tmpList:= control as TFlatListBox;
+    for i:=0 to tmpList.Items.Count-1 do
+    begin
+      itemElement:=addElement(doc,valueElement,'item');
+      addElementEx(doc,itemElement,'name',tmpList.Items[i]);
+      index:=dataHashMap.IndexOfName(tmpList.Items[i]);
+      if(index>=0) then
+        addElementEx(doc,itemElement,'value',dataHashMap.Strings[index]);
+    end;
   end;
-  //result:=dataHashMap.;
 end;
 
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;

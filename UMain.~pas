@@ -59,7 +59,7 @@ type
     procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
-    procedure CreateCatchRule();
+    
   public
     { Public declarations }
   end;
