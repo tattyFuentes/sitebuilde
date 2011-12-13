@@ -7,14 +7,14 @@ uses
 function createRoot(rootName:String):IXMLDocument;
 function addElement(doc:IXMLDocument;node:IXMLElement;tag:String):IXMLElement;
 function addElementEx(doc:IXMLDocument;node:IXMLElement;tag:String;value:String):IXMLElement;
-function findNodeByName(doc:IXMLDocument;parentNode:IXMLNode;nodeName:String):IXMLNode;
+function findNodeByName(parentNode:IXMLNode;nodeName:String):IXMLNode;
 function getNodeValue(parentNode:IXMLNode):String;
 
 
 implementation
 
 
-function findNodeByName(doc:IXMLDocument;parentNode:IXMLNode;nodeName:String):IXMLNode;
+function findNodeByName(parentNode:IXMLNode;nodeName:String):IXMLNode;
 var
   i:integer;
 begin

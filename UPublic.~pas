@@ -104,6 +104,39 @@ begin
   addElementEx(doc,tmpElement,'value',controlValue)
 end;
 
+
+procedure LoadComboxData(node:IXMLNode;control:TControl);
+var
+  nodeList:IXMLNodeList;
+  tmpNode:IXMLNode;
+  i:integer;
+begin
+  tmpNode:=findNodeByName(node,'value');
+
+  (control as TFlatComboBox).Text:=GetNodeValue(tmpNode);
+  //(control as TFlatComboBox).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
+  
+end;
+
+procedure SaveComboxData(doc :IXMLDocument;control:TControl);
+var
+  tmpElement,valueElement,itemElement:IXMLElement;
+  tmpCombox:TFlatComboBox;
+  i:integer;
+begin
+  tmpElement:=addElement(doc,doc.DocumentElement,'control');
+  addElementEx(doc,tmpElement,'name',control.Name);
+  addElementEx(doc,tmpElement,'type',control.ClassName);
+  valueElement:=addElement(doc,tmpElement,'value');
+  tmpCombox:=(control as TFlatComboBox);
+  addElementEx(doc,valueElement,'value',tmpCombox.Text);
+  for i:=0 to tmpCombox.Items.Count-1 do
+  begin
+    itemElement:=addElement(doc,valueElement,'item');
+    addElementEx(doc,itemElement,'name',tmpCombox.Items[i]);
+  end;
+end;
+
 procedure SaveListBoxData(doc :IXMLDocument;control:TControl;listBoxDataHashMap:THashedStringList);
 var
   dataHashMap:THashedStringList;
@@ -151,6 +184,7 @@ function FindControlByName(controls:TWinControlArray;name:String):TControl;
 var
   i:integer;
 begin
+  result:=nil;
   for i:=0 to length(controls)-1 do
   begin
     if(controls[i].Name=name) then
@@ -168,6 +202,7 @@ var
   root:IXMLNode;
   nodeList:IXMLNodeList;
   i:integer;
+  control:TControl;
 begin  
   xml:=readfile(xmlFile);
   if(xml='') then
@@ -177,41 +212,40 @@ begin
   nodeList:=doc.GetElementsByTagName('control');
   for i:=0 to nodeList.Length-1 do
   begin
-    controlName:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'name'));
-    controlClassType:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'type'));
+    controlName:=getNodeValue(findNodeByName(nodeList.Item[i],'name'));
+    FindControlByName(controls,controlName);
+    if(control=nil) then
+      exit;
+    controlClassType:=getNodeValue(findNodeByName(nodeList.Item[i],'type'));
     if(controlClassType='TFlatCheckBox') then
     begin
-      controlValue:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      controlValue:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
       if (controlValue='1') then
-        (controls[i] as TFlatCheckBox).Checked:=true
+        (control as TFlatCheckBox).Checked:=true
       else
-        (controls[i] as TFlatCheckBox).Checked:=false;
+        (control as TFlatCheckBox).Checked:=false;
     end
     else if (controlClassType = 'TFlatRadioButton') then
     begin
-      controlValue:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      controlValue:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
       if (controlValue='1') then
-        (controls[i] as TFlatRadioButton).Checked:=true
+        (control as TFlatRadioButton).Checked:=true
       else
-        (controls[i] as TFlatRadioButton).Checked:=false;
+        (control as TFlatRadioButton).Checked:=false;
     end
     else if (controlClassType='TFlatEdit') then
     begin
-      (controls[i] as TFlatEdit).Text:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      (control as TFlatEdit).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
     end
     else if (controlClassType='TFlatMemo') then
     begin
-      (controls[i] as TFlatMemo).Text:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      (control as TFlatMemo).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
     end
     else if (controlClassType='TFlatComboBox') then
     begin
-      (controls[i] as TFlatComboBox).Text:=getNodeValue(findNodeByName(doc,nodeList.Item[i].ChildNodes.Item[i],'value'));
+      (control as TFlatComboBox).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
     end;
-
-
-
   end;
-
 end;
 
 
@@ -253,7 +287,7 @@ begin
     end
     else if (controls[i] is TFlatComboBox) then
     begin
-      CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,(controls[i] as TFlatComboBox).Text);
+      SaveComboxData(doc,controls[i]);
     end
     else if (controls[i] is TFlatMemo) then
     begin
@@ -262,7 +296,6 @@ begin
     else if (controls[i] is TFlatCheckListBox) or (controls[i] is TFlatListBox) then
     begin
       SaveListBoxData(doc,controls[i], listBoxDataHashMap);
-      //CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,(controls[i] as TFlatMemo).Text);
     end;
   end;
   result:= doc.XML;
