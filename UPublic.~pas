@@ -14,6 +14,7 @@ type
   
 function FindControlByName(controls:TWinControlArray;name:String):TControl;
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
+procedure LoadXmlInitControls(xmlFile:string;controls:TWinControlArray;listBoxDataHashMap:THashedStringList);
 procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray);
 function readFile(aFileName:string):string;
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
@@ -104,18 +105,65 @@ begin
   addElementEx(doc,tmpElement,'value',controlValue)
 end;
 
+procedure LoadListBoxData(node:IXMLNode;control:TControl;listBoxDataHashMap:THashedStringList);
+var
+  nodeList:IXMLNodeList;
+  tmpNode,tmpValueNode:IXMLNode;
+  i,index:integer;
+  listItemName,listItemValue:string;
+  hashList:THashedStringList;
+begin
+  tmpNode:=findNodeByName(node,'value');
+  for i:=0 to node.ChildNodes.Length-1 do
+  begin
+    if node.ChildNodes.Item[i].NodeName='item' then
+    begin
+      tmpValueNode:=node.ChildNodes.Item[i];
+      listItemName:=GetNodeValue(findNodeByName(tmpValueNode,'name'));
+      if(listItemName<>'') then
+        (control as TFlatCheckListBox).Items.Add(listItemName);
+      listItemValue:=GetNodeValue(findNodeByName(tmpValueNode,'value'));
+      if(listItemValue<>'') then
+      begin
+        index:=listBoxDataHashMap.IndexOf(control.Name);
+        if(index>=0) then
+        begin
+          hashList:=listBoxDataHashMap.Objects[index] as THashedStringList;
+          index:=hashList.IndexOf(listItemName);
+          if(index>=0) then
+            listBoxDataHashMap.Values[listItemName]:=listItemValue
+          else
+          begin
+            index:=listBoxDataHashMap.Add(listItemName);
+            listBoxDataHashMap.Values[listItemName]:=listItemValue;
+          end;
+        end;
+      end;
+    end;
+  end;
+  //(control as TFlatCheckListBox).Text:=GetNodeValue(tmpNode);
+
+end;
 
 procedure LoadComboxData(node:IXMLNode;control:TControl);
 var
   nodeList:IXMLNodeList;
   tmpNode:IXMLNode;
   i:integer;
+  comboxItem:string;
 begin
   tmpNode:=findNodeByName(node,'value');
-
+  for i:=0 to node.ChildNodes.Length-1 do
+  begin
+    if node.ChildNodes.Item[i].NodeName='item' then
+    begin
+      tmpNode:=node.ChildNodes.Item[i];
+      comboxItem:=GetNodeValue(findNodeByName(tmpNode,'name'));
+      if(comboxItem<>'') then
+        (control as TFlatComboBox).Items.Add(comboxItem);
+    end;
+  end;
   (control as TFlatComboBox).Text:=GetNodeValue(tmpNode);
-  //(control as TFlatComboBox).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
-  
 end;
 
 procedure SaveComboxData(doc :IXMLDocument;control:TControl);
@@ -213,7 +261,7 @@ begin
   for i:=0 to nodeList.Length-1 do
   begin
     controlName:=getNodeValue(findNodeByName(nodeList.Item[i],'name'));
-    FindControlByName(controls,controlName);
+    control:=FindControlByName(controls,controlName);
     if(control=nil) then
       exit;
     controlClassType:=getNodeValue(findNodeByName(nodeList.Item[i],'type'));
@@ -239,11 +287,19 @@ begin
     end
     else if (controlClassType='TFlatMemo') then
     begin
-      (control as TFlatMemo).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
+      //showmessage(stringreplace(getNodeValue(findNodeByName(nodeList.Item[i],'value')),';',chr(13)+chr(10),[rfReplaceAll]));
+      (control as TFlatMemo).Lines.Text :=stringreplace(getNodeValue(findNodeByName(nodeList.Item[i],'value')),';',chr(13),[rfReplaceAll]);
     end
     else if (controlClassType='TFlatComboBox') then
     begin
-      (control as TFlatComboBox).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
+       LoadComBoxData(nodeList.Item[i],control);
+      //LoadListBoxDatanodeList.Item[i],
+      //(control as TFlatComboBox).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
+    end
+    else if (controlClassType='TFlatCheckListBox') then
+    begin
+      LoadListBoxData(nodeList.Item[i],control,listBoxDataHashMap);
+      //(control as TFlatMemo).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
     end;
   end;
 end;
@@ -291,7 +347,8 @@ begin
     end
     else if (controls[i] is TFlatMemo) then
     begin
-      CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,(controls[i] as TFlatMemo).Text);
+      //showmessage(stringreplace((controls[i] as TFlatMemo).Text,chr(13)+chr(10),';',[rfReplaceAll]));
+      CreateOneControlXmlNode(doc,controls[i].name,controls[i].ClassName,stringreplace((controls[i] as TFlatMemo).Text,chr(13),';',[rfReplaceAll]));
     end
     else if (controls[i] is TFlatCheckListBox) or (controls[i] is TFlatListBox) then
     begin

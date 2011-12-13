@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 203
-  Top = 41
+  Left = 231
+  Top = 61
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 688
@@ -100,8 +100,8 @@ object frmCatchPlan: TfrmCatchPlan
     Top = 35
     Width = 705
     Height = 607
-    ActivePage = TabSheet6
-    TabIndex = 5
+    ActivePage = TabSheet2
+    TabIndex = 0
     TabOrder = 4
     object TabSheet2: TTabSheet
       Caption = #22522#26412#35774#32622

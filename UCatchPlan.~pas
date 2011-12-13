@@ -414,6 +414,10 @@ var
   controlArray:TWinControlArray;
   a:THashedStringList;
 begin
+
+  //showmessage(MemHtmlAttibute.Lines.Text);
+  //showmessage(StringReplace(MemHtmlAttibute.Lines.Text,char(13)+char(10),';',[rfReplaceAll]));
+  //showmessage(StringReplace(MemHtmlAttibute.Lines.Text,char(13),';',[rfReplaceAll]));
   a:= THashedStringList.Create;
 
    //RadioAutoCode.Checked
@@ -428,14 +432,10 @@ var
   doc :IXMLDocument;
   nodelist:IXMLNodeList;
   i:integer;
+  controlArray:TWinControlArray;
 begin
-  doc :=CreateXMLDoc;
-  doc.LoadXML(MemHtmlAttibute.Lines.Text);
-  nodelist:=doc.GetElementsByTagName('control');
-  for i:=0 to nodelist.Length-1 do
-  begin
-    showmessage(nodelist.Item[i].ChildNodes.Item[2].FirstChild.nodevalue);
-  end;
+  GetChildControls(self,controlArray);
+  LoadXmlInitControls('xml\catchplaninit.xml',controlArray,arrayListBoxStoreData);
 
 end;
 
