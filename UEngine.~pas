@@ -7,7 +7,10 @@ uses
 
 function createCateGory(parentId:integer;name:string;desc:string):integer;
 procedure updateCateGory(id:integer;name:string;desc:string);
+procedure updatePlanName(id:integer;name:string);
+procedure updatePlanContent(id:integer;content:string);
 procedure deleteCategory(id:integer);
+function createPlan(parentId:integer;name:string;content:string):integer;
 
 implementation
 
@@ -75,6 +78,19 @@ begin
 end;
 
 
+function createPlan(parentId:integer;name:string;content:string):integer;
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'name',name,ftString,ptInput);
+  addParam(params,'parentid',parentId,ftString,ptInput);
+  addParam(params,'content',content,ftString,ptInput);
+  sql:='insert into plan values(null,:name,'''',:parentid,:content,now())';
+  result:=execUpdate(sql,params);
+end;
+
 procedure updateCateGory(id:integer;name:string;desc:string);
 var
   sql:string;
@@ -87,5 +103,29 @@ begin
   sql:='update category set name=:name,description=:desc where id=:id';
   execUpdate(sql,params);
 end;
+
+procedure updatePlanName(id:integer;name:string);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'name',name,ftString,ptInput);
+  addParam(params,'id',id,ftInteger,ptInput);
+  sql:='update plan set name=:name where id=:id';
+  execUpdate(sql,params);
+end;
+
+procedure updatePlanContent(id:integer;content:string);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'content',content,ftString,ptInput);
+  addParam(params,'id',id,ftInteger,ptInput);
+  sql:='update plan set content=:content where id=:id';
+  execUpdate(sql,params);
+
 
 end.

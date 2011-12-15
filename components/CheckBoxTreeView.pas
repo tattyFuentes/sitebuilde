@@ -5,7 +5,8 @@ uses Messages, Windows, SysUtils, CommCtrl, Controls, Forms, Classes,
 type
   PTreeNodeData = ^TTreeNodeData;
   TTreeNodeData = record
-    Data: string;
+    Data: string;  //id±Í ∂
+    content:String;
   end;
 
   TTreeNodeArr = array of TTreeNode;
@@ -159,6 +160,7 @@ var
 begin
   treeNodeData:=node.Data;
   treeNodeData^.Data:= nodeData.Data;
+  treeNodeData^.content:=nodeData.Content;
 end;
 
 function TCheckBoxTreeView.AddTreeNode(nodeName:String;nodeData:TTreeNodeData;parentNode:TTreeNode):TTreeNode;
@@ -168,6 +170,7 @@ begin
   result:=nil;
   New(treeNodeData);
   treeNodeData^.Data := nodeData.Data;
+  treeNodeData^.content := nodeData.content;
   with self do
   begin
     if parentNode=nil then

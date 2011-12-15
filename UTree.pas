@@ -41,13 +41,13 @@ begin
   while not sqlDataSet.Eof do
   begin
     nodeData.Data:=getFieldText(sqlDataSet,'id');
+    nodeData.content:=getFieldText(sqlDataSet,'content');
     tmpTreeNode:=checkboxTreeView.AddTreeNode(getFieldText(sqlDataSet,'name'),nodeData,parentNode);
     tmpTreeNode.ImageIndex:=1;
     tmpTreeNode.SelectedIndex:=1;
     sqlDataSet.Next;
   end;
   sqlDataSet.Close;
-
 end;
 
 

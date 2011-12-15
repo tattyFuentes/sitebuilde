@@ -215,6 +215,9 @@ type
     procedure FlatSpeedButton3Click(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
+    procedure pop_createplanClick(Sender: TObject);
+    procedure checkBoxTreePlanCategoryChange(Sender: TObject;
+      Node: TTreeNode);
   private
     { Private declarations }
     arrayListBoxStoreData:THashedStringList;
@@ -322,22 +325,16 @@ var
 begin
   if(not isGroupNode(node)) then
   begin
-    s:=Node.Text;
-    exit;
-  end;
-  nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
-  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
-  if(nodeId='0') then  //新加节点
-  begin
-    if(isGroupNode(node)) then
-    begin
-      newNodeId:=createCateGory(strtoint(parentNodeData),s,'');
-      nodeData.Data:=inttostr(newNodeId);
-      checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
-    end;
+    nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
+    parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
+    updatePlanName(strtoint(nodeId),s);
+    LabelRuleName.Caption:=s;
   end else
+  begin
+    nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
+    parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
     updateCateGory(strtoint(nodeId),s,'');
-
+  end;
 end;
 
 procedure TfrmCatchPlan.FormClose(Sender: TObject;
@@ -435,8 +432,43 @@ var
   controlArray:TWinControlArray;
 begin
   GetChildControls(self,controlArray);
-  LoadXmlInitControls('xml\catchplaninit.xml',controlArray,arrayListBoxStoreData);
+  //LoadXmlInitControls('xml\catchplaninit.xml',self,arrayListBoxStoreData);
 
+end;
+
+procedure TfrmCatchPlan.pop_createplanClick(Sender: TObject);
+var
+  node:TTreeNode;
+  parentNodeData:string;
+  newNodeId:integer;
+  nodeData:TTreeNodeData;
+begin
+  checkBoxTreePlanCategory.Selected.Expanded:=true;
+  nodeData.Data:='0';
+  node:=checkBoxTreePlanCategory.AddTreeNode('新采集方案',nodeData,checkBoxTreePlanCategory.Selected);
+  node.ImageIndex:=1;
+  node.SelectedIndex:=1;
+  parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
+  nodeData.content:=readfile('xml\catchplaninit.xml');
+  newNodeId:=createPlan(strtoint(parentNodeData),'新采集方案',nodeData.content);
+  LabelRuleName.Caption:='新采集方案';
+  nodeData.Data:=inttostr(newNodeId);
+
+  LoadXmlInitControls(nodeData.content,self,arrayListBoxStoreData);
+  checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
+  node.Focused:=true;
+  node.Selected:=true;
+  node.EditText;
+end;
+
+procedure TfrmCatchPlan.checkBoxTreePlanCategoryChange(Sender: TObject;
+  Node: TTreeNode);
+begin
+  if(not IsGroupNode(Node)) then
+  begin
+    LoadXmlInitControls(checkBoxTreePlanCategory.GetTreeViewNodeData(Node).content,self,arrayListBoxStoreData);
+    LabelRuleName.Caption:='新采集方案';
+  end;
 end;
 
 end.

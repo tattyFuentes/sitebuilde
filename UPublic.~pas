@@ -14,7 +14,7 @@ type
   
 function FindControlByName(controls:TWinControlArray;name:String):TControl;
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
-procedure LoadXmlInitControls(xmlFile:string;controls:TWinControlArray;listBoxDataHashMap:THashedStringList);
+procedure LoadXmlInitControls(xml:string;parentControl:TWinControl;listBoxDataHashMap:THashedStringList);
 procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray);
 function readFile(aFileName:string):string;
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
@@ -242,19 +242,19 @@ begin
     end;
   end;
 end;
-
-procedure LoadXmlInitControls(xmlFile:string;controls:TWinControlArray;listBoxDataHashMap:THashedStringList);
+procedure LoadXmlInitControls(xml:string;parentControl:TWinControl;listBoxDataHashMap:THashedStringList);
 var
-  xml,controlName,controlClassType,controlValue:string;
+  controlName,controlClassType,controlValue:string;
   doc :IXMLDocument;
   root:IXMLNode;
   nodeList:IXMLNodeList;
   i:integer;
   control:TControl;
+  controls:TWinControlArray;
 begin  
-  xml:=readfile(xmlFile);
   if(xml='') then
     exit;
+  GetChildControls(parentControl,controlArray);  
   doc:=CreateXMLDoc;
   doc.LoadXML(xml);
   nodeList:=doc.GetElementsByTagName('control');
