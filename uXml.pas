@@ -32,6 +32,8 @@ end;
 function getNodeValue(parentNode:IXMLNode):String;
 begin
   result:='';
+  if(parentNode=nil) then
+    exit;
   if(parentNode.FirstChild<>nil) then
     result:=parentNode.FirstChild.NodeValue;
 end;

@@ -218,12 +218,14 @@ type
     procedure pop_createplanClick(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
+
   private
     { Private declarations }
     arrayListBoxStoreData:THashedStringList;
     procedure initListBoxData();
     procedure CreateCatchRule();
     procedure ShowHelp(title:string;content:String);
+    procedure ControlEvent(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -385,6 +387,7 @@ end;
 
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
+  InitControlEvent(nil,self,ControlEvent);
   initListBoxData();
   StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
   StringGridGroupContent.EditorMode:=true;
@@ -410,6 +413,7 @@ var
   i:integer;
   controlArray:TWinControlArray;
   a:THashedStringList;
+  s:string;
 begin
 
   //showmessage(MemHtmlAttibute.Lines.Text);
@@ -420,8 +424,9 @@ begin
    //RadioAutoCode.Checked
   //self.Controls
   GetChildControls(self,controlArray);
-  MemHtmlAttibute.Clear;
-  MemHtmlAttibute.Lines.Add(SaveControlsToXml('',controlArray,arrayListBoxStoreData));
+  s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
+  MemHtmlAttibute.Lines.Clear;
+  MemHtmlAttibute.Lines.Add(s);
 end;
 
 procedure TfrmCatchPlan.BtnCancelClick(Sender: TObject);
@@ -470,5 +475,19 @@ begin
     LabelRuleName.Caption:=Node.Text;
   end;
 end;
+
+
+procedure TfrmCatchPlan.ControlEvent(Sender: TObject);
+var
+  controlArray:TWinControlArray;
+  i:integer;
+begin
+  GetChildControls(self,controlArray);
+  for i:=0 to length(controlArray)-1 do
+  begin
+     (controlArray[i] as TFlatCheckBox).OnClick:=ControlEvent;
+  end;
+end;
+
 
 end.

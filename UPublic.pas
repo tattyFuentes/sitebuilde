@@ -19,7 +19,8 @@ procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinContro
 function readFile(aFileName:string):string;
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
 function isFileExist(aFileName:string):boolean;
-function GetFileSize(const FileName: String): LongInt; 
+function GetFileSize(const FileName: String): LongInt;
+procedure InitControlEvent(Sender: TObject;ParentControl:TWinControl;ControlEvent:TNotifyEvent);
 const
   TVS_CHECKBOXES22 = $00000100;
 
@@ -114,6 +115,7 @@ var
   hashList:THashedStringList;
 begin
   tmpNode:=findNodeByName(node,'value');
+  (control as TFlatCheckListBox).Items.Clear;
   for i:=0 to node.ChildNodes.Length-1 do
   begin
     if node.ChildNodes.Item[i].NodeName='item' then
@@ -145,6 +147,46 @@ begin
 
 end;
 
+
+procedure InitControlEvent(Sender: TObject;ParentControl:TWinControl;ControlEvent:TNotifyEvent);
+var
+  controls:TWinControlArray;
+  i:integer;
+begin
+  GetChildControls(ParentControl,controls);
+  for i:=0 to length(controls)-1 do
+  begin
+    if(controls[i] is TFlatCheckBox) then
+    begin
+      (controls[i] as TFlatCheckBox).OnClick:=ControlEvent;
+    end
+    else if (controls[i] is TFlatRadioButton) then
+    begin
+      (controls[i] as TFlatRadioButton).OnClick:=ControlEvent;
+    end
+    else if (controls[i] is TFlatEdit) then
+    begin
+      (controls[i] as TFlatEdit).OnChange:=ControlEvent;
+    end
+    else if (controls[i] is TFlatComboBox) then
+    begin
+      (controls[i] as TFlatComboBox).OnChange:=ControlEvent;
+    end
+    else if (controls[i] is TFlatMemo) then
+    begin
+      (controls[i] as TFlatMemo).OnChange:=ControlEvent;
+    end
+    else if (controls[i] is TFlatCheckListBox) then
+    begin
+      (controls[i] as TFlatCheckListBox).OnClick:=ControlEvent;
+    end
+    else if (controls[i] is TFlatListBox) then
+    begin
+      (controls[i] as TFlatListBox).OnClick:=ControlEvent;
+    end;
+  end;
+end;
+
 procedure LoadComboxData(node:IXMLNode;control:TControl);
 var
   nodeList:IXMLNodeList;
@@ -153,6 +195,7 @@ var
   comboxItem:string;
 begin
   tmpNode:=findNodeByName(node,'value');
+  (control as TFlatComboBox).Items.Clear;
   for i:=0 to node.ChildNodes.Length-1 do
   begin
     if node.ChildNodes.Item[i].NodeName='item' then
@@ -292,13 +335,13 @@ begin
     end
     else if (controlClassType='TFlatComboBox') then
     begin
-       LoadComBoxData(nodeList.Item[i],control);
+       LoadComBoxData(findNodeByName(nodeList.Item[i],'value'),control);
       //LoadListBoxDatanodeList.Item[i],
       //(control as TFlatComboBox).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
     end
     else if (controlClassType='TFlatCheckListBox') then
     begin
-      LoadListBoxData(nodeList.Item[i],control,listBoxDataHashMap);
+      LoadListBoxData(findNodeByName(nodeList.Item[i],'value'),control,listBoxDataHashMap);
       //(control as TFlatMemo).Text:=getNodeValue(findNodeByName(nodeList.Item[i],'value'));
     end;
   end;
