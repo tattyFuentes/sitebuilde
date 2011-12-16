@@ -33,7 +33,6 @@ type
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     TabSheet8: TTabSheet;
-    ChkHttpCode: TFlatCheckBox;
     ChkIsCompress: TFlatCheckBox;
     FlatGroupBox1: TFlatGroupBox;
     RadioAutoCode: TFlatRadioButton;
@@ -57,7 +56,6 @@ type
     Label7: TLabel;
     FlatGroupBox4: TFlatGroupBox;
     Panel4: TPanel;
-    BtnNewRule: TFlatButton;
     BtnSave: TFlatButton;
     BtnCancel: TFlatButton;
     BtnApply: TFlatButton;
@@ -198,6 +196,7 @@ type
     Label50: TLabel;
     Label51: TLabel;
     FlatSpeedButton3: TFlatSpeedButton;
+    ChkHttpCode: TFlatCheckBox;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -218,10 +217,14 @@ type
     procedure pop_createplanClick(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
+    procedure pop_deleteplanClick(Sender: TObject);
 
   private
     { Private declarations }
+    isChangeing:boolean;
+    currentPlanNode:TTreeNode;
     arrayListBoxStoreData:THashedStringList;
+    procedure onTreeNodeChanged(node:TTreeNode;nodeName:String);
     procedure initListBoxData();
     procedure CreateCatchRule();
     procedure ShowHelp(title:string;content:String);
@@ -239,6 +242,15 @@ uses UHelp;
 procedure TfrmCatchPlan.CreateCatchRule();
 begin
   
+end;
+
+procedure TfrmCatchPlan.onTreeNodeChanged(node:TTreeNode;nodeName:String);
+begin
+  if(not isGroupNode(node)) then
+  begin
+    LabelRuleName.Caption:=nodeName;
+    currentPlanNode:=node;
+  end;
 end;
 
 procedure TfrmCatchPlan.ShowHelp(title:string;content:String);
@@ -278,6 +290,8 @@ end;
 
 procedure TfrmCatchPlan.pop_deletegroupClick(Sender: TObject);
 begin
+  if(not isGroupNode(checkBoxTreePlanCategory.Selected)) then
+    exit;
   deleteCategory(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
   checkBoxTreePlanCategory.Selected.Delete;
 end;
@@ -330,7 +344,7 @@ begin
     nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
     parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
     updatePlanName(strtoint(nodeId),s);
-    LabelRuleName.Caption:=s;
+    onTreeNodeChanged(Node,s);
   end else
   begin
     nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
@@ -387,7 +401,8 @@ end;
 
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
-  InitControlEvent();
+  InitControlEvent(nil,self,ControlEvent);
+  currentPlanNode:=nil;
   initListBoxData();
   StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
   StringGridGroupContent.EditorMode:=true;
@@ -456,9 +471,8 @@ begin
   parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
   nodeData.content:=readfile('xml\catchplaninit.xml');
   newNodeId:=createPlan(strtoint(parentNodeData),'新采集方案',nodeData.content);
-  LabelRuleName.Caption:='新采集方案';
+  onTreeNodeChanged(node,'新采集方案');
   nodeData.Data:=inttostr(newNodeId);
-
   LoadXmlInitControls(nodeData.content,self,arrayListBoxStoreData);
   checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
   node.Focused:=true;
@@ -471,8 +485,13 @@ procedure TfrmCatchPlan.checkBoxTreePlanCategoryChange(Sender: TObject;
 begin
   if(not IsGroupNode(Node)) then
   begin
+    isChangeing:=true;
     LoadXmlInitControls(checkBoxTreePlanCategory.GetTreeViewNodeData(Node).content,self,arrayListBoxStoreData);
-    LabelRuleName.Caption:=Node.Text;
+    isChangeing:=false;
+    onTreeNodeChanged(node,node.Text);
+  end
+  else begin
+    onTreeNodeChanged(nil,'无选择的方案');
   end;
 end;
 
@@ -481,13 +500,27 @@ procedure TfrmCatchPlan.ControlEvent(Sender: TObject);
 var
   controlArray:TWinControlArray;
   i:integer;
+  s:String;
+  nodeData:TTreeNodeData;
 begin
+  if(currentPlanNode=nil) or (isChangeing) then
+    exit;
   GetChildControls(self,controlArray);
-  for i:=0 to length(controlArray)-1 do
-  begin
-     (controlArray[i] as TFlatCheckBox).OnClick:=ControlEvent;
-  end;
+  s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
+  nodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode);
+  nodeData.content:=s;
+  updatePlanContent(strtoint(nodeData.data),s);
+  checkBoxTreePlanCategory.ModifyTreeNodeData(currentPlanNode,nodeData);
 end;
 
+
+procedure TfrmCatchPlan.pop_deleteplanClick(Sender: TObject);
+begin
+  //
+  if(isGroupNode(checkBoxTreePlanCategory.Selected)) then
+    exit; 
+  deletePlan(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
+  checkBoxTreePlanCategory.Selected.Delete;
+end;
 
 end.

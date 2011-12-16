@@ -20,7 +20,10 @@ function readFile(aFileName:string):string;
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
 function isFileExist(aFileName:string):boolean;
 function GetFileSize(const FileName: String): LongInt;
-procedure InitControlEvent(Sender: TObject;ParentControl:TWinControl;ControlEvent:TNotifyEvent);
+procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent);
+
+
+
 const
   TVS_CHECKBOXES22 = $00000100;
 
@@ -148,7 +151,7 @@ begin
 end;
 
 
-procedure InitControlEvent(Sender: TObject;ParentControl:TWinControl;ControlEvent:TNotifyEvent);
+procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent);
 var
   controls:TWinControlArray;
   i:integer;

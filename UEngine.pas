@@ -10,9 +10,22 @@ procedure updateCateGory(id:integer;name:string;desc:string);
 procedure updatePlanName(id:integer;name:string);
 procedure updatePlanContent(id:integer;content:string);
 procedure deleteCategory(id:integer);
+procedure deletePlan(id:integer);
 function createPlan(parentId:integer;name:string;content:string):integer;
 
 implementation
+
+
+procedure deletePlan(id:integer);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'id',id,ftInteger,ptInput);
+  sql:='delete from plan where id=:id';
+  execUpdate(sql,params);
+end;
 
 
 procedure deleteOneCategory(conn:TSQLConnection;id:integer);

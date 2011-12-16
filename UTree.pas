@@ -14,6 +14,8 @@ implementation
 function isGroupNode(node:TTreeNode):boolean;
 begin
   result:=false;
+  if(node=nil) then
+    exit;
   if(node.ImageIndex=0) then
     result:=true;
 end;
