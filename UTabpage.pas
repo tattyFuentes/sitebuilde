@@ -14,12 +14,13 @@ type
     { Private declarations }
     isChangeing:boolean;
     currentItemIndex:integer;
-    parentControl:TWinControl;
-    arrayListBoxStoreData:THashedStringList;    
+    listBox:TFlatCheckListBox;
+    arrayListBoxStoreData:THashedStringList;
+    currentTabPage:TTabSheet;
   public
     { Public declarations }
     constructor Create();
-    procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent;SaveEvent:TNotifyEvent;ListBoxDataHashMap:THashedStringList);
+    procedure InitTabControlEvent(TabPage:TTabSheet;ParentControl:TWinControl;ControlEvent:TNotifyEvent;SaveEvent:TNotifyEvent;ListBoxDataHashMap:THashedStringList);
     procedure DataControlEvent(Sender: TObject);
     procedure ListBoxChangeEvent(Sender: TObject);
   end;
@@ -32,13 +33,18 @@ begin
   inherited Create();  // Initialize inherited parts
   isChangeing:=false;
 end;
-procedure TTabPageDelegate.InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent;SaveEvent:TNotifyEvent;ListBoxDataHashMap:THashedStringList);
+procedure TTabPageDelegate.InitTabControlEvent(TabPage:TTabSheet;ParentControl:TWinControl;ControlEvent:TNotifyEvent;SaveEvent:TNotifyEvent;ListBoxDataHashMap:THashedStringList);
 begin
-
+  currentTabPage:= TabPage;
+  listBox:=parentControl as TFlatCheckListBox;
+  InitControlEvent(TabPage,SaveEvent);
+  listBox.OnClick:= ControlEvent;
 end;
 
 procedure TTabPageDelegate.ListBoxChangeEvent(Sender: TObject);
 begin
+  //listBox.ItemIndex
+  //currentTabPage
 end;
 
 procedure TTabPageDelegate.DataControlEvent(Sender: TObject);

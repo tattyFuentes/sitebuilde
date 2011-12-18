@@ -218,17 +218,25 @@ type
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
     procedure pop_deleteplanClick(Sender: TObject);
+    procedure ChkListBoxDataItemClick(Sender: TObject);
+    procedure BtnAddDataItemClick(Sender: TObject);
+    procedure BtnDelDataItemClick(Sender: TObject);
+    procedure BtnSaveDataItemClick(Sender: TObject);
+    procedure PageControl2Change(Sender: TObject);
 
   private
     { Private declarations }
     isChangeing:boolean;
     currentPlanNode:TTreeNode;
     arrayListBoxStoreData:THashedStringList;
+    chkListBoxDataItemItemIndex:integer;
     procedure onTreeNodeChanged(node:TTreeNode;nodeName:String);
     procedure initListBoxData();
     procedure CreateCatchRule();
+    procedure initComboLinkArrangeGroup();
     procedure ShowHelp(title:string;content:String);
     procedure ControlEvent(Sender: TObject);
+    procedure TabSheet3ControlEvent(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -250,6 +258,13 @@ begin
   begin
     LabelRuleName.Caption:=nodeName;
     currentPlanNode:=node;
+    if (node=nil) then
+      pagecontrol2.Enabled:=false
+    else
+      pagecontrol2.Enabled:=true;
+  end else
+  begin
+    pagecontrol2.Enabled:=false;  
   end;
 end;
 
@@ -388,7 +403,7 @@ var
   i:integer;
   controlArray:TWinControlArray;
 begin
-  GetChildControls(self,controlArray);
+  GetChildControls(self,controlArray,'');
   arrayListBoxStoreData:=THashedStringList.create;
   for i:=0 to length(controlArray)-1 do
   begin
@@ -402,6 +417,7 @@ end;
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
   InitControlEvent(self,ControlEvent);
+  InitControlEvent(TabSheet3,TabSheet3ControlEvent);
   currentPlanNode:=nil;
   initListBoxData();
   StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
@@ -409,7 +425,6 @@ begin
   StringGridGroupContent.Cells[0,0]:= '序号';
   StringGridGroupContent.Cells[1,0]:= '原文代码';
   StringGridGroupContent.Cells[2,0]:= '替换为';
-
 end;
 
 procedure TfrmCatchPlan.BtnApplyClick(Sender: TObject);
@@ -438,7 +453,7 @@ begin
 
    //RadioAutoCode.Checked
   //self.Controls
-  GetChildControls(self,controlArray);
+  GetChildControls(self,controlArray,'');
   s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
   MemHtmlAttibute.Lines.Clear;
   MemHtmlAttibute.Lines.Add(s);
@@ -451,7 +466,7 @@ var
   i:integer;
   controlArray:TWinControlArray;
 begin
-  GetChildControls(self,controlArray);
+  GetChildControls(self,controlArray,'');
   //LoadXmlInitControls('xml\catchplaninit.xml',self,arrayListBoxStoreData);
 
 end;
@@ -505,7 +520,7 @@ var
 begin
   if(currentPlanNode=nil) or (isChangeing) then
     exit;
-  GetChildControls(self,controlArray);
+  GetChildControls(self,controlArray,'');
   s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
   nodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode);
   nodeData.content:=s;
@@ -521,6 +536,84 @@ begin
     exit; 
   deletePlan(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
   checkBoxTreePlanCategory.Selected.Delete;
+end;
+
+procedure TfrmCatchPlan.ChkListBoxDataItemClick(Sender: TObject);
+begin
+  chkListBoxDataItemItemIndex:=ChkListBoxDataItem.ItemIndex;
+  if(chkListBoxDataItemItemIndex<0) or (chkListBoxDataItemItemIndex>ChkListBoxDataItem.Items.Count-1) then
+  begin
+    isChangeing:=true;
+    EdtDataItemName.Text:='没有选中数据项';
+    isChangeing:=false;
+    exit;
+  end;
+  isChangeing:=true;
+  LoadXmlInitControls(getValueFromHashMap(arrayListBoxStoreData,ChkListBoxDataItem.name,ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex]),tabsheet3,arrayListBoxStoreData);
+  EdtDataItemName.Text:=ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex];
+  initComboLinkArrangeGroup();
+  isChangeing:=false;
+
+end;
+
+
+procedure TfrmCatchPlan.TabSheet3ControlEvent(Sender: TObject);
+var
+  controlArray:TWinControlArray;
+  i:integer;
+  s:String;
+  nodeData:TTreeNodeData;
+begin
+  if(chkListBoxDataItemItemIndex<0) or (chkListBoxDataItemItemIndex>ChkListBoxDataItem.Items.Count-1) then
+    exit;
+  if(isChangeing) then
+    exit;
+  GetChildControls(tabsheet3,controlArray,'ChkListBoxDataItem');
+  s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
+  modifyValueFromHashMap(arrayListBoxStoreData,'ChkListBoxDataItem',ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex] ,s);
+  ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex]:=EdtDataItemName.Text;
+end;
+
+procedure TfrmCatchPlan.BtnAddDataItemClick(Sender: TObject);
+begin
+  ChkListBoxDataItem.Items.Add('新数据项');
+  ChkListBoxDataItem.itemindex:=ChkListBoxDataItem.Items.Count-1;
+  ChkListBoxDataItemClick(nil);
+end;
+
+procedure TfrmCatchPlan.BtnDelDataItemClick(Sender: TObject);
+begin
+  if(chkListBoxDataItemItemIndex<0) or (chkListBoxDataItemItemIndex>ChkListBoxDataItem.Items.Count-1) then
+    exit;
+  chkListBoxDataItem.Items.Delete(chkListBoxDataItemItemIndex);
+  ChkListBoxDataItemClick(nil);
+end;
+
+
+procedure TfrmCatchPlan.initComboLinkArrangeGroup();
+var
+  i:integer;
+  s:string;
+begin
+  if PageControl2.ActivePageIndex=2 then
+  begin
+    s:=ComboLinkArrangeGroup.Text;
+    ComboLinkArrangeGroup.Items.Clear;
+    for i:=0 to ListBoxArrangeGroups.Items.Count-1 do
+    begin
+      ComboLinkArrangeGroup.Items.Add(ListBoxArrangeGroups.Items[i]);
+    end;
+    ComboLinkArrangeGroup.Text:=s;
+  end;
+end;
+
+procedure TfrmCatchPlan.BtnSaveDataItemClick(Sender: TObject);
+begin
+  ControlEvent(nil);
+end;
+procedure TfrmCatchPlan.PageControl2Change(Sender: TObject);
+begin
+  initComboLinkArrangeGroup();
 end;
 
 end.

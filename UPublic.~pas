@@ -15,13 +15,14 @@ type
 function FindControlByName(controls:TWinControlArray;name:String):TControl;
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
 procedure LoadXmlInitControls(xml:string;parentControl:TWinControl;listBoxDataHashMap:THashedStringList);
-procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray);
+procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray;NoIncludeControlName:String);
 function readFile(aFileName:string):string;
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
 function isFileExist(aFileName:string):boolean;
 function GetFileSize(const FileName: String): LongInt;
 procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent);
-
+function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String):String;
+procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
 
 
 const
@@ -128,22 +129,10 @@ begin
       if(listItemName<>'') then
         (control as TFlatCheckListBox).Items.Add(listItemName);
       listItemValue:=GetNodeValue(findNodeByName(tmpValueNode,'value'));
-      if(listItemValue<>'') then
-      begin
-        index:=listBoxDataHashMap.IndexOf(control.Name);
-        if(index>=0) then
-        begin
-          hashList:=listBoxDataHashMap.Objects[index] as THashedStringList;
-          index:=hashList.IndexOf(listItemName);
-          if(index>=0) then
-            listBoxDataHashMap.Values[listItemName]:=listItemValue
-          else
-          begin
-            index:=listBoxDataHashMap.Add(listItemName);
-            listBoxDataHashMap.Values[listItemName]:=listItemValue;
-          end;
-        end;
-      end;
+      //if(listItemValue<>'') then
+      //begin
+      modifyValueFromHashMap(listBoxDataHashMap,control.Name,listItemName,listItemValue);
+      //end;
     end;
   end;
   //(control as TFlatCheckListBox).Text:=GetNodeValue(tmpNode);
@@ -151,12 +140,12 @@ begin
 end;
 
 
-procedure InitControlEvent(Sender: TObject;ParentControl:TWinControl;ControlEvent:TNotifyEvent);
+procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent);
 var
   controls:TWinControlArray;
   i:integer;
 begin
-  GetChildControls(ParentControl,controls);
+  GetChildControls(ParentControl,controls,'');
   for i:=0 to length(controls)-1 do
   begin
     if(controls[i] is TFlatCheckBox) then
@@ -181,35 +170,18 @@ begin
     end
     else if (controls[i] is TFlatCheckListBox) then
     begin
-      (controls[i] as TFlatCheckListBox).OnClick:=ControlEvent;
+      //(controls[i] as TFlatCheckListBox).OnClick:=ControlEvent;
     end
     else if (controls[i] is TFlatListBox) then
     begin
-      (controls[i] as TFlatListBox).OnClick:=ControlEvent;
+      //(controls[i] as TFlatListBox).OnClick:=ControlEvent;
     end;
   end;
 end;
 
 procedure LoadComboxData(node:IXMLNode;control:TControl);
-var
-  nodeList:IXMLNodeList;
-  tmpNode:IXMLNode;
-  i:integer;
-  comboxItem:string;
 begin
-  tmpNode:=findNodeByName(node,'value');
-  (control as TFlatComboBox).Items.Clear;
-  for i:=0 to node.ChildNodes.Length-1 do
-  begin
-    if node.ChildNodes.Item[i].NodeName='item' then
-    begin
-      tmpNode:=node.ChildNodes.Item[i];
-      comboxItem:=GetNodeValue(findNodeByName(tmpNode,'name'));
-      if(comboxItem<>'') then
-        (control as TFlatComboBox).Items.Add(comboxItem);
-    end;
-  end;
-  (control as TFlatComboBox).Text:=GetNodeValue(tmpNode);
+  (control as TFlatComboBox).Text:=GetNodeValue(node);
 end;
 
 procedure SaveComboxData(doc :IXMLDocument;control:TControl);
@@ -221,15 +193,52 @@ begin
   tmpElement:=addElement(doc,doc.DocumentElement,'control');
   addElementEx(doc,tmpElement,'name',control.Name);
   addElementEx(doc,tmpElement,'type',control.ClassName);
-  valueElement:=addElement(doc,tmpElement,'value');
+  addElementEx(doc,tmpElement,'value',tmpCombox.Text);
+  {valueElement:=addElement(doc,tmpElement,'value');
   tmpCombox:=(control as TFlatComboBox);
   addElementEx(doc,valueElement,'value',tmpCombox.Text);
   for i:=0 to tmpCombox.Items.Count-1 do
   begin
     itemElement:=addElement(doc,valueElement,'item');
     addElementEx(doc,itemElement,'name',tmpCombox.Items[i]);
+  end;}
+end;
+
+function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String):String;
+var
+  index:integer;
+  dataHashMap:THashedStringList;
+begin
+  result:='';
+  index:=listBoxDataHashMap.IndexOf(controlName);
+  if(index<0) then
+    exit;
+  dataHashMap:=listBoxDataHashMap.Objects[index] as THashedStringList;
+  index:=dataHashMap.IndexOfName(itemName);
+  if(index>=0) then
+    result:=dataHashMap.Strings[index];
+end;
+
+
+procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
+var
+  index:integer;
+  dataHashMap:THashedStringList;
+begin
+  index:=listBoxDataHashMap.IndexOf(controlName);
+  if(index<0) then
+    exit;
+  dataHashMap:=listBoxDataHashMap.Objects[index] as THashedStringList;
+  index:=dataHashMap.IndexOfName(itemName);
+  if(index>=0) then
+    dataHashMap.Values[itemName]:=itemValue
+  else begin
+    index:=dataHashMap.Add(itemName);
+    dataHashMap.Values[itemName]:=itemValue;
   end;
 end;
+
+
 
 procedure SaveListBoxData(doc :IXMLDocument;control:TControl;listBoxDataHashMap:THashedStringList);
 var
@@ -244,10 +253,6 @@ begin
   addElementEx(doc,tmpElement,'name',control.Name);
   addElementEx(doc,tmpElement,'type',control.ClassName);
   valueElement:=addElement(doc,tmpElement,'value');
-  index:=listBoxDataHashMap.IndexOf(control.name);
-  if(index<0) then
-    exit;
-  dataHashMap:=listBoxDataHashMap.Objects[index] as THashedStringList;
   if (control is TFlatCheckListBox) then
   begin
     tmpCheckList:= control as TFlatCheckListBox;
@@ -255,9 +260,7 @@ begin
     begin
       itemElement:=addElement(doc,valueElement,'item');
       addElementEx(doc,itemElement,'name',tmpCheckList.Items[i]);
-      index:=dataHashMap.IndexOfName(tmpCheckList.Items[i]);
-      if(index>=0) then
-        addElementEx(doc,itemElement,'value',dataHashMap.Strings[index]);
+      addElementEx(doc,itemElement,'value',getValueFromHashMap(listBoxDataHashMap,control.name,tmpCheckList.Items[i]));
     end;
   end else
   begin
@@ -266,9 +269,7 @@ begin
     begin
       itemElement:=addElement(doc,valueElement,'item');
       addElementEx(doc,itemElement,'name',tmpList.Items[i]);
-      index:=dataHashMap.IndexOfName(tmpList.Items[i]);
-      if(index>=0) then
-        addElementEx(doc,itemElement,'value',dataHashMap.Strings[index]);
+      addElementEx(doc,itemElement,'value',getValueFromHashMap(listBoxDataHashMap,control.name,tmpList.Items[i]));
     end;
   end;
 end;
@@ -300,7 +301,7 @@ var
 begin  
   if(xml='') then
     exit;
-  GetChildControls(parentControl,controls);  
+  GetChildControls(parentControl,controls,'');  
   doc:=CreateXMLDoc;
   doc.LoadXML(xml);
   nodeList:=doc.GetElementsByTagName('control');
@@ -405,20 +406,22 @@ begin
 end;
 
 
-procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray);
+procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray;NoIncludeControlName:String);
 var
   i:integer;
   tmpControl:TControl;
 begin
   for i:=0 to parentControl.Controlcount-1 do
   begin
-     setLength(controlArray,length(controlArray)+1);
-     tmpControl:=parentControl.Controls[i] as TControl;
-     controlArray[length(controlArray)-1]:=tmpControl;
-     if(tmpControl is TWinControl) then
-     begin
-        GetChildControls(tmpControl as TWinControl,controlArray);
-     end;
+    if(NoIncludeControlName=parentControl.Controls[i].Name) then
+      continue;
+    setLength(controlArray,length(controlArray)+1);
+    tmpControl:=parentControl.Controls[i] as TControl;
+    controlArray[length(controlArray)-1]:=tmpControl;
+    if(tmpControl is TWinControl) then
+    begin
+      GetChildControls(tmpControl as TWinControl,controlArray,NoIncludeControlName);
+    end;
   end;
 end;
 
