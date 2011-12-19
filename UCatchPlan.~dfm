@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 178
-  Top = 139
+  Left = 187
+  Top = 44
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 688
@@ -2006,8 +2006,8 @@ object frmCatchPlan: TfrmCatchPlan
         TabOrder = 5
       end
       object EdtGroupName: TFlatEdit
-        Left = 95
-        Top = 266
+        Left = 119
+        Top = 138
         Width = 315
         Height = 26
         ColorFlat = clWhite
@@ -2283,8 +2283,7 @@ object frmCatchPlan: TfrmCatchPlan
       000000000000}
   end
   object PopupMenu1: TPopupMenu
-    Left = 728
-    Top = 8
+    Left = 744
     object pop_creategroup: TMenuItem
       Caption = #21019#24314#20998#32452
       OnClick = pop_creategroupClick

@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 187
-  Top = 44
+  Left = 321
+  Top = 162
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 688
@@ -101,8 +101,8 @@ object frmCatchPlan: TfrmCatchPlan
     Top = 35
     Width = 705
     Height = 607
-    ActivePage = TabSheet7
-    TabIndex = 6
+    ActivePage = TabSheet2
+    TabIndex = 0
     TabOrder = 4
     OnChange = PageControl2Change
     object TabSheet2: TTabSheet
@@ -792,7 +792,7 @@ object frmCatchPlan: TfrmCatchPlan
         Width = 225
         Height = 21
         Color = clWindow
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 4
         ItemIndex = -1
       end
@@ -2006,10 +2006,10 @@ object frmCatchPlan: TfrmCatchPlan
         TabOrder = 5
       end
       object EdtGroupName: TFlatEdit
-        Left = 119
-        Top = 138
-        Width = 315
-        Height = 26
+        Left = 102
+        Top = 262
+        Width = 316
+        Height = 24
         ColorFlat = clWhite
         TabOrder = 6
       end
