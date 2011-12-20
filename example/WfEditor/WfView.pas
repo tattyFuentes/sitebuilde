@@ -3,13 +3,14 @@ unit WfView;
 interface
 
 uses
-  Windows, Messages,dxflchrt,WfActiG,WfConnG;
+  Windows, Messages,Classes,dxflchrt,WfActiG,WfConnG;
 
 type
   TWfView = class(TdxFlowChart)
   protected
     function InternalCreateConnection: TdxFcConnection; override;
     function InternalCreateObject: TdxFcObject; override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     //按如下步骤修改TdxCustomFlowChart类
     //1、在声明私有部分定义
     //   FObjS,FObjD:TDxFcObject;
@@ -58,6 +59,11 @@ type
 implementation
 
 { TWfView }
+
+procedure TWfView.MouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+  
+end;
 
 function TWfView.HasTyp(at:TWfActiType): Boolean;
 var
