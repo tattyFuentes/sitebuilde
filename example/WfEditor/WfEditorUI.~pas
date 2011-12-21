@@ -42,7 +42,7 @@ type
     property UndoSteps: Integer read FUndoSteps write SetUndoSteps;
   end;
 
-  TfWfEditorUI = class(TForm)
+  TfWfEditorUI1 = class(TForm)
     Bevel2: TBevel;
     Bevel3: TBevel;
     Bevel4: TBevel;
@@ -545,7 +545,7 @@ type
   end;
 
 var
-  fWfEditorUI: TfWfEditorUI;
+  fWfEditorUI1: TfWfEditorUI1;
   OldHintHidePause : Integer;
 
 const
@@ -664,7 +664,7 @@ end;
 
 { TfWfEditor }
 
-procedure TfWfEditorUI.btnCreateConnectClick(Sender: TObject);
+procedure TfWfEditorUI1.btnCreateConnectClick(Sender: TObject);
 begin
   if (View.SelectedObjectCount=2) and (View.SelectedConnectionCount=0) then begin
     with View do begin
@@ -687,7 +687,7 @@ begin
     btnT.Down:=False;
 end;
 
-procedure TfWfEditorUI.btnCreateObjectClick(Sender: TObject);
+procedure TfWfEditorUI1.btnCreateObjectClick(Sender: TObject);
 begin
   if TSpeedButton(Sender).Down then
   begin
@@ -711,7 +711,7 @@ begin
       btnCreateObject.Down:=False;
 end;
 
-function TfWfEditorUI.CanKeyEnter(Edit : TEdit; Key : Char; MinValue, MaxValue
+function TfWfEditorUI1.CanKeyEnter(Edit : TEdit; Key : Char; MinValue, MaxValue
         : Integer): Boolean;
 var
   Text: string;
@@ -730,7 +730,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ChangeConnections(Mode : Integer);
+procedure TfWfEditorUI1.ChangeConnections(Mode : Integer);
 var
   i: Integer;
   AStore, AChange: Boolean;
@@ -764,7 +764,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ChangeObjects(Mode : Integer);
+procedure TfWfEditorUI1.ChangeObjects(Mode : Integer);
 var
   i, Position: Integer;
   AStore, AChange: Boolean;
@@ -798,7 +798,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ViewChange(Sender: TdxCustomFlowChart; Item:
+procedure TfWfEditorUI1.ViewChange(Sender: TdxCustomFlowChart; Item:
         TdxFcItem);
 begin
   if Self.HandleAllocated then begin
@@ -810,7 +810,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ViewDblClick(Sender: TObject);
+procedure TfWfEditorUI1.ViewDblClick(Sender: TObject);
 var
   hTest: TdxFcHitTest;
   Res: Boolean;
@@ -837,7 +837,7 @@ begin
     end;
 end;
 
-function TfWfEditorUI.ChartHasUnions(AView : TdxFlowChart): Boolean;
+function TfWfEditorUI1.ChartHasUnions(AView : TdxFlowChart): Boolean;
 var
   i: Integer;
 begin
@@ -849,7 +849,7 @@ begin
     end;
 end;
 
-procedure TfWfEditorUI.ViewKeyDown(Sender: TObject; var Key: Word; Shift:
+procedure TfWfEditorUI1.ViewKeyDown(Sender: TObject; var Key: Word; Shift:
         TShiftState);
 var
   P: TPoint;
@@ -907,7 +907,7 @@ begin
 
 end;
 
-procedure TfWfEditorUI.ViewKeyUp(Sender: TObject; var Key: Word; Shift:
+procedure TfWfEditorUI1.ViewKeyUp(Sender: TObject; var Key: Word; Shift:
         TShiftState);
 begin
   if Key = VK_MENU then begin
@@ -917,7 +917,7 @@ begin
   if Key = VK_DELETE then ViewChange(View, nil);
 end;
 
-procedure TfWfEditorUI.ViewMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TfWfEditorUI1.ViewMouseDown(Sender: TObject; Button: TMouseButton;
         Shift: TShiftState; X, Y: Integer);
 var
   hTest: TdxFcHitTest;
@@ -970,7 +970,7 @@ begin
   if FPE then FPE := False; // Fix: by Kirill
 end;
 
-procedure TfWfEditorUI.ViewMouseMove(Sender: TObject; Shift: TShiftState; X,
+procedure TfWfEditorUI1.ViewMouseMove(Sender: TObject; Shift: TShiftState; X,
         Y: Integer);
 var
   UpPoint: TPoint;
@@ -1048,7 +1048,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ViewMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TfWfEditorUI1.ViewMouseUp(Sender: TObject; Button: TMouseButton;
         Shift: TShiftState; X, Y: Integer);
 var
   ALeft, ATop, SPoint, DPoint, Temp: Integer;
@@ -1187,7 +1187,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ChartPopupMenuPopup(Sender: TObject);
+procedure TfWfEditorUI1.ChartPopupMenuPopup(Sender: TObject);
 var
   i, j, b, k: Integer;
   P1: TPoint;
@@ -1213,7 +1213,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ViewSelected(Sender: TdxCustomFlowChart; Item:
+procedure TfWfEditorUI1.ViewSelected(Sender: TdxCustomFlowChart; Item:
         TdxFcItem);
 var
   En: Boolean;
@@ -1327,13 +1327,13 @@ begin
   FChange := True;
 end;
 
-procedure TfWfEditorUI.ViewSelection(Sender: TdxCustomFlowChart; Item:
+procedure TfWfEditorUI1.ViewSelection(Sender: TdxCustomFlowChart; Item:
         TdxFcItem; var Allow: Boolean);
 begin
   Allow := not ( btnZoomIn.Down or btnCreateObject.Down or btnCreateConnect.Down);
 end;
 
-procedure TfWfEditorUI.ClearBuf;
+procedure TfWfEditorUI1.ClearBuf;
 var
   i: Integer;
 begin
@@ -1349,7 +1349,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.ConAssign(Source, Dest : TdxFcConnection);
+procedure TfWfEditorUI1.ConAssign(Source, Dest : TdxFcConnection);
 var
   i: Integer;
 begin
@@ -1372,7 +1372,7 @@ begin
   Dest.Transparent := Source.Transparent;
 end;
 
-procedure TfWfEditorUI.CopyToBuf;
+procedure TfWfEditorUI1.CopyToBuf;
 var
   i, j: Integer;
   ABufItem: TWfEditorBuferItem;
@@ -1416,7 +1416,7 @@ begin
   List.Free;
 end;
 
-procedure TfWfEditorUI.Layout(lt:TLayoutType);
+procedure TfWfEditorUI1.Layout(lt:TLayoutType);
 var
   i,iT:Integer;
   function SelObjMaxWid:Integer;
@@ -1533,127 +1533,127 @@ begin
   FChange:=True;
 end;
 
-procedure TfWfEditorUI.actAlignLeftExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAlignLeftExecute(Sender: TObject);
 begin
   Layout(ltAlignLeft);
 end;
 
-procedure TfWfEditorUI.actAlignRightExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAlignRightExecute(Sender: TObject);
 begin
   Layout(ltAlignRight);
 end;
 
-procedure TfWfEditorUI.actAlignHCenterExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAlignHCenterExecute(Sender: TObject);
 begin
   Layout(ltAlignHCenter);
 end;
 
-procedure TfWfEditorUI.actSpaceEquHExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceEquHExecute(Sender: TObject);
 begin
   Layout(ltSpaceEquH);
 end;
 
-procedure TfWfEditorUI.actSpaceEquHXExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceEquHXExecute(Sender: TObject);
 begin
   Layout(ltSpaceEquHX);
 end;
 
-procedure TfWfEditorUI.actIncWidthExecute(Sender: TObject);
+procedure TfWfEditorUI1.actIncWidthExecute(Sender: TObject);
 begin
   Layout(ltIncWidth);
 end;
 
-procedure TfWfEditorUI.actDecWidthExecute(Sender: TObject);
+procedure TfWfEditorUI1.actDecWidthExecute(Sender: TObject);
 begin
   Layout(ltDecWidth);
 end;
 
-procedure TfWfEditorUI.actMakeMaxWidthExecute(Sender: TObject);
+procedure TfWfEditorUI1.actMakeMaxWidthExecute(Sender: TObject);
 begin
   Layout(ltMakeMaxWidth);
 end;
 
-procedure TfWfEditorUI.actMakeMinWidthExecute(Sender: TObject);
+procedure TfWfEditorUI1.actMakeMinWidthExecute(Sender: TObject);
 begin
   Layout(ltMakeMinWidth);
 end;
 
-procedure TfWfEditorUI.actMakeSameWidthExecute(Sender: TObject);
+procedure TfWfEditorUI1.actMakeSameWidthExecute(Sender: TObject);
 begin
   Layout(ltMakeSameWidth);
 end;
 
-procedure TfWfEditorUI.actSpaceDecHExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceDecHExecute(Sender: TObject);
 begin
   Layout(ltSpaceDecH);
 end;
 
-procedure TfWfEditorUI.actSpaceIncHExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceIncHExecute(Sender: TObject);
 begin
   Layout(ltSpaceIncH);
 end;
 
-procedure TfWfEditorUI.actAlignTopExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAlignTopExecute(Sender: TObject);
 begin
   Layout(ltAlignTop);
 end;
 
-procedure TfWfEditorUI.actAlignBottomExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAlignBottomExecute(Sender: TObject);
 begin
   Layout(ltAlignBottom);
 end;
 
-procedure TfWfEditorUI.actAlignVCenterExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAlignVCenterExecute(Sender: TObject);
 begin
   Layout(ltAlignVCenter);
 end;
 
-procedure TfWfEditorUI.actSpaceEquVExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceEquVExecute(Sender: TObject);
 begin
   Layout(ltSpaceEquV);
 end;
 
-procedure TfWfEditorUI.actSpaceEquVYExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceEquVYExecute(Sender: TObject);
 begin
   Layout(ltSpaceEquVY);
 end;
 
-procedure TfWfEditorUI.actIncHeightExecute(Sender: TObject);
+procedure TfWfEditorUI1.actIncHeightExecute(Sender: TObject);
 begin
   Layout(ltIncHeight);
 end;
 
-procedure TfWfEditorUI.actDecHeightExecute(Sender: TObject);
+procedure TfWfEditorUI1.actDecHeightExecute(Sender: TObject);
 begin
   Layout(ltDecHeight);
 end;
 
-procedure TfWfEditorUI.actMakeMaxHeightExecute(Sender: TObject);
+procedure TfWfEditorUI1.actMakeMaxHeightExecute(Sender: TObject);
 begin
   Layout(ltMakeMaxHeight);
 end;
 
-procedure TfWfEditorUI.actMakeMinHeightExecute(Sender: TObject);
+procedure TfWfEditorUI1.actMakeMinHeightExecute(Sender: TObject);
 begin
   Layout(ltMakeMinHeight);
 end;
 
-procedure TfWfEditorUI.actMakeSameHeightExecute(Sender: TObject);
+procedure TfWfEditorUI1.actMakeSameHeightExecute(Sender: TObject);
 begin
   Layout(ltMakeSameHeight);
 end;
 
-procedure TfWfEditorUI.actSpaceDecVExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceDecVExecute(Sender: TObject);
 begin
   Layout(ltSpaceDecV);
 end;
 
-procedure TfWfEditorUI.actSpaceIncVExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSpaceIncVExecute(Sender: TObject);
 begin
   Layout(ltSpaceIncV);
 end;
 
-procedure TfWfEditorUI.DrawDrag(P1, P2 : TPoint; Mode : Integer);
+procedure TfWfEditorUI1.DrawDrag(P1, P2 : TPoint; Mode : Integer);
 var
   AMode: TPenMode;
   AColor: TColor;
@@ -1725,7 +1725,7 @@ begin
   end;
 end;
 
-function TfWfEditorUI.FindAllUnions(AView : TdxFlowChart; FromUnion :
+function TfWfEditorUI1.FindAllUnions(AView : TdxFlowChart; FromUnion :
         TdxFcObject): TdxFcObject;
 var
   i: Integer;
@@ -1743,7 +1743,7 @@ begin
     end;
 end;
 
-function TfWfEditorUI.FindUnions(AView : TdxFlowChart; FromUnion, Obj :
+function TfWfEditorUI1.FindUnions(AView : TdxFlowChart; FromUnion, Obj :
         TdxFcObject): TdxFcObject;
 var
   i: Integer;
@@ -1762,7 +1762,7 @@ begin
       end;
 end;
 
-procedure TfWfEditorUI.FormCreate(Sender: TObject);
+procedure TfWfEditorUI1.FormCreate(Sender: TObject);
 begin
   FView:=TWfView.Create(Self);
   FView.Parent:=Self;
@@ -1799,7 +1799,7 @@ begin
   FFindStr:='';
 end;
 
-procedure TfWfEditorUI.FormDestroy(Sender: TObject);
+procedure TfWfEditorUI1.FormDestroy(Sender: TObject);
 var
   i: Integer;
 begin
@@ -1815,12 +1815,12 @@ begin
   Application.HintHidePause := OldHintHidePause;
 end;
 
-procedure TfWfEditorUI.FormShow(Sender: TObject);
+procedure TfWfEditorUI1.FormShow(Sender: TObject);
 begin
   ViewChange(View, nil);
 end;
 
-function TfWfEditorUI.GetImageIndexByMenuItem(Item : TmenuItem): Integer;
+function TfWfEditorUI1.GetImageIndexByMenuItem(Item : TmenuItem): Integer;
 begin
   Result := - 1;
   if Item = mniOpen then begin Result := 0; Exit; end;
@@ -1943,7 +1943,7 @@ begin
   if Item = mniFit then begin Result := 15; Exit; end;
 end;
 
-function TfWfEditorUI.GetMainItemInUnion(AView : TdxFlowChart; Obj :
+function TfWfEditorUI1.GetMainItemInUnion(AView : TdxFlowChart; Obj :
         TdxFcObject): TdxFcObject;
 var
   i: Integer;
@@ -1957,7 +1957,7 @@ begin
       end;
 end;
 
-function TfWfEditorUI.GetNumberByUnion(AView : TdxFlowChart; Obj :
+function TfWfEditorUI1.GetNumberByUnion(AView : TdxFlowChart; Obj :
         TdxFcObject): Integer;
 var
   i: Integer;
@@ -1970,7 +1970,7 @@ begin
     end;
 end;
 
-function TfWfEditorUI.GetUnionByNumber(AView : TdxFlowChart; Number :
+function TfWfEditorUI1.GetUnionByNumber(AView : TdxFlowChart; Number :
         Integer): TdxFcObject;
 var
   i, Count: Integer;
@@ -1987,7 +1987,7 @@ begin
     end;
 end;
 
-function TfWfEditorUI.IntegerToStr(S : String): Integer;
+function TfWfEditorUI1.IntegerToStr(S : String): Integer;
 begin
   try
     if S = '' then Result := 1 else Result := StrToInt(S);
@@ -1996,7 +1996,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.iRectangleClick(Sender: TObject);
+procedure TfWfEditorUI1.iRectangleClick(Sender: TObject);
 var
   B: TBitmap;
   APopupMenu: TPopupMenu;
@@ -2064,7 +2064,7 @@ begin
   ViewChange(View, nil);
 end;
 
-function TfWfEditorUI.IsChildItemInUnion(AView : TdxFlowChart; Obj :
+function TfWfEditorUI1.IsChildItemInUnion(AView : TdxFlowChart; Obj :
         TdxFcObject): Boolean;
 var
   i: Integer;
@@ -2078,12 +2078,12 @@ begin
       end;
 end;
 
-function TfWfEditorUI.IsMainItemInUnion(Obj : TdxFcObject): Boolean;
+function TfWfEditorUI1.IsMainItemInUnion(Obj : TdxFcObject): Boolean;
 begin
   Result := Obj.IsUnion;
 end;
 
-procedure TfWfEditorUI.MultiSelect(ResetOldSelected : Boolean; SelectRect :
+procedure TfWfEditorUI1.MultiSelect(ResetOldSelected : Boolean; SelectRect :
         TRect);
 var
   i: Integer;
@@ -2095,7 +2095,7 @@ begin
     if View.Connections[i].InRect(SelectRect) then View.Connections[i].Selected := not View.Connections[i].Selected;
 end;
 
-procedure TfWfEditorUI.ObjAssign(Source, Dest : TdxFcObject);
+procedure TfWfEditorUI1.ObjAssign(Source, Dest : TdxFcObject);
 begin
   Dest.Font.Assign(Source.Font);
   Dest.ParentFont := Source.ParentFont;
@@ -2124,7 +2124,7 @@ begin
   Dest.ZOrder := Source.ZOrder;
 end;
 
-procedure TfWfEditorUI.PasteFromBuf;
+procedure TfWfEditorUI1.PasteFromBuf;
   
   const d = 5;
   var i, j, Index : integer;
@@ -2178,7 +2178,7 @@ begin
   FChange := True;
 end;
 
-procedure TfWfEditorUI.pBlackMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TfWfEditorUI1.pBlackMouseDown(Sender: TObject; Button: TMouseButton;
         Shift: TShiftState; X, Y: Integer);
 begin
   FStore := False;
@@ -2198,7 +2198,7 @@ begin
   ViewChange(View, nil);
 end;
 
-procedure TfWfEditorUI.pColorClick(Sender: TObject);
+procedure TfWfEditorUI1.pColorClick(Sender: TObject);
 begin
   FChange := False;
   FStore := False;
@@ -2209,7 +2209,7 @@ begin
   ViewChange(View, nil);
 end;
 
-procedure TfWfEditorUI.pColorDblClick(Sender: TObject);
+procedure TfWfEditorUI1.pColorDblClick(Sender: TObject);
 begin
   if ColorDialog.Execute then begin
     FStore := False;
@@ -2226,7 +2226,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.sbConnectFontClick(Sender: TObject);
+procedure TfWfEditorUI1.sbConnectFontClick(Sender: TObject);
 begin
   with TSpeedButton(Sender) do begin
     if View.SelectedConnectionCount > 0 then Font := View.SelectedConnections[0].Font;
@@ -2238,7 +2238,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.sbFitClick(Sender: TObject);
+procedure TfWfEditorUI1.sbFitClick(Sender: TObject);
 begin
   if TSpeedButton(Sender).Down then begin
     btnZoomIn.Down := False;
@@ -2256,7 +2256,7 @@ begin
   View.Cursor := crDefault;
 end;
 
-procedure TfWfEditorUI.sbObjectFontClick(Sender: TObject);
+procedure TfWfEditorUI1.sbObjectFontClick(Sender: TObject);
 begin
   with TSpeedButton(Sender) do begin
     if View.SelectedObjectCount > 0 then Font := View.SelectedObjects[0].Font;
@@ -2268,7 +2268,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.sbShapeClick(Sender: TObject);
+procedure TfWfEditorUI1.sbShapeClick(Sender: TObject);
 var
   P: TPoint;
   APanel: TPanel;
@@ -2332,7 +2332,7 @@ begin
   APopupMenu.Popup(P.X, P.Y);
 end;
 
-procedure TfWfEditorUI.sbZoomClick(Sender: TObject);
+procedure TfWfEditorUI1.sbZoomClick(Sender: TObject);
 begin
   if TSpeedButton(Sender).Down then begin
     View.ClearSelection;
@@ -2340,7 +2340,7 @@ begin
   end else View.Cursor := crDefault;
 end;
 
-procedure TfWfEditorUI.SelectLastConnect;
+procedure TfWfEditorUI1.SelectLastConnect;
 begin
   with View do begin
     ClearSelection;
@@ -2348,7 +2348,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.SelectLastObject;
+procedure TfWfEditorUI1.SelectLastObject;
 begin
   with View do begin
     ClearSelection;
@@ -2356,7 +2356,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.SetGlyph(SB : TSpeedButton; PM : TPopupMenu);
+procedure TfWfEditorUI1.SetGlyph(SB : TSpeedButton; PM : TPopupMenu);
 var
   B: TBitmap;
   i: Integer;
@@ -2376,7 +2376,7 @@ begin
   B.Free;
 end;
 
-procedure TfWfEditorUI.pBkColorMouseDown(Sender: TObject;
+procedure TfWfEditorUI1.pBkColorMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if Button=mbLeft then
@@ -2406,7 +2406,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.pColorMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TfWfEditorUI1.pColorMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   if Button=mbLeft then
@@ -2436,7 +2436,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.actOpenExecute(Sender: TObject);
+procedure TfWfEditorUI1.actOpenExecute(Sender: TObject);
 begin
   if OpenDialog.Execute then begin
     View.LoadFromFile(OpenDialog.FileName);
@@ -2444,7 +2444,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.actSaveAsExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSaveAsExecute(Sender: TObject);
   procedure SaveAs(bJPG:Boolean;sFile:string);
   var
     ACanvas: TControlCanvas;
@@ -2491,7 +2491,7 @@ begin
       SaveAs(SaveDialog.FilterIndex=2,SaveDialog.FileName);
 end;
 
-procedure TfWfEditorUI.actUndoExecute(Sender: TObject);
+procedure TfWfEditorUI1.actUndoExecute(Sender: TObject);
 begin
   FStore := False;
   FUndo.Undo;
@@ -2499,7 +2499,7 @@ begin
   FStore := True;
 end;
 
-procedure TfWfEditorUI.actCutExecute(Sender: TObject);
+procedure TfWfEditorUI1.actCutExecute(Sender: TObject);
 begin
   FStore := False;
   CopyToBuf;
@@ -2508,13 +2508,13 @@ begin
   ViewChange(View, nil);
 end;
 
-procedure TfWfEditorUI.actCopyExecute(Sender: TObject);
+procedure TfWfEditorUI1.actCopyExecute(Sender: TObject);
 begin
   CopyToBuf;
   ViewSelected(View, nil);
 end;
 
-procedure TfWfEditorUI.actPasteExecute(Sender: TObject);
+procedure TfWfEditorUI1.actPasteExecute(Sender: TObject);
 begin
   FStore := False;
   PasteFromBuf;
@@ -2522,22 +2522,22 @@ begin
   ViewChange(View, nil);
 end;
 
-procedure TfWfEditorUI.actDeleteExecute(Sender: TObject);
+procedure TfWfEditorUI1.actDeleteExecute(Sender: TObject);
 begin
   View.DeleteSelection;
 end;
 
-procedure TfWfEditorUI.actSelAllExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSelAllExecute(Sender: TObject);
 begin
   View.SelectAll;
 end;
 
-procedure TfWfEditorUI.actClearSelectionExecute(Sender: TObject);
+procedure TfWfEditorUI1.actClearSelectionExecute(Sender: TObject);
 begin
   View.ClearSelection;
 end;
 
-procedure TfWfEditorUI.actBringToFrontExecute(Sender: TObject);
+procedure TfWfEditorUI1.actBringToFrontExecute(Sender: TObject);
 var
   i: Integer;
 begin
@@ -2545,7 +2545,7 @@ begin
     View.SelectedObjects[i].BringToFront;
 end;
 
-procedure TfWfEditorUI.actSendToBackExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSendToBackExecute(Sender: TObject);
 var
   i: Integer;
 begin
@@ -2553,7 +2553,7 @@ begin
     View.SelectedObjects[i].SendToBack;
 end;
 
-procedure TfWfEditorUI.actZoomInExecute(Sender: TObject);
+procedure TfWfEditorUI1.actZoomInExecute(Sender: TObject);
 begin
   if View.Zoom < 490 then
   begin
@@ -2572,14 +2572,14 @@ begin
   actActualSize.Enabled := (View.Zoom <> 100) and (not btnFit.Down);
 end;
 
-procedure TfWfEditorUI.actZoomOutExecute(Sender: TObject);
+procedure TfWfEditorUI1.actZoomOutExecute(Sender: TObject);
 begin
   if View.Zoom > 20 then View.Zoom := View.Zoom - 10 else actZoomOut.Enabled := False;
   actZoomIn.Enabled := True;
   actActualSize.Enabled := (View.Zoom <> 100) and (not btnFit.Down);
 end;
 
-procedure TfWfEditorUI.actFitExecute(Sender: TObject);
+procedure TfWfEditorUI1.actFitExecute(Sender: TObject);
 begin
   actFit.Checked := not actFit.Checked;
   if actFit.Checked then begin
@@ -2597,12 +2597,12 @@ begin
   actActualSize.Enabled := (View.Zoom <> 100) and (not btnFit.Down);
 end;
 
-procedure TfWfEditorUI.actActualSizeExecute(Sender: TObject);
+procedure TfWfEditorUI1.actActualSizeExecute(Sender: TObject);
 begin
   View.Zoom := 100;
 end;
 
-procedure TfWfEditorUI.actNewUnionExecute(Sender: TObject);
+procedure TfWfEditorUI1.actNewUnionExecute(Sender: TObject);
 var
   i: Integer;
   MainObj, FirstObj: TdxFcObject;
@@ -2630,7 +2630,7 @@ begin
   if FChange then FUndo.Store;
 end;
 
-procedure TfWfEditorUI.actAddToUnionExecute(Sender: TObject);
+procedure TfWfEditorUI1.actAddToUnionExecute(Sender: TObject);
 var
   Obj, FirstObj: TdxFcObject;
   i: Integer;
@@ -2659,7 +2659,7 @@ begin
   if FChange then FUndo.Store;
 end;
 
-procedure TfWfEditorUI.actRemoveFromUnionExecute(Sender: TObject);
+procedure TfWfEditorUI1.actRemoveFromUnionExecute(Sender: TObject);
 var
   FFind, FChange: Boolean;
   i: Integer;
@@ -2682,7 +2682,7 @@ begin
   if FChange then FUndo.Store;
 end;
 
-procedure TfWfEditorUI.actClearUnionExecute(Sender: TObject);
+procedure TfWfEditorUI1.actClearUnionExecute(Sender: TObject);
 var
   i: Integer;
   FChange: Boolean;
@@ -2696,7 +2696,7 @@ begin
   if FChange then FUndo.Store;
 end;
 
-procedure TfWfEditorUI.actClearAllUnionsExecute(Sender: TObject);
+procedure TfWfEditorUI1.actClearAllUnionsExecute(Sender: TObject);
 var
   i: Integer;
   FChange: Boolean;
@@ -2710,7 +2710,7 @@ begin
   if FChange then FUndo.Store;
 end;
 
-procedure TfWfEditorUI.actContensExecute(Sender: TObject);
+procedure TfWfEditorUI1.actContensExecute(Sender: TObject);
 var
   FileName, PathInRegistry: string;
   Registry: TRegistry;
@@ -2741,12 +2741,12 @@ begin
   Registry.Free;
 end;
 
-procedure TfWfEditorUI.actPropExecute(Sender: TObject);
+procedure TfWfEditorUI1.actPropExecute(Sender: TObject);
 begin
   ViewDblClick(View);
 end;
 
-procedure TfWfEditorUI.actRemovePointExecute(Sender: TObject);
+procedure TfWfEditorUI1.actRemovePointExecute(Sender: TObject);
 var
   i, j, b, k: Integer;
   P1: TPoint;
@@ -2764,7 +2764,7 @@ begin
     end;
 end;
 
-procedure TfWfEditorUI.actlstLayoutUpdate(Action: TBasicAction;
+procedure TfWfEditorUI1.actlstLayoutUpdate(Action: TBasicAction;
   var Handled: Boolean);
 begin
   actAlignLeft.Enabled:=View.SelectedObjectCount>1;
@@ -2793,7 +2793,7 @@ begin
   actSpaceIncV.Enabled:=actSpaceEquH.Enabled;
 end;
 
-procedure TfWfEditorUI.actlstWfEditorUpdate(Action: TBasicAction;
+procedure TfWfEditorUI1.actlstWfEditorUpdate(Action: TBasicAction;
   var Handled: Boolean);
 begin
   actCopy.Enabled:=actCopy.Enabled and (View.SelectedObjectCount>0);
@@ -2807,7 +2807,7 @@ begin
   actSelAllCon.Enabled:=View.ConnectionCount>0;
 end;
 
-function TfWfEditorUI.FindObj(iStart: Integer):Boolean;
+function TfWfEditorUI1.FindObj(iStart: Integer):Boolean;
 var
   i:Integer;
   b:Boolean;
@@ -2855,7 +2855,7 @@ begin
   end;
 end;
 
-function TfWfEditorUI.FindCon(iStart: Integer):Boolean;
+function TfWfEditorUI1.FindCon(iStart: Integer):Boolean;
 var
   i:Integer;
   b:Boolean;
@@ -2903,7 +2903,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.actFindExecute(Sender: TObject);
+procedure TfWfEditorUI1.actFindExecute(Sender: TObject);
 begin
   if View.SelectedConnection<>nil then
     dlgFind.FindText:=View.SelectedConnection.Text
@@ -2912,7 +2912,7 @@ begin
   dlgFind.Execute;
 end;
 
-procedure TfWfEditorUI.actFindNextExecute(Sender: TObject);
+procedure TfWfEditorUI1.actFindNextExecute(Sender: TObject);
 begin
   if FFindPos>=0 then
   begin
@@ -2927,13 +2927,13 @@ begin
         FindCon(0);
 end;
 
-procedure TfWfEditorUI.Find;
+procedure TfWfEditorUI1.Find;
 begin
   if not FindObj(0) then
     FindCon(0);
 end;
 
-procedure TfWfEditorUI.dlgFindFind(Sender: TObject);
+procedure TfWfEditorUI1.dlgFindFind(Sender: TObject);
 begin
   FFindRep:=False;
   FFindStr:=dlgFind.FindText;
@@ -2942,7 +2942,7 @@ begin
   Find;
 end;
 
-procedure TfWfEditorUI.dlgReplaceFind(Sender: TObject);
+procedure TfWfEditorUI1.dlgReplaceFind(Sender: TObject);
 begin
   FFindRep:=True;
   FFindStr:=dlgReplace.FindText;
@@ -2956,17 +2956,17 @@ begin
   View.SetFocus;
 end;
 
-procedure TfWfEditorUI.dlgReplaceClose(Sender: TObject);
+procedure TfWfEditorUI1.dlgReplaceClose(Sender: TObject);
 begin
   dlgReplace.Tag:=0;
 end;
 
-procedure TfWfEditorUI.dlgReplaceShow(Sender: TObject);
+procedure TfWfEditorUI1.dlgReplaceShow(Sender: TObject);
 begin
   dlgReplace.Tag:=1;
 end;
 
-procedure TfWfEditorUI.actReplaceExecute(Sender: TObject);
+procedure TfWfEditorUI1.actReplaceExecute(Sender: TObject);
 begin
   if dlgFind.FindText<>'' then
     dlgReplace.FindText:=dlgFind.FindText
@@ -2977,7 +2977,7 @@ begin
   dlgReplace.Execute;
 end;
 
-procedure TfWfEditorUI.dlgReplaceReplace(Sender: TObject);
+procedure TfWfEditorUI1.dlgReplaceReplace(Sender: TObject);
 var
   i:Integer;
   procedure ReplaceObj(Obj:TdxFcObject);
@@ -3015,7 +3015,7 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.actSetPointExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSetPointExecute(Sender: TObject);
 var
   i, j, b, k: Integer;
   P1,P2: TPoint;
@@ -3049,7 +3049,7 @@ begin
     end;
 end;
 
-procedure TfWfEditorUI.actViewSizeExecute(Sender: TObject);
+procedure TfWfEditorUI1.actViewSizeExecute(Sender: TObject);
 begin
   with TfWfXyUI.Create(Self) do
   begin
@@ -3068,12 +3068,12 @@ begin
   end;
 end;
 
-procedure TfWfEditorUI.actSelAllObjExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSelAllObjExecute(Sender: TObject);
 begin
   View.SelAllObj;
 end;
 
-procedure TfWfEditorUI.actSelAllConExecute(Sender: TObject);
+procedure TfWfEditorUI1.actSelAllConExecute(Sender: TObject);
 begin
   View.SelAllCon;
 end;

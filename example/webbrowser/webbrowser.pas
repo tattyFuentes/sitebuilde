@@ -112,11 +112,9 @@ var
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
-   htmlDoc.parentWindow.event.cancelBubble:=false;
    elementInfo.Clear;
    if(element<>nil) then
      elementInfo.Lines.Add(element.outerHTML);
-   element.onclick:='';
 end; (*Document_OnMouseOver*)
 
 
@@ -185,7 +183,7 @@ procedure TForm1.WebBrowser1BeforeNavigate2(Sender: TObject;
   const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
   Headers: OleVariant; var Cancel: WordBool);
 begin
-  htmlDoc := nil;
+  //htmlDoc := nil;
   if(oldelement<>nil) then
     Cancel:=true;
 end;
@@ -198,7 +196,7 @@ end;
 procedure TForm1.WebBrowser1NewWindow2(Sender: TObject;
   var ppDisp: IDispatch; var Cancel: WordBool);
 begin
-//cancel:=true;
+  cancel:=true;
 end;
 
 end.

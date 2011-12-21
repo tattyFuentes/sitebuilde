@@ -5,56 +5,55 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,dxflchrt, WfView, WfActiG, WfConnG, ImgList, ExtCtrls, Buttons,
-  ComCtrls, StdCtrls;
+  ComCtrls, StdCtrls, dxExEdtr, dxInspRw, dxInspct, dxCntner,
+  TFlatEditUnit, TFlatCheckBoxUnit, TFlatGroupBoxUnit, TFlatPanelUnit,
+  Mask, TFlatMaskEditUnit,XMLIntf;
 
 type
   TForm1 = class(TForm)
-    ilWfObj: TImageList;
-    pObject: TPanel;
-    sbShape: TSpeedButton;
-    sbLine: TSpeedButton;
-    sbTextPosition: TSpeedButton;
-    sbObjectFont: TSpeedButton;
-    sbImagePosition: TSpeedButton;
-    btnCreateObject: TSpeedButton;
-    btnS: TSpeedButton;
-    btnE: TSpeedButton;
-    btnT: TSpeedButton;
-    sbSPoint: TSpeedButton;
-    sbStyle: TSpeedButton;
-    sbSourceArrow: TSpeedButton;
-    sbDestArrow: TSpeedButton;
-    sbSArrowSize: TSpeedButton;
-    sbDArrowSize: TSpeedButton;
-    sbDPoint: TSpeedButton;
-    sbConnectFont: TSpeedButton;
-    btnCreateConnect: TSpeedButton;
-    Bevel4: TBevel;
-    btnLine: TSpeedButton;
-    Panel2: TPanel;
-    pYellow: TShape;
-    pBkColor: TShape;
-    pBlack: TShape;
-    pWhite: TShape;
-    pGray: TShape;
-    pMarron: TShape;
-    pRed: TShape;
-    pOlive: TShape;
-    pGreen: TShape;
-    pLime: TShape;
-    pTeal: TShape;
-    pAqua: TShape;
-    pNavy: TShape;
-    pBlue: TShape;
-    pPurple: TShape;
-    pFuchsia: TShape;
-    pSilver: TShape;
-    pColor: TShape;
-    Bevel3: TBevel;
     statWFEditor: TStatusBar;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    InspectorBaseConfig: TdxInspector;
+    InspectorBaseConfigRow1: TdxInspectorTextRow;
+    InspectorBaseConfigRow2: TdxInspectorTextCheckRow;
+    InspectorBaseConfigRow3: TdxInspectorTextCheckRow;
+    InspectorBaseConfigRow4: TdxInspectorTextPickRow;
+    InspectorBaseConfigRow5: TdxInspectorTextPickRow;
+    dxInspectorCatchNumber: TdxInspectorTextPopupRow;
+    PanelCatchNumber: TPanel;
+    LabelCatchCount: TLabel;
+    ChkCatchAll: TFlatCheckBox;
+    EdtCatchCount: TFlatEdit;
+    InspectorBaseConfigRow7: TdxInspectorTextRow;
+    InspectorListConifg: TdxInspector;
+    dxInspectorTextRow1: TdxInspectorTextRow;
+    dxInspectorTextCheckRow2: TdxInspectorTextCheckRow;
+    dxInspectorTextPickRow1: TdxInspectorTextPickRow;
+    dxInspectorTextPickRow2: TdxInspectorTextPickRow;
+    dxInspectorTextPopupRow1: TdxInspectorTextPopupRow;
+    dxInspectorTextRow2: TdxInspectorTextRow;
+    dxInspectorTextCheckRow1: TdxInspectorTextRow;
+    InspectorBaseConfigRow8: TdxInspectorTextButtonRow;
+    InspectorListConifgRow9: TdxInspectorTextPopupRow;
+    InspectorListConifgRow10: TdxInspectorTextPopupRow;
+    InspectorListConifgRow8: TdxInspectorTextMemoRow;
     Button1: TButton;
+    Button2: TButton;
+    Panel6: TPanel;
+    Memo1: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure dxInspectorCatchNumberPopup(Sender: TObject;
+      const EditText: String);
+    procedure ChkCatchAllClick(Sender: TObject);
+    procedure dxInspectorCatchNumberCloseUp(Sender: TObject;
+      var Text: String; var Accept: Boolean);
+    procedure dxInspectorCatchNumberInitPopup(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
     FView: TWfView;
@@ -80,7 +79,7 @@ var
   Form1: TForm1;
 
 implementation
-
+ uses WfEditorUI;
 {$R *.dfm}
 
 procedure TForm1.ViewChange(Sender: TdxCustomFlowChart; Item:
@@ -125,12 +124,13 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   FView:=TWfView.Create(Self);
-  FView.Parent:=Self;
+  FView.Parent:=panel4;
   FView.BorderStyle:=bsNone;
   FView.Align:=alClient;
-  FView.Images:=ilWfObj;
+  //FView.Images:=ilWfObj;
   FView.LoadFromFile('E:\privte\myprogram\delphi\sitebuildegoogle\example\WfEditor\采集.pf');
-  FView.OnMouseMove:=nil;
+  FView.OnDragDrop :=nil;
+  FView.OnDragOver :=nil;
   {FView.OnChange:=ViewChange;
   FView.OnDblClick:=ViewDblClick;
   //FView.OnKeyDown:=ViewKeyDown;
@@ -149,7 +149,7 @@ var
   R: TRect;
   SObj: TdxFcObject;
 begin
-  if Button = mbLeft then begin
+  {if Button = mbLeft then begin
     DownPoint := Point(X, Y);
     OldPoint := DownPoint;
   end;
@@ -184,7 +184,7 @@ begin
     ClipCursor(@R);
     if not ((ssShift in Shift)) then View.ClearSelection;
   end;
-  if FPE then FPE := False; // Fix: by Kirill
+  if FPE then FPE := False; // Fix: by Kirill      }
 end;
 
 
@@ -196,7 +196,7 @@ var
   AStyle: TPenStyle;
   PP1, PP2: TPoint;
 begin
-  if P1.X < P2.X then begin
+  {if P1.X < P2.X then begin
     PP1.X := P1.X; PP2.X := P2.X;
   end else begin
     PP1.X := P2.X; PP2.X := P1.X;
@@ -257,7 +257,7 @@ begin
     Pen.Color := AColor;
     Pen.Style := AStyle;
     Brush.Color := ABkColor;
-  end;
+  end; }
 end;
 
 procedure TForm1.ViewMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -276,7 +276,7 @@ var
 begin
 
 
-  statWFEditor.Panels[2].Text:=IntToStr(X)+','+IntToStr(Y);
+  {statWFEditor.Panels[2].Text:=IntToStr(X)+','+IntToStr(Y);
   UpPoint := Point(X, Y);
   if btnCreateObject.Down and FNewObject then begin
     DrawDrag(DownPoint, OldPoint, 1);
@@ -312,8 +312,8 @@ begin
                View.ShowHint := False;
                LastObj := nil;
                Application.HintHidePause := OldHintHidePause;
-             end;}
-  end;
+             end;
+  end;           }
 end;
 
 procedure TForm1.ViewMouseUp(Sender: TObject; Button: TMouseButton;
@@ -324,7 +324,7 @@ var
   SObj, DObj, Obj: TdxFcObject;
   Con: TdxFcConnection;
 begin
-  statWFEditor.Panels[1].Text:='';
+{  statWFEditor.Panels[1].Text:='';
   statWFEditor.Panels[2].Text:='';
   statWFEditor.Panels[3].Text:='';
 
@@ -460,7 +460,8 @@ var
   newObj,newObj2:TdxFcObject;
   conn:TdxFcConnection;
 begin
-  newObj:=View.CreateObject(200 , 200, 100, 100, TdxFcShapeType(3));
+  (InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).EditText:=(InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).ValueChecked;
+  {newObj:=View.CreateObject(200 , 200, 100, 100, TdxFcShapeType(3));
   newObj.Text:='采集规则列表分析';
 
   newObj2:=View.CreateObject(600 , 600, 100, 100, TdxFcShapeType(3));
@@ -470,7 +471,81 @@ begin
   conn.ArrowDest.ArrowType:=TdxFcaType(1);
   conn.ArrowSource.ArrowType:=TdxFcaType(1);
   conn.ArrowDest.Width := 15;
-  conn.ArrowDest.Height :=15;
+  conn.ArrowDest.Height :=15;    }
+end;
+
+procedure TForm1.dxInspectorCatchNumberPopup(Sender: TObject;
+  const EditText: String);
+begin
+  //showmessage(EditText);
+end;
+
+procedure TForm1.ChkCatchAllClick(Sender: TObject);
+begin
+  if (ChkCatchAll.Checked) then
+  begin
+    LabelCatchCount.Enabled:=false;
+    EdtCatchCount.Enabled:=false;
+  end else
+  begin
+    LabelCatchCount.Enabled:=true;
+    EdtCatchCount.Enabled:=true;
+  end;
+end;
+
+procedure TForm1.dxInspectorCatchNumberCloseUp(Sender: TObject;
+  var Text: String; var Accept: Boolean);
+begin
+   if (ChkCatchAll.Checked) then
+     dxInspectorCatchNumber.Text:='All'
+   else
+     dxInspectorCatchNumber.Text:=EdtCatchCount.Text;
+end;
+
+procedure TForm1.dxInspectorCatchNumberInitPopup(Sender: TObject);
+begin
+  if(dxInspectorCatchNumber.Text='All') then
+    ChkCatchAll.Checked:=true
+  else begin
+    ChkCatchAll.Checked:=false;
+    EdtCatchCount.Text:=dxInspectorCatchNumber.Text;
+  end;
+end;
+
+
+function SaveControlsToXml(xml:String):String;
+var
+  i:integer;
+  s:string;
+begin
+  s:='';
+  //InspectorBaseConfig
+  //result:= doc.XML;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  i:integer;
+  s:string;
+begin
+  memo1.Lines.Clear;
+  for i:=0 to InspectorBaseConfig.Count-1 do
+  begin
+    if InspectorBaseConfig.Rows[i] is TdxInspectorTextRow then
+      memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextRow).EditText)
+    else if InspectorBaseConfig.Rows[i] is TdxInspectorTextCheckRow then
+    begin
+      if(InspectorBaseConfig.Rows[i] as TdxInspectorTextCheckRow).EditText='' then
+        (InspectorBaseConfig.Rows[i] as TdxInspectorTextCheckRow).EditText:=(InspectorBaseConfig.Rows[i] as TdxInspectorTextCheckRow).ValueUnchecked;
+      memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextCheckRow).EditText)
+    end
+    else if InspectorBaseConfig.Rows[i] is TdxInspectorTextPickRow then
+      memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextPickRow).EditText)
+    else if InspectorBaseConfig.Rows[i] is TdxInspectorTextPopupRow then
+      memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextPopupRow).EditText)
+    else if InspectorBaseConfig.Rows[i] is TdxInspectorTextButtonRow then
+      memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextButtonRow).EditText)
+  end;
 end;
 
 end.

@@ -62,7 +62,7 @@ implementation
 
 procedure TWfView.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
-  
+  inherited;
 end;
 
 function TWfView.HasTyp(at:TWfActiType): Boolean;
