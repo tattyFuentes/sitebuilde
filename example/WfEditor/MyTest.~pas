@@ -128,7 +128,7 @@ begin
   FView.BorderStyle:=bsNone;
   FView.Align:=alClient;
   //FView.Images:=ilWfObj;
-  FView.LoadFromFile('E:\privte\myprogram\delphi\sitebuildegoogle\example\WfEditor\采集.pf');
+  FView.LoadFromFile('采集.pf');
   FView.OnDragDrop :=nil;
   FView.OnDragOver :=nil;
   {FView.OnChange:=ViewChange;
@@ -460,6 +460,7 @@ var
   newObj,newObj2:TdxFcObject;
   conn:TdxFcConnection;
 begin
+  (InspectorBaseConfig.Rows[0] as TdxInspectorTextRow).EditText:='hello world';
   (InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).EditText:=(InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).ValueChecked;
   {newObj:=View.CreateObject(200 , 200, 100, 100, TdxFcShapeType(3));
   newObj.Text:='采集规则列表分析';
@@ -528,7 +529,8 @@ var
   i:integer;
   s:string;
 begin
-  memo1.Lines.Clear;
+  showmessage((FView.SelectedObject as TWfActiG).ActiType);
+  {memo1.Lines.Clear;
   for i:=0 to InspectorBaseConfig.Count-1 do
   begin
     if InspectorBaseConfig.Rows[i] is TdxInspectorTextRow then
@@ -545,7 +547,7 @@ begin
       memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextPopupRow).EditText)
     else if InspectorBaseConfig.Rows[i] is TdxInspectorTextButtonRow then
       memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextButtonRow).EditText)
-  end;
+  end;    }
 end;
 
 end.

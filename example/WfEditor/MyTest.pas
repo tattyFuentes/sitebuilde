@@ -128,7 +128,7 @@ begin
   FView.BorderStyle:=bsNone;
   FView.Align:=alClient;
   //FView.Images:=ilWfObj;
-  FView.LoadFromFile('E:\privte\myprogram\delphi\sitebuildegoogle\example\WfEditor\采集.pf');
+  FView.LoadFromFile('采集.pf');
   FView.OnDragDrop :=nil;
   FView.OnDragOver :=nil;
   {FView.OnChange:=ViewChange;
@@ -529,7 +529,10 @@ var
   i:integer;
   s:string;
 begin
-  memo1.Lines.Clear;
+  if (FView.SelectedObject as TWfActiG).ActiType=atNormal then
+
+  showmessage('normal');
+  {memo1.Lines.Clear;
   for i:=0 to InspectorBaseConfig.Count-1 do
   begin
     if InspectorBaseConfig.Rows[i] is TdxInspectorTextRow then
@@ -546,7 +549,7 @@ begin
       memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextPopupRow).EditText)
     else if InspectorBaseConfig.Rows[i] is TdxInspectorTextButtonRow then
       memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextButtonRow).EditText)
-  end;
+  end;    }
 end;
 
 end.

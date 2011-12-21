@@ -42,6 +42,7 @@ type
     Memo2: TMemo;
     Button5: TButton;
     PerlRegEx1: TPerlRegEx;
+    Button6: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -57,6 +58,7 @@ type
     procedure pop_deletegroupClick(Sender: TObject);
     procedure N7Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
     
@@ -256,5 +258,10 @@ end;
 FreeAndNil(reg);
 end;
 
+
+procedure TfrmMain.Button6Click(Sender: TObject);
+begin
+LoadPictureToDatabase();
+end;
 
 end.

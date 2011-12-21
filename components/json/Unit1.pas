@@ -34,6 +34,7 @@ var
   i: Integer;
 begin
   js := TlkJSONobject.Create;
+  js.fi
   js.Add('namestring','david');
   js.Add('hello','world,,,,,'']}');
   //s := TlkJSON.GenerateText(js);

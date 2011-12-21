@@ -2,7 +2,7 @@ program WfEditor;
 
 uses
   Forms,
-  WfEditorUI in 'WfEditorUI.pas' {fWfEditorUI1},
+  WfEditorUI in 'WfEditorUI.pas' {fWfEditorUI},
   WfActiUI in 'WfActiUI.pas' {fWfActiUI},
   WfConnUI in 'WfConnUI.pas' {fWfConnUI},
   WfUnionUI in 'WfUnionUI.pas' {fWfUnionUI},

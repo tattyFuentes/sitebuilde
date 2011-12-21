@@ -12,6 +12,8 @@ procedure updatePlanContent(id:integer;content:string);
 procedure deleteCategory(id:integer);
 procedure deletePlan(id:integer);
 function createPlan(parentId:integer;name:string;content:string):integer;
+procedure SavePictureToDatabase;
+procedure LoadPictureToDatabase;
 
 implementation
 
@@ -28,6 +30,64 @@ begin
 end;
 
 
+procedure SavePictureToDatabase;
+var
+  BlobField: TField;
+  BS: TStream;
+  sqlDataset:TSQLDataSet;
+  Bitmap:TBitmap;
+  strm:tmemorystream;
+begin
+  strm:=tmemorystream.Create;
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.MaxBlobSize:=10240000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  //SQLDataSet.TableName:='test';
+  Bitmap := TBitmap.Create;
+  Bitmap.LoadFromFile('d:\aaa.bmp');
+  Bitmap.SaveToStream(strm);
+  with sqlDataset do
+  begin
+    sqlDataset.CommandText:='insert into test values(1,:con)';
+    strm.Position:=0;
+    SQLDataSet.Params[0].LoadFromStream(strm,ftBlob);
+    sqlDataset.Prepared:=true; 
+    sqlDataset.ExecSQL(false);
+    close();
+  end;
+end;
+
+procedure LoadPictureToDatabase;
+var
+  BlobField: TField;
+  BS: TStream;
+  sqlDataset:TSQLDataSet;
+  Bitmap:TBitmap;
+  strm:tmemorystream;
+begin
+  //strm:=tmemorystream.Create;
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.MaxBlobSize:=1024000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  //SQLDataSet.TableName:='test';
+  //Bitmap := TBitmap.Create;
+  //Bitmap.LoadFromFile('d:\aaa.bmp');
+  //Bitmap.SaveToStream(strm);
+  with sqlDataset do
+  begin
+    sqlDataset.CommandText:='select * from test limit 1';
+    sqlDataset.Open;
+    (FieldByName('con')  as TBlobField).SaveToFile('d:\bbb.bmp');
+    //Bitmap.LoadFromStream(strm);
+    //strm.Position:=0;
+    //Bitmap.SaveToFile('d:\bbb.bmp');
+    //Bitmap.Free;
+    close();
+  end;
+end;
+
 procedure deleteOneCategory(conn:TSQLConnection;id:integer);
 var
   sql:string;
@@ -36,6 +96,7 @@ var
   tempCateId:Integer;
 begin
   params:=TParams.Create();
+
   addParam(params,'id',id,ftInteger,ptInput);
   sql:='delete from category where id=:id';
   execUpdateWithConn(sql,conn,params);
@@ -45,6 +106,7 @@ begin
   
   sql:='select * from category where parentid=:id';
   sqlDataset:=execQueryWithConn(sql,conn,params);
+  //sqlDataset.FieldByName('').Value
   while not sqlDataset.Eof do
   begin
     tempCateId:= strtoint(getFieldText(sqlDataSet,'id'));
