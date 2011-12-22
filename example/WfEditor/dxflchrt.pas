@@ -698,7 +698,8 @@ type
     property Visible;
     property Zoom;
   end;
-  
+procedure WriteStr(Stream: TStream; const S: string);
+function ReadStr(Stream: TStream): string;
 implementation
 
 procedure Swap(var A, B: Integer);

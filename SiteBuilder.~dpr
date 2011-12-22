@@ -9,7 +9,9 @@ uses
   UEngine in 'UEngine.pas',
   UCatchPlan in 'UCatchPlan.pas' {frmCatchPlan},
   uXML in 'uXml.pas',
-  UHelp in 'UHelp.pas' {FrmHelp};
+  UHelp in 'UHelp.pas' {FrmHelp},
+  UTabpage in 'UTabpage.pas',
+  UPlanObject in 'UPlanObject.pas';
 
 {$R *.res}
 

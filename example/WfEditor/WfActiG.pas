@@ -24,15 +24,19 @@ implementation
 { TWfActiG }
 
 procedure TWfActiG.Load(Stream: TStream);
+var
+  s:String;
 begin
   inherited;
   Stream.ReadBuffer(FActiType, SizeOf(FActiType));
+  s:=ReadStr(stream);
 end;
 
 procedure TWfActiG.Save(Stream: TStream);
 begin
   inherited;
   Stream.WriteBuffer(FActiType, SizeOf(FActiType));
+  WriteStr(stream,'abcde');
 end;
 
 end.

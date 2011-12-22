@@ -62,6 +62,8 @@ implementation
 
 procedure TWfView.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
+  if(self.SelectedConnection<>nil) then
+    exit;
   inherited;
 end;
 

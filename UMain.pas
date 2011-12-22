@@ -261,7 +261,7 @@ end;
 
 procedure TfrmMain.Button6Click(Sender: TObject);
 begin
-LoadPictureToDatabase();
+  LoadPictureToDatabase();
 end;
 
 end.

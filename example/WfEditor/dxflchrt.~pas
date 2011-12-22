@@ -698,7 +698,8 @@ type
     property Visible;
     property Zoom;
   end;
-  
+procedure WriteStr(Stream: TStream; const S: string);
+function ReadStr(Stream: TStream): string;
 implementation
 
 procedure Swap(var A, B: Integer);
@@ -3939,7 +3940,7 @@ end;
 
 procedure TdxCustomFlowChart.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
-  {if GetCapture = Handle then
+  if GetCapture = Handle then
   begin
     if Assigned(FDragHandler) then
       CallDragHandler(X, Y, dsDragMove)
@@ -3949,7 +3950,7 @@ begin
         ChkDrag(Shift, X, Y);
     end;
   end;
-  inherited MouseMove(Shift, X, Y);}
+  inherited MouseMove(Shift, X, Y);
 end;
 
 procedure TdxCustomFlowChart.MouseUp(Button: TMouseButton; Shift: TShiftState;

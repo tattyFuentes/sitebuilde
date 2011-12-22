@@ -8,7 +8,7 @@ uses
   StdCtrls, ImgList,UEngine, Menus, TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatGroupBoxUnit, TFlatEditUnit, TFlatButtonUnit,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
-  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML;
+  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML,UPlanView;
 type
   
   TfrmCatchPlan = class(TForm)
@@ -24,179 +24,13 @@ type
     pop_editplan: TMenuItem;
     Panel2: TPanel;
     Panel3: TPanel;
-    Label1: TLabel;
-    PageControl2: TPageControl;
-    TabSheet2: TTabSheet;
-    TabSheet3: TTabSheet;
-    TabSheet4: TTabSheet;
-    TabSheet5: TTabSheet;
-    TabSheet6: TTabSheet;
-    TabSheet7: TTabSheet;
-    TabSheet8: TTabSheet;
-    ChkIsCompress: TFlatCheckBox;
-    FlatGroupBox1: TFlatGroupBox;
-    RadioAutoCode: TFlatRadioButton;
-    RadioUTF8: TFlatRadioButton;
-    RadioNotUTF8: TFlatRadioButton;
-    FlatGroupBox2: TFlatGroupBox;
-    RadioDownUp: TFlatRadioButton;
-    RadioUpDown: TFlatRadioButton;
-    FlatGroupBox3: TFlatGroupBox;
-    ChkCatchAll: TFlatCheckBox;
-    Label2: TLabel;
-    EdtCatchCount: TFlatEdit;
-    ChkRandomSelect: TFlatCheckBox;
-    Label3: TLabel;
-    EdtTimeOut: TFlatEdit;
-    Label4: TLabel;
-    Label5: TLabel;
-    EdtTitleWordCountFrom: TFlatEdit;
-    Label6: TLabel;
-    EdtTitleWordCountTo: TFlatEdit;
-    Label7: TLabel;
-    FlatGroupBox4: TFlatGroupBox;
     Panel4: TPanel;
     BtnSave: TFlatButton;
     BtnCancel: TFlatButton;
     BtnApply: TFlatButton;
-    LabelRuleName: TLabel;
-    TabSheet1: TTabSheet;
-    Label9: TLabel;
-    Label10: TLabel;
-    EdtAutoListUrl: TFlatEdit;
-    EdtListIdFrom: TFlatEdit;
-    ChkEnableAutoList: TFlatCheckBox;
-    BtnInsertListNumberTag: TFlatButton;
-    Label11: TLabel;
-    EdtListIdTo: TFlatEdit;
-    EdtListIdStep: TFlatEdit;
-    Label12: TLabel;
-    Label13: TLabel;
-    BtnInsertScopeTag: TFlatButton;
-    BtnInsertVarTag: TFlatButton;
-    MemListUrl: TFlatMemo;
-    MemoListAreaRule: TFlatMemo;
-    MemHtmlAttibute: TFlatMemo;
-    Label14: TLabel;
-    BtnInsertArticleTitleTag: TFlatButton;
-    BtnInsertArticleUrlTag: TFlatButton;
-    MemoListAreaRulePharse: TFlatMemo;
-    BtnInsertArticleThumbTag: TFlatButton;
-    BtnInsertVarTag2: TFlatButton;
-    Label15: TLabel;
-    BtnInsertArticleUrlTag2: TFlatButton;
-    EdtNewArticleUrl: TFlatEdit;
-    Label16: TLabel;
-    ChkListBoxDataItem: TFlatCheckListBox;
-    BtnAddDataItem: TFlatButton;
-    BtnDelDataItem: TFlatButton;
-    Label17: TLabel;
-    EdtDataItemName: TFlatEdit;
-    Label18: TLabel;
-    ComboLinkArrangeGroup: TFlatComboBox;
-    FlatGroupBox5: TFlatGroupBox;
-    ChkMatchManyRows: TFlatCheckBox;
-    ChkPseudoOriginal: TFlatCheckBox;
-    ChkIncludeDownFile: TFlatCheckBox;
-    ChkAsDownUrl: TFlatCheckBox;
-    Label19: TLabel;
-    EdtFileExtension: TFlatEdit;
-    Label20: TLabel;
-    FlatButton15: TFlatButton;
-    FlatButton16: TFlatButton;
-    MemDataItemCatchRule: TFlatMemo;
-    BtnSaveDataItem: TFlatButton;
-    ChkListBoxCatchPage: TFlatCheckListBox;
-    FlatButton18: TFlatButton;
-    FlatButton19: TFlatButton;
-    Label21: TLabel;
-    EdtCatchPageName: TFlatEdit;
-    Label22: TLabel;
-    ListBoxCatchDataItems: TFlatListBox;
-    ListBoxCatchDataItemsForSelect: TFlatListBox;
-    Label23: TLabel;
-    FlatSpeedButton1: TFlatSpeedButton;
-    FlatSpeedButton2: TFlatSpeedButton;
-    Label24: TLabel;
-    FlatButton20: TFlatButton;
-    FlatButton21: TFlatButton;
-    MemNextLevelPageUrl: TFlatMemo;
-    Label25: TLabel;
-    EdtNewNextLevelPageUrl: TFlatEdit;
-    FlatButton22: TFlatButton;
-    Label35: TLabel;
-    PanelArticleSplitPageLogic: TPanel;
-    Label38: TLabel;
-    Label39: TLabel;
-    Label40: TLabel;
-    Label41: TLabel;
-    Label42: TLabel;
-    Label43: TLabel;
-    Label44: TLabel;
-    Label45: TLabel;
-    Label46: TLabel;
-    Label47: TLabel;
-    Label48: TLabel;
-    EdtUrlDecompose: TFlatEdit;
-    EdtArticleIdFrom: TFlatEdit;
-    EdtArticleIdTo: TFlatEdit;
-    EdtArticleIdStep: TFlatEdit;
-    EdtArticleUrlGenerate: TFlatEdit;
-    MemValidPageFeatureCode: TFlatMemo;
-    MemNotLastPageFeatureCode: TFlatMemo;
-    PanelArticleSplitPageCatch: TPanel;
-    Label49: TLabel;
-    Label55: TLabel;
-    Label56: TLabel;
-    Label57: TLabel;
-    Label58: TLabel;
-    EdtArticlePageRuleGenerate: TFlatEdit;
-    MemArticlePageUrlRule: TFlatMemo;
-    MemArticlePageContentRule: TFlatMemo;
-    FlatButton23: TFlatButton;
-    FlatButton24: TFlatButton;
-    FlatButton25: TFlatButton;
-    FlatButton26: TFlatButton;
-    FlatButton27: TFlatButton;
-    RadioArticleUseLogic: TFlatRadioButton;
-    RadioArticleUseCatch: TFlatRadioButton;
-    FlatButton28: TFlatButton;
-    FlatButton29: TFlatButton;
-    FlatButton30: TFlatButton;
-    Label26: TLabel;
-    ChkEnableDownload: TFlatCheckBox;
-    Label27: TLabel;
-    MemFileHtmlName: TFlatMemo;
-    Label28: TLabel;
-    MemFileExtensions: TFlatMemo;
-    Label29: TLabel;
-    MemDynamicDownFileUrls: TFlatMemo;
-    Label30: TLabel;
-    ListBoxArrangeGroups: TFlatListBox;
-    btnAddGroup: TFlatButton;
-    btnCopyGroup: TFlatButton;
-    btnImportGroup: TFlatButton;
-    btnExportGroup: TFlatButton;
-    btnDeleteGroup: TFlatButton;
-    Label31: TLabel;
-    EdtGroupName: TFlatEdit;
-    ComboBoxDataArrangeTagList: TFlatComboBox;
-    StringGridGroupContent: TStringGrid;
-    FlatButton36: TFlatButton;
-    FlatButton37: TFlatButton;
-    FlatButton38: TFlatButton;
-    Label32: TLabel;
-    Label33: TLabel;
-    EdtCookiesUrl: TFlatEdit;
-    Label34: TLabel;
-    MemCookies: TFlatMemo;
-    FlatButton39: TFlatButton;
-    Label36: TLabel;
-    Label37: TLabel;
-    Label50: TLabel;
-    Label51: TLabel;
-    FlatSpeedButton3: TFlatSpeedButton;
-    ChkHttpCode: TFlatCheckBox;
+    Panel5: TPanel;
+    PanelView: TPanel;
+    PanelProperty: TPanel;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -205,10 +39,8 @@ type
     procedure checkBoxTreePlanCategoryEdited(Sender: TObject;
       Node: TTreeNode; var S: String);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure RadioButtonLuoJi2Click(Sender: TObject);
-    procedure RadioButtonCaiJi2Click(Sender: TObject);
-    procedure RadioArticleUseLogicClick(Sender: TObject);
-    procedure RadioArticleUseCatchClick(Sender: TObject);
+
+
     procedure FormCreate(Sender: TObject);
     procedure BtnApplyClick(Sender: TObject);
     procedure FlatSpeedButton3Click(Sender: TObject);
@@ -219,24 +51,23 @@ type
       Node: TTreeNode);
     procedure pop_deleteplanClick(Sender: TObject);
     procedure ChkListBoxDataItemClick(Sender: TObject);
-    procedure BtnAddDataItemClick(Sender: TObject);
-    procedure BtnDelDataItemClick(Sender: TObject);
-    procedure BtnSaveDataItemClick(Sender: TObject);
-    procedure PageControl2Change(Sender: TObject);
+
+
 
   private
     { Private declarations }
     isChangeing:boolean;
     currentPlanNode:TTreeNode;
     arrayListBoxStoreData:THashedStringList;
+    PlanView: TPlanView;
     chkListBoxDataItemItemIndex:integer;
     procedure onTreeNodeChanged(node:TTreeNode;nodeName:String);
     procedure initListBoxData();
     procedure CreateCatchRule();
-    procedure initComboLinkArrangeGroup();
+
     procedure ShowHelp(title:string;content:String);
     procedure ControlEvent(Sender: TObject);
-    procedure TabSheet3ControlEvent(Sender: TObject);
+
   public
     { Public declarations }
   end;
@@ -256,15 +87,21 @@ procedure TfrmCatchPlan.onTreeNodeChanged(node:TTreeNode;nodeName:String);
 begin
   if(not isGroupNode(node)) then
   begin
-    LabelRuleName.Caption:=nodeName;
+    //LabelRuleName.Caption:=nodeName;
     currentPlanNode:=node;
     if (node=nil) then
-      pagecontrol2.Enabled:=false
-    else
-      pagecontrol2.Enabled:=true;
+    begin
+      PanelView.Enabled:=false;
+      panelProperty.Enabled:=false;
+    end
+    else begin
+      PanelView.Enabled:=true;
+      panelProperty.Enabled:=true;
+    end;
   end else
   begin
-    pagecontrol2.Enabled:=false;  
+    PanelView.Enabled:=false;
+    panelProperty.Enabled:=false;  
   end;
 end;
 
@@ -374,29 +211,11 @@ begin
   freeTreeData(checkBoxTreePlanCategory);
 end;
 
-procedure TfrmCatchPlan.RadioButtonLuoJi2Click(Sender: TObject);
-begin
-  PanelArticleSplitPageLogic.Visible:=true;
-  PanelArticleSplitPageCatch.Visible:=false;
-end;
 
-procedure TfrmCatchPlan.RadioButtonCaiJi2Click(Sender: TObject);
-begin
-  PanelArticleSplitPageLogic.Visible:=false;
-  PanelArticleSplitPageCatch.Visible:=true;
-end;
 
-procedure TfrmCatchPlan.RadioArticleUseLogicClick(Sender: TObject);
-begin
-  PanelArticleSplitPageLogic.Visible:=true;
-  PanelArticleSplitPageCatch.Visible:=false;
-end;
 
-procedure TfrmCatchPlan.RadioArticleUseCatchClick(Sender: TObject);
-begin
-  PanelArticleSplitPageLogic.Visible:=false;
-  PanelArticleSplitPageCatch.Visible:=true;
-end;
+
+
 
 procedure TfrmCatchPlan.initListBoxData();
 var
@@ -416,20 +235,29 @@ end;
 
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
-  InitControlEvent(self,ControlEvent);
-  InitControlEvent(TabSheet3,TabSheet3ControlEvent);
+  //InitControlEvent(self,ControlEvent);
+  //InitControlEvent(TabSheet3,TabSheet3ControlEvent);
   currentPlanNode:=nil;
   initListBoxData();
-  StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
-  StringGridGroupContent.EditorMode:=true;
-  StringGridGroupContent.Cells[0,0]:= '序号';
-  StringGridGroupContent.Cells[1,0]:= '原文代码';
-  StringGridGroupContent.Cells[2,0]:= '替换为';
+
+  PlanView:=TPlanView.Create(Self);
+  PlanView.Parent:=PanelView;
+  PlanView.BorderStyle:=bsNone;
+  PlanView.Align:=alClient;
+  //FView.Images:=ilWfObj;
+  PlanView.LoadFromFile('采集.pf');
+
+
+  //StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
+  //StringGridGroupContent.EditorMode:=true;
+  //StringGridGroupContent.Cells[0,0]:= '序号';
+  //StringGridGroupContent.Cells[1,0]:= '原文代码';
+  //StringGridGroupContent.Cells[2,0]:= '替换为';
 end;
 
 procedure TfrmCatchPlan.BtnApplyClick(Sender: TObject);
 begin
-  StringGridGroupContent.RowCount:=StringGridGroupContent.RowCount+10;
+  //StringGridGroupContent.RowCount:=StringGridGroupContent.RowCount+10;
 end;
 
 procedure TfrmCatchPlan.FlatSpeedButton3Click(Sender: TObject);
@@ -449,14 +277,14 @@ begin
   //showmessage(MemHtmlAttibute.Lines.Text);
   //showmessage(StringReplace(MemHtmlAttibute.Lines.Text,char(13)+char(10),';',[rfReplaceAll]));
   //showmessage(StringReplace(MemHtmlAttibute.Lines.Text,char(13),';',[rfReplaceAll]));
-  a:= THashedStringList.Create;
+  //a:= THashedStringList.Create;
 
    //RadioAutoCode.Checked
   //self.Controls
-  GetChildControls(self,controlArray,'');
-  s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
-  MemHtmlAttibute.Lines.Clear;
-  MemHtmlAttibute.Lines.Add(s);
+  //GetChildControls(self,controlArray,'');
+  //s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
+  //MemHtmlAttibute.Lines.Clear;
+  //MemHtmlAttibute.Lines.Add(s);
 end;
 
 procedure TfrmCatchPlan.BtnCancelClick(Sender: TObject);
@@ -540,7 +368,7 @@ end;
 
 procedure TfrmCatchPlan.ChkListBoxDataItemClick(Sender: TObject);
 begin
-  chkListBoxDataItemItemIndex:=ChkListBoxDataItem.ItemIndex;
+  {chkListBoxDataItemItemIndex:=ChkListBoxDataItem.ItemIndex;
   if(chkListBoxDataItemItemIndex<0) or (chkListBoxDataItemItemIndex>ChkListBoxDataItem.Items.Count-1) then
   begin
     isChangeing:=true;
@@ -552,68 +380,15 @@ begin
   LoadXmlInitControls(getValueFromHashMap(arrayListBoxStoreData,ChkListBoxDataItem.name,ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex]),tabsheet3,arrayListBoxStoreData);
   EdtDataItemName.Text:=ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex];
   initComboLinkArrangeGroup();
-  isChangeing:=false;
+  isChangeing:=false;   }
 
 end;
 
 
-procedure TfrmCatchPlan.TabSheet3ControlEvent(Sender: TObject);
-var
-  controlArray:TWinControlArray;
-  i:integer;
-  s:String;
-  nodeData:TTreeNodeData;
-begin
-  if(chkListBoxDataItemItemIndex<0) or (chkListBoxDataItemItemIndex>ChkListBoxDataItem.Items.Count-1) then
-    exit;
-  if(isChangeing) then
-    exit;
-  GetChildControls(tabsheet3,controlArray,'ChkListBoxDataItem');
-  s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
-  modifyValueFromHashMap(arrayListBoxStoreData,'ChkListBoxDataItem',ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex] ,s);
-  ChkListBoxDataItem.Items[chkListBoxDataItemItemIndex]:=EdtDataItemName.Text;
-end;
-
-procedure TfrmCatchPlan.BtnAddDataItemClick(Sender: TObject);
-begin
-  ChkListBoxDataItem.Items.Add('新数据项');
-  ChkListBoxDataItem.itemindex:=ChkListBoxDataItem.Items.Count-1;
-  ChkListBoxDataItemClick(nil);
-end;
-
-procedure TfrmCatchPlan.BtnDelDataItemClick(Sender: TObject);
-begin
-  if(chkListBoxDataItemItemIndex<0) or (chkListBoxDataItemItemIndex>ChkListBoxDataItem.Items.Count-1) then
-    exit;
-  chkListBoxDataItem.Items.Delete(chkListBoxDataItemItemIndex);
-  ChkListBoxDataItemClick(nil);
-end;
 
 
-procedure TfrmCatchPlan.initComboLinkArrangeGroup();
-var
-  i:integer;
-  s:string;
-begin
-  if PageControl2.ActivePageIndex=2 then
-  begin
-    s:=ComboLinkArrangeGroup.Text;
-    ComboLinkArrangeGroup.Items.Clear;
-    for i:=0 to ListBoxArrangeGroups.Items.Count-1 do
-    begin
-      ComboLinkArrangeGroup.Items.Add(ListBoxArrangeGroups.Items[i]);
-    end;
-    ComboLinkArrangeGroup.Text:=s;
-  end;
-end;
 
-procedure TfrmCatchPlan.BtnSaveDataItemClick(Sender: TObject);
-begin
-  ControlEvent(nil);
-end;
-procedure TfrmCatchPlan.PageControl2Change(Sender: TObject);
-begin
-  initComboLinkArrangeGroup();
-end;
+
+
 
 end.
