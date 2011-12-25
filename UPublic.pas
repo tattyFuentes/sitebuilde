@@ -6,7 +6,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,CommCtrl,TFlatCheckBoxUnit,
-  TFlatRadioButtonUnit, TFlatEditUnit,
+  TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles;
 type
   TWinControlArray=Array of TControl;
@@ -23,7 +23,8 @@ function GetFileSize(const FileName: String): LongInt;
 procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent);
 function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String):String;
 procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
-
+function SaveInspectorToJson(aTdxInspedtor:TdxInspector):String;
+procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnRowChange:TNotifyEvent);
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -31,7 +32,157 @@ const
 
 implementation
 
-uses uXML;
+uses uXML,uLKJSON;
+
+//function SaveOneRow()
+function GetOneInspectorRowValue(row:TdxInspectorRow):String;
+begin
+  if row is TdxInspectorTextRow then
+    result:=(row as TdxInspectorTextRow).EditText
+  else if (row is TdxInspectorTextCheckRow) then
+  begin
+    if(row as TdxInspectorTextCheckRow).EditText='' then
+     (row as TdxInspectorTextCheckRow).EditText:=(row as TdxInspectorTextCheckRow).ValueUnchecked;
+    result:=(row as TdxInspectorTextCheckRow).EditText;
+  end
+  else if row is TdxInspectorTextPickRow then
+    result:=(row as TdxInspectorTextPickRow).EditText
+  else if row is TdxInspectorTextPopupRow then
+    result:=(row as TdxInspectorTextPopupRow).EditText
+  else if row is TdxInspectorTextButtonRow then
+    result:=(row as TdxInspectorTextButtonRow).EditText;
+end;
+
+
+function SaveOneInspectorRow(parentObject:TlkJSONobject;row:TdxInspectorRow;rowNumber:Integer):TlkJSONobject;
+var
+  i,j:integer;
+  
+  childsNode,textPickRowItems:TlkJSONobject;
+begin
+  result:=TlkJSONobject.Create;
+  result.Add('name',row.Caption);
+  result.Add('value',GetOneInspectorRowValue(row));
+  result.Add('classname',row.ClassName);
+  if(row is TdxInspectorTextPickRow) then
+  begin
+    if (row as TdxInspectorTextPickRow).Items.Count>1 then
+    begin
+      textPickRowItems:=TlkJSONobject.Create;
+      for j:=0 to (row as TdxInspectorTextPickRow).Items.Count-1 do
+      begin
+        textPickRowItems.Add('item'+inttostr(j),(row as TdxInspectorTextPickRow).Items.Strings[j]);
+      end;
+      result.Add('items',textPickRowItems);
+    end;
+  end;
+  if(row.Node.Count>0) then
+  begin
+    childsNode:=TlkJSONobject.Create;
+    for i:=0 to row.Node.Count-1 do
+    begin
+      SaveOneInspectorRow(childsNode,(row.Node.Items[i] as tdxinspectorrownode).Row,i);
+    end;
+    result.Add('childs',childsNode);
+  end;
+  parentObject.Add('row'+inttostr(rowNumber),result);
+end;
+
+function GetRowClassTypeByClassName(ClassName:String):TdxInspectorRowClass;
+begin
+  if(ClassName='TdxInspectorTextRow') then
+    result:=TdxInspectorTextRow
+  else if(ClassName='TdxInspectorTextCheckRow') then
+    result:=TdxInspectorTextCheckRow
+  else if(ClassName='TdxInspectorTextPopupRow') then
+    result:=TdxInspectorTextPopupRow
+  else if(ClassName='TdxInspectorTextButtonRow') then
+    result:=TdxInspectorTextButtonRow
+  else if(ClassName='TdxInspectorTextPickRow') then
+    result:=TdxInspectorTextPickRow;
+end;
+
+procedure InitSystemConfig();
+begin
+  
+end;
+
+procedure LoadOneInspectorRow(aTdxInspedtor:TdxInspector;JsonObject:TlkJSONobject;parentRow:TDxinspectorRow;OnRowChange:TNotifyEvent);
+var
+  childRow,row:TDxinspectorRow;
+  childsJsonObject,pickItems:TlkJSONobject;
+  i:integer;
+  rowClass:String;
+begin
+  rowClass:=JsonObject.Field['classname'].Value;
+  if(parentRow=nil) then
+  begin
+     row:=aTdxInspedtor.AddEx(GetRowClassTypeByClassName(rowClass)).Row;
+  end else
+  begin
+    parentRow.Node.Expand(true);
+    row:=parentRow.Node.AddChildEx(GetRowClassTypeByClassName(rowClass)).Row;
+  end;
+  row.OnChange:=OnRowChange;
+  row.Caption:=JsonObject.Field['name'] .Value;
+  row.EditText:=JsonObject.Field['value'].Value;
+  childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
+  if(rowClass='TdxInspectorTextPickRow') then
+  begin
+    pickItems:=JsonObject.Field['items'] as TlkJSONobject;
+    if(pickItems<>nil) then
+    begin
+      for i:=0 to pickItems.Count -1 do
+      begin
+        (row as TdxInspectorTextPickRow).Items.Add(pickItems.FieldByIndex[i].Value);
+      end;
+    end;
+  end;
+  if(childsJsonObject<>nil) then
+  begin
+
+    for i:=0 to childsJsonObject.Count -1 do
+    begin
+      LoadOneInspectorRow(aTdxInspedtor,childsJsonObject.FieldByIndex[i] as TlkJSONobject,row,OnRowChange);
+    end;
+  end;
+end;
+
+procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnRowChange:TNotifyEvent);
+var
+  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
+  i:integer;
+begin
+  JsonRoot:=TlkJSON.ParseText(JsonString) as TlkJSONobject;
+  aTdxInspedtor.ClearRows;
+  //JsonObject:=JsonRoot.FieldByIndex[0] as TlkJSONobject;
+  JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
+  for i:=0 to JsonRoot.Count-1 do
+  begin
+    LoadOneInspectorRow(aTdxInspedtor,JsonRoot.FieldByIndex[i] as TlkJSONobject,nil,OnRowChange);
+  end;
+end;
+
+
+
+
+
+function SaveInspectorToJson(aTdxInspedtor:TdxInspector):String;
+var
+  i:integer;
+  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
+begin
+  JsonObject := TlkJSONobject.Create;
+  JsonRoot := TlkJSONobject.Create;
+  for i:=0 to aTdxInspedtor.Count-1 do
+  begin
+    SaveOneInspectorRow(JsonObject,(aTdxInspedtor.Items[i] as tdxinspectorrownode).Row,i);
+  end;
+  JsonRoot.Add('rows',JsonObject);
+  result:=TlkJSON.GenerateText(JsonRoot);
+  JsonRoot.Free;
+end;
+
 
 function GetFileSize(const FileName: String): LongInt; 
 var

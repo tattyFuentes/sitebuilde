@@ -13,7 +13,8 @@ uses
   UTabpage in 'UTabpage.pas',
   UPlanObject in 'UPlanObject.pas',
   UPlanView in 'UPlanView.pas',
-  UPlanConnection in 'UPlanConnection.pas';
+  UPlanConnection in 'UPlanConnection.pas',
+  UPlanViewHelp in 'UPlanViewHelp.pas';
 
 {$R *.res}
 

@@ -29,7 +29,7 @@ var
 begin
   inherited;
   Stream.ReadBuffer(FActiType, SizeOf(FActiType));
-  s:=ReadStr(stream);
+  //s:=ReadStr(stream);
 end;
 
 procedure TWfActiG.Save(Stream: TStream);

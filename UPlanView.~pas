@@ -13,7 +13,7 @@ type
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;X, Y: Integer); override;
   public
-    function HasTyp(at:TPlanObjectType):Boolean;
+    function HasTyp(aType:TPlanObjectType):Boolean;
     function HasConnection(SObj,DObj:TdxFcObject):Boolean;
     procedure SelAllObj;
     procedure SelAllCon;
@@ -34,23 +34,34 @@ begin
   inherited;
   hTest := self.GetHitTestAt(X,Y);
   if (hTest = [dxflchrt.htNowhere]) and (Button = mbLeft) and (not (ssShift in Shift)) then
-    View.ClearSelection;
+    self.ClearSelection;
 end;
 
 procedure TPlanView.MouseMove(Shift: TShiftState; X, Y: Integer);
+var
+ i:integer;
 begin
   if(self.SelectedConnection<>nil) then
     exit;
-  inherited;
+  if self.SelectedObjectCount=0 then
+    exit;
+  for i:=0 to self.SelectedObjectCount-1 do
+  begin
+    if(self.SelectedObjects[i] as TPlanObject).ObjectType=ptArticle then
+    begin
+      inherited;
+      exit;
+    end;
+  end;
 end;
 
-function TPlanView.HasTyp(at:TPlanObjectType): Boolean;
+function TPlanView.HasTyp(aType:TPlanObjectType): Boolean;
 var
   i:Integer;
 begin
   Result:=False;
   for i:=0 to ObjectCount-1 do
-    if TPlanObject(Objects[i]).ObjectType=at then
+    if TPlanObject(Objects[i]).ObjectType=aType then
     begin
       //ClearSelection;
       //Objects[i].Selected:=True;

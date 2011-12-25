@@ -3923,7 +3923,7 @@ begin
     if Assigned(FDragHandler) then Exit;
     if (htOnObject in FHitTest) and FObjectAt.Selected and not (ssShift in Shift) then
     begin
-      FObjectAt.SelectUnion;
+      //FObjectAt.SelectUnion;
     end else
     begin
       if FHitTest * [htOnObject, htOnConnection, htOnConLabel, htOnArrowSrc, htOnArrowDst] <> [] then

@@ -8,9 +8,10 @@ uses
   StdCtrls, ImgList,UEngine, Menus, TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatGroupBoxUnit, TFlatEditUnit, TFlatButtonUnit,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
-  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML,UPlanView;
+  TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML,UPlanView,
+  dxExEdtr, dxInspRw, dxInspct, dxCntner,uLkJSON,uPlanObject,dxflchrt;
 type
-  
+
   TfrmCatchPlan = class(TForm)
     checkBoxTreePlanCategory: TCheckBoxTreeView;
     Panel1: TPanel;
@@ -31,6 +32,80 @@ type
     Panel5: TPanel;
     PanelView: TPanel;
     PanelProperty: TPanel;
+    InspectorBaseConfig: TdxInspector;
+    CatchPlanBaseName: TdxInspectorTextRow;
+    CatchPlanBaseNeedEncode: TdxInspectorTextCheckRow;
+    CatchPlanBaseIsArchive: TdxInspectorTextCheckRow;
+    CatchPlanBasePageEncode: TdxInspectorTextPickRow;
+    CatchPlanBaseCatchOrder: TdxInspectorTextPickRow;
+    InspectorBaseConfigRow7: TdxInspectorTextRow;
+    CatchPlanBaseCookies: TdxInspectorTextButtonRow;
+    InspectorListConifg: TdxInspector;
+    CatchPlanListName: TdxInspectorTextRow;
+    CatchPlanEnableAutoList: TdxInspectorTextCheckRow;
+    CatchPlanAutoListFirstPage: TdxInspectorTextPickRow;
+    CatchPlanAutoListEndPage: TdxInspectorTextPopupRow;
+    CatchPlanAutoListStep: TdxInspectorTextRow;
+    CatchPlanListUrl: TdxInspectorTextButtonRow;
+    CatchPlanAutoListUrl: TdxInspectorTextButtonRow;
+    CatchPlanAutoListBeginEnd: TdxInspectorTextButtonRow;
+    CatchPlanAutoListPageUrl: TdxInspectorTextButtonRow;
+    CatchPlanBaseIsCatchAll: TdxInspectorTextCheckRow;
+    CatchPlanBaseCatchNumber: TdxInspectorTextRow;
+    InspectorPageConifg: TdxInspector;
+    CatchPlanPageName: TdxInspectorTextRow;
+    CatchPlanPageAllowFileUrl: TdxInspectorTextButtonRow;
+    CatchPlanPageBlockFileUrl: TdxInspectorTextButtonRow;
+    CatchPlanPageUrl: TdxInspectorTextButtonRow;
+    CatchPlanPageEnableDownFile: TdxInspectorTextCheckRow;
+    CatchPlanPageHtmlName: TdxInspectorTextButtonRow;
+    CatchPlanPageFileExtension: TdxInspectorTextButtonRow;
+    InspectorPageItems: TdxInspector;
+    CatchPlanPageItems: TdxInspectorTextRow;
+    CatchPlanItemTitle: TdxInspectorTextButtonRow;
+    CatchPlanItemThumb: TdxInspectorTextButtonRow;
+    CatchPlanItemContent: TdxInspectorTextButtonRow;
+    CatchPlanItemTags: TdxInspectorTextButtonRow;
+    CatchPlanItemExcerpt: TdxInspectorTextButtonRow;
+    CatchPlanItemUrl: TdxInspectorTextPickRow;
+    CatchPlanItemAuthor: TdxInspectorTextButtonRow;
+    CatchPlanItemCategory: TdxInspectorTextButtonRow;
+    InspectorDataLimit: TdxInspector;
+    CatchPlanLimitName: TdxInspectorTextRow;
+    CatchPlanLimitTitleMax: TdxInspectorTextButtonRow;
+    CatchPlanLimitTitleIncludeWords: TdxInspectorTextButtonRow;
+    CatchPlanLimitTitleNoIncludeWords: TdxInspectorTextButtonRow;
+    CatchPlanLimitContentIncludeWords: TdxInspectorTextButtonRow;
+    CatchPlanLimitContentNoIncludeWords: TdxInspectorTextPickRow;
+    CatchPlanLimitAuthorIncludeWords: TdxInspectorTextButtonRow;
+    CatchPlanLimitCategoryIncludeWords: TdxInspectorTextButtonRow;
+    CatchPlanLimitTitleMin: TdxInspectorTextRow;
+    CatchPlanLimitCategoryNoIncludeWords: TdxInspectorTextButtonRow;
+    InspectorDataArrange: TdxInspector;
+    CatchPlanArrangeName: TdxInspectorTextRow;
+    CatchPlanItemDownloadFile: TdxInspectorTextButtonRow;
+    CatchPlanArrangeContent: TdxInspectorTextButtonRow;
+    CatchPlanArrangeTitle: TdxInspectorTextButtonRow;
+    CatchPlanArrangeExcerpt: TdxInspectorTextButtonRow;
+    CatchPlanArrangeCategory: TdxInspectorTextButtonRow;
+    CatchPlanArrangeAuthor: TdxInspectorTextButtonRow;
+    InspectorSplitContent: TdxInspector;
+    CatchPlanSplitContentName: TdxInspectorTextRow;
+    CatchPlanSplitContentUrl: TdxInspectorTextButtonRow;
+    CatchPlanSplitContentValidPage: TdxInspectorTextButtonRow;
+    CatchPlanSplitContentScope: TdxInspectorTextButtonRow;
+    CatchPlanSplitContentStep: TdxInspectorTextRow;
+    CatchPlanSplitContentBeginPage: TdxInspectorTextRow;
+    CatchPlanSplitContentEndPage: TdxInspectorTextRow;
+    CatchPlanSplitContentIsUseLogic: TdxInspectorTextCheckRow;
+    CatchPlanSplitContentUrlRule: TdxInspectorTextButtonRow;
+    CatchPlanSplitContentNewUrl: TdxInspectorTextButtonRow;
+    CatchPlanSplitContentIsUseCatch: TdxInspectorTextCheckRow;
+    CatchPlanIsArrangeTitile: TdxInspectorTextCheckRow;
+    CatchPlanIsArrangeContent: TdxInspectorTextCheckRow;
+    CatchPlanIsArrangeExcerpt: TdxInspectorTextCheckRow;
+    Memo1: TMemo;
+    dxInspector1: TdxInspector;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -70,17 +145,44 @@ type
 
   public
     { Public declarations }
+    procedure OnInspectorRowChange(Sender: TObject);
+    procedure OnPlanViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
   end;
 
 var
   frmCatchPlan: TfrmCatchPlan;
 
 implementation
-uses UHelp;
+uses UHelp,UPlanViewHelp;
 {$R *.dfm}
 procedure TfrmCatchPlan.CreateCatchRule();
 begin
   
+end;
+
+procedure TfrmCatchPlan.OnInspectorRowChange(Sender: TObject);
+begin
+  if (planview.SelectedObject<>nil) then
+    showmessage((planview.SelectedObject as TPlanObject).Text);
+end;
+
+
+procedure TfrmCatchPlan.OnPlanViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
+var
+  hTest: TdxFcHitTest;
+begin
+  inherited;
+  hTest := (Sender as TPlanView).GetHitTestAt(X,Y);
+  if (hTest = [dxflchrt.htNowhere]) and (Button = mbLeft) and (not (ssShift in Shift)) then
+  begin
+    (Sender as TPlanView).ClearSelection;
+  end;
+  if((Sender as TPlanView).SelectedObject<>nil) then
+  begin
+    LoadJsonStringToInspector(dxInspector1,UTF8ENCODE(((Sender as TPlanView).SelectedObject as TPlanObject).ItemProperty),OnInspectorRowChange);
+    dxInspector1.Rows[0].EditText:= ((Sender as TPlanView).SelectedObject as TPlanObject).text;
+    dxInspector1.Rows[0].ReadOnly:=true;
+  end;
 end;
 
 procedure TfrmCatchPlan.onTreeNodeChanged(node:TTreeNode;nodeName:String);
@@ -241,11 +343,12 @@ begin
   initListBoxData();
 
   PlanView:=TPlanView.Create(Self);
-  PlanView.Parent:=PanelVew;
+  PlanView.Parent:=PanelView;
   PlanView.BorderStyle:=bsNone;
   PlanView.Align:=alClient;
+  
   //FView.Images:=ilWfObj;
-  PlanView.LoadFromFile('采集.pf');
+  //PlanView.LoadFromFile('采集.pf');
 
 
   //StringGridGroupContent.Options:=StringGridGroupContent.Options+[goEditing];
@@ -257,6 +360,8 @@ end;
 
 procedure TfrmCatchPlan.BtnApplyClick(Sender: TObject);
 begin
+  InitNewCatchPlan(PlanView,'新采集规则');
+  PlanView.OnMouseDown:=OnPlanViewMouseDown;
   //StringGridGroupContent.RowCount:=StringGridGroupContent.RowCount+10;
 end;
 
@@ -268,23 +373,60 @@ end;
 
 procedure TfrmCatchPlan.BtnSaveClick(Sender: TObject);
 var
-  i:integer;
-  controlArray:TWinControlArray;
-  a:THashedStringList;
-  s:string;
+  js,js2,JsonRoot:TlkJSONobject;
+  ws: TlkJSONstring;
+  s: String;
+  i: Integer;
+  childRow,row:TDxinspectorRow;
+
 begin
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorBaseConfig)));
+  memo1.Lines.Append('---------------------------');
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorListConifg)));
+  memo1.Lines.Append('---------------------------');
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorPageConifg)));
+  memo1.Lines.Append('---------------------------');
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorDataLimit)));
+  memo1.Lines.Append('---------------------------');
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorPageItems)));
+  memo1.Lines.Append('---------------------------');
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorSplitContent)));
+  memo1.Lines.Append('---------------------------');
+  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorDataArrange)));
 
-  //showmessage(MemHtmlAttibute.Lines.Text);
-  //showmessage(StringReplace(MemHtmlAttibute.Lines.Text,char(13)+char(10),';',[rfReplaceAll]));
-  //showmessage(StringReplace(MemHtmlAttibute.Lines.Text,char(13),';',[rfReplaceAll]));
-  //a:= THashedStringList.Create;
 
-   //RadioAutoCode.Checked
-  //self.Controls
-  //GetChildControls(self,controlArray,'');
-  //s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
-  //MemHtmlAttibute.Lines.Clear;
-  //MemHtmlAttibute.Lines.Add(s);
+
+
+  //memo1.Lines.Append(UTF8Decode(SaveInspectorToJson(InspectorListConifg)));
+
+  //LoadJsonStringToInspector(dxInspector1,memo1.Lines.Text,OnInspectorRowChange);
+  exit;
+  //TlkJSONobject.
+  {row:=dxInspector1.AddEx(TDxInspectorTextRow).Row;
+  with row do
+  begin
+    Caption:='hello';
+    edittext:='world';
+  end;
+  childRow:=row.Node.AddChildEx(TdxInspectorTextPickRow).Row;
+  childRow.Caption:='child';
+  childRow.EditText:='fanfan';
+
+  showmessage(inttostr(InspectorListConifg.Count));
+  showmessage((CatchPlanEnableAutoList.Node.Items[1] as tdxinspectorrownode).Row.Caption);
+  //showmessage(CatchPlanEnableAutoList.Node.Items[0].name);  }
+  js := TlkJSONobject.Create;
+  js.Add('namestring','互访话');
+  js.Add('hello','world,,,,,'']');
+  //s := TlkJSON.GenerateText(js);
+  //i := 0;
+  js2:=TlkJSONobject.Create;
+  js2.Add('list',js);
+
+  memo1.Lines.Append(TlkJSON.GenerateText(js2));
+  js:=TlkJSON.ParseText(memo1.Lines.Text) as TlkJSONobject;
+  showmessage((js.FieldByIndex[0] as TlkJSONobject).FieldByIndex[0].value);
+  //2.Free;
 end;
 
 procedure TfrmCatchPlan.BtnCancelClick(Sender: TObject);
@@ -294,7 +436,16 @@ var
   i:integer;
   controlArray:TWinControlArray;
 begin
-  GetChildControls(self,controlArray,'');
+  planview.Clear;
+  planview.LoadFromFile('d:\bbb.xrf');
+  {for i:=0 to planview.SelectedObjectCount-1 do
+  begin
+    if(planview.SelectedObjects[i] as TPlanObject).ObjectType=ptArticle then
+    begin
+      showmessage('sdsfsd');
+    end;
+  end; }
+  //GetChildControls(self,controlArray,'');
   //LoadXmlInitControls('xml\catchplaninit.xml',self,arrayListBoxStoreData);
 
 end;
@@ -305,6 +456,7 @@ var
   parentNodeData:string;
   newNodeId:integer;
   nodeData:TTreeNodeData;
+  contentStream:TMemoryStream;
 begin
   checkBoxTreePlanCategory.Selected.Expanded:=true;
   nodeData.Data:='0';
@@ -312,11 +464,14 @@ begin
   node.ImageIndex:=1;
   node.SelectedIndex:=1;
   parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
-  nodeData.content:=readfile('xml\catchplaninit.xml');
-  newNodeId:=createPlan(strtoint(parentNodeData),'新采集方案',nodeData.content);
+  InitNewCatchPlan(PlanView,'新采集方案');
+  PlanView.OnMouseDown:=OnPlanViewMouseDown;
+  contentStream:=TMemoryStream.Create;
+  PlanView.SaveToStream(contentStream);
+  newNodeId:=createPlan(strtoint(parentNodeData),'新采集方案',contentStream);
+  contentStream.Free;
   onTreeNodeChanged(node,'新采集方案');
   nodeData.Data:=inttostr(newNodeId);
-  LoadXmlInitControls(nodeData.content,self,arrayListBoxStoreData);
   checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
   node.Focused:=true;
   node.Selected:=true;
@@ -325,11 +480,20 @@ end;
 
 procedure TfrmCatchPlan.checkBoxTreePlanCategoryChange(Sender: TObject;
   Node: TTreeNode);
+var
+  tmpFileName:String;
+  //memStr:TMemoryStream;
 begin
   if(not IsGroupNode(Node)) then
   begin
     isChangeing:=true;
-    LoadXmlInitControls(checkBoxTreePlanCategory.GetTreeViewNodeData(Node).content,self,arrayListBoxStoreData);
+    tmpFileName:=getPlanContentById(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data));
+
+    if(tmpFileName<>'') then
+    begin
+      planview.LoadFromFile(tmpFileName);
+      PlanView.OnMouseDown:=OnPlanViewMouseDown;
+    end;
     isChangeing:=false;
     onTreeNodeChanged(node,node.Text);
   end

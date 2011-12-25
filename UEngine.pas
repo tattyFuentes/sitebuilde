@@ -11,12 +11,28 @@ procedure updatePlanName(id:integer;name:string);
 procedure updatePlanContent(id:integer;content:string);
 procedure deleteCategory(id:integer);
 procedure deletePlan(id:integer);
-function createPlan(parentId:integer;name:string;content:string):integer;
+function createPlan(parentId:integer;aName:string;contentStream:TMemoryStream):integer;
 procedure SavePictureToDatabase;
 procedure LoadPictureToDatabase;
+function getSystemConfig(name:String):String;
+function getPlanContentById(id:integer):String;
+function getPlanContentById2(id:integer):TMemoryStream;
 
 implementation
 
+function getSystemConfig(name:String):String;
+var
+  sql:string;
+  params:TParams;
+  sqlSet:TSQLDataSet;
+begin
+  params:=TParams.Create();
+  addParam(params,'name',name,ftString,ptInput);
+  sql:='select value from systemconfig where name=:name';
+  sqlSet:=execQuery(sql,params);
+  if not sqlSet.Eof then
+    result:=sqlSet.FieldByName('value').Value;
+end;
 
 procedure deletePlan(id:integer);
 var
@@ -26,7 +42,7 @@ begin
   params:=TParams.Create();
   addParam(params,'id',id,ftInteger,ptInput);
   sql:='delete from plan where id=:id';
-  execUpdate(sql,params);
+    execUpdate(sql,params);
 end;
 
 
@@ -152,18 +168,79 @@ begin
   result:=execUpdate(sql,params);
 end;
 
+function getPlanContentById2(id:integer):TMemoryStream;
+var
+  SQLDataSet:TSQLDataSet;
+begin
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.MaxBlobSize:=10000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='select content from plan where id='+inttostr(id);
+    sqlDataset.open();
+    if(not eof) then
+    begin
+      result:=TMemoryStream.Create;
+      (FieldByName('content')  as TBlobField).SaveToStream(result);
+      //result:='d:\bbb.xrf';
+      //close();
+      //(FieldByName('content')  as TBlobField).savetostream(result);
+    end;
+  end;
+end;
 
-function createPlan(parentId:integer;name:string;content:string):integer;
+function getPlanContentById(id:integer):String;
+var
+  SQLDataSet:TSQLDataSet;
+begin
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.MaxBlobSize:=10000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='select content from plan where id='+inttostr(id);
+    //Params[0].Value:=id;
+    //sqlDataset.Prepared:=true;
+    sqlDataset.open();
+    if(not eof) then
+    begin
+      //FieldByName('name').text;
+      //result:=TMemoryStream.Create;
+      (FieldByName('content')  as TBlobField).SaveToFile('d:\bbb.xrf');
+      result:='d:\bbb.xrf';
+      close();
+      //(FieldByName('content')  as TBlobField).savetostream(result);
+    end;
+  end;
+end;
+
+function createPlan(parentId:integer;aName:string;contentStream:TMemoryStream):integer;
 var
   sql:string;
+  SQLDataSet:TSQLDataSet;
   params:TParams;
 begin
-  params:=TParams.Create();
-  addParam(params,'name',name,ftString,ptInput);
-  addParam(params,'parentid',parentId,ftString,ptInput);
-  addParam(params,'content',content,ftString,ptInput);
-  sql:='insert into plan values(null,:name,'''',:parentid,:content,now())';
-  result:=execUpdate(sql,params);
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.MaxBlobSize:=10240000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='insert into plan values(null,:name,'''',:parentid,:content,now())';
+    SQLDataSet.Params[0].Value:=aName;
+    SQLDataSet.Params[1].Value:=parentId;
+    contentStream.Position:=0;
+    SQLDataSet.Params[2].LoadFromStream(contentStream,ftBlob);
+    sqlDataset.Prepared:=true; 
+    sqlDataset.ExecSQL(false);
+    close();
+  end;
+  SQLDataSet:=execQuery('select @@identity',nil);
+  result:=strtoint(SQLDataSet.Fields[0].Text);
+  SQLDataSet.Close;
 end;
 
 procedure updateCateGory(id:integer;name:string;desc:string);

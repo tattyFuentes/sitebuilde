@@ -5,7 +5,7 @@ interface
 uses
   Classes,dxflchrt;
 type
-  TPlanObjectType = (ptCatchPlan,ptList,ptArticle,ptLimit,ptFix,ptArticlePage,ptDownload,ptCatchItems);
+  TPlanObjectType = (ptCatchPlan,ptList,ptArticle,ptLimit,ptArrange,ptArticlePage,ptCatchItems);
   TPlanObject = class(TdxFcObject)
   private
     FStop:Boolean;
@@ -27,7 +27,7 @@ procedure TPlanObject.Load(Stream: TStream);
 begin
   inherited;
   Stream.ReadBuffer(FType, SizeOf(FType));
-  ReadStr(Stream);
+  ItemProperty:=ReadStr(Stream);
 end;
 
 procedure TPlanObject.Save(Stream: TStream);

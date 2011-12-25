@@ -60,6 +60,8 @@ type
     OldPoint,DownPoint: TPoint;
     FSelect: Boolean;
     FStore,FNewObject,FPE: Boolean;
+    procedure addConnection(aView: TWfView;sObj:TdxFcObject;dObj:TdxFcObject;sPoint:integer;dPoint:integer);
+    function addOneViewObject(aView: TWfView;text:String;x:integer;y:integer;width:integer;height:integer;shape:integer):TdxFcObject;
     procedure ViewChange(Sender: TdxCustomFlowChart; Item: TdxFcItem);
     procedure ViewDblClick(Sender: TObject);
     procedure ViewMouseDown(Sender: TObject; Button: TMouseButton; Shift:
@@ -455,24 +457,90 @@ begin
   end; }
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
-var
-  newObj,newObj2:TdxFcObject;
-  conn:TdxFcConnection;
+function TForm1.addOneViewObject(aView: TWfView;text:String;x:integer;y:integer;width:integer;height:integer;shape:integer):TdxFcObject;
 begin
-  (InspectorBaseConfig.Rows[0] as TdxInspectorTextRow).EditText:='hello world';
-  (InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).EditText:=(InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).ValueChecked;
-  {newObj:=View.CreateObject(200 , 200, 100, 100, TdxFcShapeType(3));
-  newObj.Text:='采集规则列表分析';
 
-  newObj2:=View.CreateObject(600 , 600, 100, 100, TdxFcShapeType(3));
-  newObj2.Text:='采集规则列表分析2';
-  conn:=View.CreateConnection(newObj, newObj2 , 4, 0);
-  conn.Style := TdxFclStyle(0);
+   result:=View.CreateObject(x,y,width,height,TdxFcShapeType(shape));
+   result.Text:=text;
+   result.HorzTextPos:=fchpCenter;
+   result.VertTextPos:=fcvpCenter;
+   result.BkColor:=TColor($808000);
+end;
+
+procedure TForm1.addConnection(aView: TWfView;sObj:TdxFcObject;dObj:TdxFcObject;sPoint:integer;dPoint:integer);
+var
+  conn:TdxFcConnection;
+  //spoint,dpoint:integer;
+begin
+  {if(sobj.Left=dobj.Left) then
+  begin
+    spoint:=sobj.GetLinkedPoint(sObj.Left+sObj.Width div 2, sObj.Top+sObj.Height);
+    dpoint:=dobj.GetLinkedPoint(dObj.Left+dObj.Width div 2, dObj.Top);
+  end else
+  begin
+    spoint:=sobj.GetLinkedPoint(sObj.Left+sObj.Width, sObj.Top+sObj.Height  div 2);
+    dpoint:=dobj.GetLinkedPoint(dObj.Left, dObj.Top+sObj.Height div 2);
+  end;  }
+  conn:=View.CreateConnection(sObj, dObj ,spoint , dpoint);
+  conn.Style := TdxFclStyle(3);
   conn.ArrowDest.ArrowType:=TdxFcaType(1);
   conn.ArrowSource.ArrowType:=TdxFcaType(1);
-  conn.ArrowDest.Width := 15;
-  conn.ArrowDest.Height :=15;    }
+  conn.ArrowDest.Width := 10;
+  conn.ArrowDest.Height :=10;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  catchObj,listobj,articleObj,limitObj,arrangeObj,articleSplitObj,catchItemsObj:TdxFcObject;
+  conn:TdxFcConnection;
+  spoint,dpoint:integer;
+  basex,basey,splitwidth,splitheight,objectWidth,objectHeight:integer;
+begin
+  view.Clear;
+  basex:=10;
+  basey:=20;
+  splitwidth:=40;
+  splitheight:=150;
+  objectWidth:=150;
+  objectHeight:=40;
+
+  //(InspectorBaseConfig.Rows[0] as TdxInspectorTextRow).EditText:='hello world';
+  //(InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).EditText:=(InspectorBaseConfig.Rows[2] as TdxInspectorTextCheckRow).ValueChecked;
+  catchObj:=addOneViewObject(View,'雅虎知道采集',basex , basey, objectWidth, objectHeight, 9);
+  listobj:=addOneViewObject(View,'列表分析',catchObj.Left , catchObj.Top+catchObj.Height+splitheight, objectWidth, objectHeight, 9);
+  addConnection(view,catchObj,listobj,10,2);
+
+  articleObj:=addOneViewObject(View,'文章分析',catchObj.Left+catchObj.Width+splitwidth , basey+70, objectWidth, objectHeight, 9);
+  addConnection(view,listobj,articleObj,6,14);
+  limitObj:=addOneViewObject(View,'限制条件',articleObj.Left+articleObj.Width+30,articleObj.Top-65, objectWidth, objectHeight, 1);
+  addConnection(view,limitObj,articleObj,14,6);
+
+  arrangeObj:=addOneViewObject(View,'整理条件',limitObj.Left,limitObj.Top+limitObj.Height+10, objectWidth, objectHeight, 1);
+  addConnection(view,arrangeObj,articleObj,14,6);
+  articleSplitObj:=addOneViewObject(View,'正文分页',arrangeObj.Left,arrangeObj.Top+limitObj.Height+10, objectWidth, objectHeight, 1);
+  addConnection(view,articleSplitObj,articleObj,14,6);
+  catchItemsObj:=addOneViewObject(View,'采集项目',articleSplitObj.Left,articleSplitObj.Top+articleSplitObj.Height+10, objectWidth, objectHeight, 1);
+  addConnection(view,catchItemsObj,articleObj,14,6);
+  articleObj.AddToUnion(limitObj);
+  articleObj.AddToUnion(arrangeObj);
+  articleObj.AddToUnion(articleSplitObj);
+  articleObj.AddToUnion(catchItemsObj);
+
+  articleObj:=addOneViewObject(View,'下载页分析',articleObj.Left ,articleObj.Top+articleObj.Height+170, objectWidth, objectHeight, 9);
+  addConnection(view,listobj,articleObj,6,14);
+  limitObj:=addOneViewObject(View,'限制条件',articleObj.Left+articleObj.Width+30,articleObj.Top-65, objectWidth, objectHeight, 1);
+  addConnection(view,limitObj,articleObj,14,6);
+
+  arrangeObj:=addOneViewObject(View,'整理条件',limitObj.Left,limitObj.Top+limitObj.Height+10, objectWidth, objectHeight, 1);
+  addConnection(view,arrangeObj,articleObj,14,6);
+  articleSplitObj:=addOneViewObject(View,'正文分页',arrangeObj.Left,arrangeObj.Top+limitObj.Height+10, objectWidth, objectHeight, 1);
+  addConnection(view,articleSplitObj,articleObj,14,6);
+  catchItemsObj:=addOneViewObject(View,'采集项目',articleSplitObj.Left,articleSplitObj.Top+articleSplitObj.Height+10, objectWidth, objectHeight, 1);
+  addConnection(view,catchItemsObj,articleObj,14,6);
+  articleObj.AddToUnion(limitObj);
+  articleObj.AddToUnion(arrangeObj);
+  articleObj.AddToUnion(articleSplitObj);
+  articleObj.AddToUnion(catchItemsObj);
 end;
 
 procedure TForm1.dxInspectorCatchNumberPopup(Sender: TObject;

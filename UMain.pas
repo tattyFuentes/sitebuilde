@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
-  StdCtrls, ImgList,UEngine, PerlRegEx;
+  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp;
 
 type
   TfrmMain = class(TForm)
@@ -61,7 +61,7 @@ type
     procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
-    
+     procedure InitSystemConfig();
   public
     { Public declarations }
   end;
@@ -128,6 +128,19 @@ begin
   checkBoxTreePlanCategory.Items.Clear;
   buildTree(checkBoxTreePlanCategory,'category','plan',1,nil);
   checkBoxTreePlanCategory.Items[0].Expanded:=true;
+  InitSystemConfig();
+end;
+
+
+procedure TfrmMain.InitSystemConfig();
+begin
+  CATCHPLANPROPERTY:=getSystemConfig('CATCHPLANPROPERTY');
+  LISTPROPERTY:=getSystemConfig('LISTPROPERTY');
+  ARTICLEPROPERTY:=getSystemConfig('ARTICLEPROPERTY');
+  LIMITPROPERTY:=getSystemConfig('LIMITPROPERTY');
+  ARRANGEROPERTY:=getSystemConfig('ARRANGEROPERTY');
+  ARTICLESPLITPROPERTY:=getSystemConfig('ARTICLESPLITPROPERTY');
+  CATCHITEMSPROPERTY:=getSystemConfig('CATCHITEMSPROPERTY');
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
