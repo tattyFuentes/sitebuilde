@@ -54,6 +54,7 @@ type
       var Text: String; var Accept: Boolean);
     procedure dxInspectorCatchNumberInitPopup(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Panel6Click(Sender: TObject);
   private
     { Private declarations }
     FView: TWfView;
@@ -618,6 +619,12 @@ begin
     else if InspectorBaseConfig.Rows[i] is TdxInspectorTextButtonRow then
       memo1.Lines.Add((InspectorBaseConfig.Rows[i] as TdxInspectorTextButtonRow).EditText)
   end;    }
+end;
+
+procedure TForm1.Panel6Click(Sender: TObject);
+begin
+  View.SelectAll();
+  View.SetFocus;
 end;
 
 end.

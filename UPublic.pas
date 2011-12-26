@@ -6,7 +6,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,CommCtrl,TFlatCheckBoxUnit,
-  TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,
+  TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,activex,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles;
 type
   TWinControlArray=Array of TControl;
@@ -25,14 +25,38 @@ function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:St
 procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
 function SaveInspectorToJson(aTdxInspedtor:TdxInspector):String;
 procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnRowChange:TNotifyEvent);
+Function GetGUID:string;
+procedure MakeDir(newFolder:String);
 
 const
   TVS_CHECKBOXES22 = $00000100;
 
-
 implementation
 
 uses uXML,uLKJSON;
+
+
+procedure MakeDir(newFolder:String);
+begin
+  if not DirectoryExists(newFolder) then
+    CreateDir(newFolder)
+end;
+
+Function GetGUID:string;
+var
+  sGUID  : string;
+  TmpGUID: TGUID;
+begin
+  Result := '';
+  if CoCreateGUID(TmpGUID) = S_OK then
+    sGUID := GUIDToString(TmpGUID)
+  else
+    Exit;
+  sGUID := Copy(sGUID,1,length(sGUID)-2);
+  Result := sGUID;
+end;
+
+
 
 //function SaveOneRow()
 function GetOneInspectorRowValue(row:TdxInspectorRow):String;

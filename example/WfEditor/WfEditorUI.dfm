@@ -1,6 +1,6 @@
 object fWfEditorUI: TfWfEditorUI
-  Left = 281
-  Top = 137
+  Left = 712
+  Top = 316
   AutoScroll = False
   Caption = #36807#31243#32534#36753
   ClientHeight = 496

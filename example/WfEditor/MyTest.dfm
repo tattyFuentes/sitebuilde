@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 180
-  Top = 132
+  Left = 211
+  Top = 109
   Width = 1110
   Height = 697
   Caption = #37319#38598#35268#21017#32534#36753
@@ -303,6 +303,7 @@ object Form1: TForm1
     Height = 121
     Caption = 'Panel6'
     TabOrder = 10
+    OnClick = Panel6Click
   end
   object Memo1: TMemo
     Left = 648

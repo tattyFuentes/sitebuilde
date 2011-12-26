@@ -303,6 +303,7 @@ object Form1: TForm1
     Height = 121
     Caption = 'Panel6'
     TabOrder = 10
+    OnClick = Panel6Click
   end
   object Memo1: TMemo
     Left = 648

@@ -1,4 +1,4 @@
-object fWfEditorUI1: TfWfEditorUI1
+object fWfEditorUI: TfWfEditorUI
   Left = 281
   Top = 137
   AutoScroll = False

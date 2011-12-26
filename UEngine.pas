@@ -3,12 +3,12 @@ unit UEngine;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ComCtrls,CommCtrl,UDatabase,CheckBoxTreeView,SqlExpr,DB,DBXpress;
+  Dialogs, Menus, ComCtrls,CommCtrl,UDatabase,CheckBoxTreeView,SqlExpr,DB,DBXpress,uPublic;
 
 function createCateGory(parentId:integer;name:string;desc:string):integer;
 procedure updateCateGory(id:integer;name:string;desc:string);
 procedure updatePlanName(id:integer;name:string);
-procedure updatePlanContent(id:integer;content:string);
+procedure updatePlanContent(id:integer;contentStream:TMemoryStream);
 procedure deleteCategory(id:integer);
 procedure deletePlan(id:integer);
 function createPlan(parentId:integer;aName:string;contentStream:TMemoryStream):integer;
@@ -194,7 +194,11 @@ end;
 function getPlanContentById(id:integer):String;
 var
   SQLDataSet:TSQLDataSet;
-begin
+  tmpFileName:String;
+begin  
+  tmpFileName:=GetGUID()+'.xrf';
+  MakeDir('tmp');
+  tmpFileName:='tmp\'+tmpFileName;
   SQLDataSet:=TSQLDataSet.Create(nil);
   SQLDataSet.MaxBlobSize:=10000;
   SQLDataSet.SQLConnection:=DBConnection;
@@ -202,17 +206,12 @@ begin
   with sqlDataset do
   begin
     CommandText:='select content from plan where id='+inttostr(id);
-    //Params[0].Value:=id;
-    //sqlDataset.Prepared:=true;
     sqlDataset.open();
     if(not eof) then
     begin
-      //FieldByName('name').text;
-      //result:=TMemoryStream.Create;
-      (FieldByName('content')  as TBlobField).SaveToFile('d:\bbb.xrf');
-      result:='d:\bbb.xrf';
+      (FieldByName('content')  as TBlobField).SaveToFile(tmpFileName);
+      result:=tmpFileName;
       close();
-      //(FieldByName('content')  as TBlobField).savetostream(result);
     end;
   end;
 end;
@@ -256,7 +255,7 @@ begin
   execUpdate(sql,params);
 end;
 
-procedure updatePlanName(id:integer;name:string);
+procedure updatePlanName(id:integer;name:String);
 var
   sql:string;
   params:TParams;
@@ -268,17 +267,25 @@ begin
   execUpdate(sql,params);
 end;
 
-procedure updatePlanContent(id:integer;content:string);
+procedure updatePlanContent(id:integer;contentStream:TMemoryStream);
 var
   sql:string;
+  SQLDataSet:TSQLDataSet;
   params:TParams;
 begin
-  params:=TParams.Create();
-  addParam(params,'content',content,ftString,ptInput);
-  addParam(params,'id',id,ftInteger,ptInput);
-  sql:='update plan set content=:content where id=:id';
-  execUpdate(sql,params);
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.MaxBlobSize:=10240000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='update plan set content=:content where id=:id';
+    contentStream.Position:=0;
+    SQLDataSet.Params[0].LoadFromStream(contentStream,ftBlob);
+    SQLDataSet.Params[1].Value:=id;
+    sqlDataset.Prepared:=true;
+    sqlDataset.ExecSQL(false);
+    close();
+  end;
 end;
-
-
 end.

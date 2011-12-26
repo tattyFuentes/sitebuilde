@@ -142,7 +142,7 @@ type
 
     procedure ShowHelp(title:string;content:String);
     procedure ControlEvent(Sender: TObject);
-
+    procedure renamePlanName(newName:string);
   public
     { Public declarations }
     procedure OnInspectorRowChange(Sender: TObject);
@@ -199,11 +199,13 @@ begin
     else begin
       PanelView.Enabled:=true;
       panelProperty.Enabled:=true;
+      renamePlanName(nodeName);
     end;
+
   end else
   begin
     PanelView.Enabled:=false;
-    panelProperty.Enabled:=false;  
+    panelProperty.Enabled:=false;
   end;
 end;
 
@@ -282,8 +284,28 @@ begin
     end;
     node.Selected:=true;
   end;
-
 end;
+
+procedure TfrmCatchPlan.renamePlanName(newName:string);
+var
+  i:integer;
+  catchPlanObject:TPlanObject;
+begin
+  catchPlanObject:=planview.GetObjectByType(ptCatchPlan);
+  
+  if(catchPlanObject<>nil) then
+  begin
+    catchPlanObject.Text:=newName;
+    planview.ClearSelection;
+    //catchPlanObject.Selected:=true;
+    if planview.SelectedObject=catchPlanObject then
+    begin
+      if(dxInspector1.Count>0) then
+        (dxInspector1.Rows[0] as TDxInspectorTextRow).EditText:=newName;
+    end;
+  end;
+end;
+
 
 procedure TfrmCatchPlan.checkBoxTreePlanCategoryEdited(Sender: TObject;
   Node: TTreeNode; var S: String);
@@ -298,6 +320,7 @@ begin
     nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
     parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node.Parent).Data;
     updatePlanName(strtoint(nodeId),s);
+    //updatePlanContent(strtoint(nodeData.data),s);
     onTreeNodeChanged(Node,s);
   end else
   begin
@@ -487,10 +510,10 @@ begin
   begin
     isChangeing:=true;
     tmpFileName:=getPlanContentById(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data));
-
     if(tmpFileName<>'') then
     begin
       planview.LoadFromFile(tmpFileName);
+      deletefile(tmpFileName);
       PlanView.OnMouseDown:=OnPlanViewMouseDown;
     end;
     isChangeing:=false;
@@ -515,7 +538,9 @@ begin
   s:=SaveControlsToXml('',controlArray,arrayListBoxStoreData);
   nodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode);
   nodeData.content:=s;
-  updatePlanContent(strtoint(nodeData.data),s);
+
+  //updatePlanContent(strtoint(nodeData.data),s);
+
   checkBoxTreePlanCategory.ModifyTreeNodeData(currentPlanNode,nodeData);
 end;
 

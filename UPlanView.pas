@@ -17,6 +17,7 @@ type
     function HasConnection(SObj,DObj:TdxFcObject):Boolean;
     procedure SelAllObj;
     procedure SelAllCon;
+    function GetObjectByType(aType:TPlanObjectType):TPlanObject;
   published
     property Canvas;
     property ChartWidth;
@@ -26,6 +27,22 @@ type
 implementation
 
 { TWfView }
+
+function TPlanView.GetObjectByType(aType:TPlanObjectType):TPlanObject;
+var
+  i:integer;
+begin
+  result:=nil;
+  for i:=0 to self.ObjectCount-1 do
+  begin
+    if (self.Objects[i] as TPlanObject).ObjectType=aType then
+    begin
+      result:=self.Objects[i] as TPlanObject;
+      exit;
+    end;
+  end;
+end;
+
 
 procedure TPlanView.MouseDown(Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
 var
