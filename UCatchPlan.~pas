@@ -126,6 +126,11 @@ type
       Node: TTreeNode);
     procedure pop_deleteplanClick(Sender: TObject);
     procedure ChkListBoxDataItemClick(Sender: TObject);
+    procedure CatchPlanEnableAutoListChange(Sender: TObject);
+    procedure CatchPlanEnableAutoListToggleClick(Sender: TObject;
+      const Text: String; State: TdxCheckBoxState);
+    procedure dxInspector1Edited(Sender: TObject; Node: TdxInspectorNode;
+      Row: TdxInspectorRow);
 
 
 
@@ -146,7 +151,7 @@ type
     procedure renamePlanName(newName:string);
   public
     { Public declarations }
-    procedure OnInspectorRowChange(Sender: TObject);
+    procedure OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
     procedure OnPlanViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
   end;
 
@@ -161,13 +166,13 @@ begin
   
 end;
 
-procedure TfrmCatchPlan.OnInspectorRowChange(Sender: TObject);
+
+procedure TfrmCatchPlan.OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
 begin
-  if (planview.SelectedObject<>nil) then
-  begin
-    (planview.SelectedObject as TPlanObject).ItemProperty:=UTF8Decode(SaveInspectorToJson(dxInspector1));
-  end;
+  (sender as TdxInspectorTextCheckRow).EditText:=text;
+  //OnInspectorRowChange(sender);
 end;
+
 
 
 procedure TfrmCatchPlan.OnPlanViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
@@ -289,7 +294,7 @@ end;
 
 procedure TfrmCatchPlan.InitObjectPropertyAndEvent(aPlanObject:TPlanObject);
 begin
-  LoadJsonStringToInspector(dxInspector1,UTF8ENCODE(aPlanObject.ItemProperty),OnInspectorRowChange);
+  LoadJsonStringToInspector(dxInspector1,UTF8ENCODE(aPlanObject.ItemProperty),OnInspectorButtonClick);
   dxInspector1.Rows[0].EditText:= aPlanObject.text;
   dxInspector1.Rows[0].ReadOnly:=true;
 end;
@@ -415,7 +420,7 @@ begin
     showmessage('成功保存方案!')
   end;
 
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorBaseConfig)));
+  {memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorBaseConfig)));
   memo1.Lines.Append('---------------------------');
   memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorListConifg)));
   memo1.Lines.Append('---------------------------');
@@ -450,18 +455,7 @@ begin
   showmessage(inttostr(InspectorListConifg.Count));
   showmessage((CatchPlanEnableAutoList.Node.Items[1] as tdxinspectorrownode).Row.Caption);
   //showmessage(CatchPlanEnableAutoList.Node.Items[0].name);  }
-  js := TlkJSONobject.Create;
-  js.Add('namestring','互访话');
-  js.Add('hello','world,,,,,'']');
-  //s := TlkJSON.GenerateText(js);
-  //i := 0;
-  js2:=TlkJSONobject.Create;
-  js2.Add('list',js);
-
-  memo1.Lines.Append(TlkJSON.GenerateText(js2));
-  js:=TlkJSON.ParseText(memo1.Lines.Text) as TlkJSONobject;
-  showmessage((js.FieldByIndex[0] as TlkJSONobject).FieldByIndex[0].value);
-  //2.Free;
+  
 end;
 
 procedure TfrmCatchPlan.BtnCancelClick(Sender: TObject);
@@ -471,8 +465,10 @@ var
   i:integer;
   controlArray:TWinControlArray;
 begin
-  planview.Clear;
-  planview.LoadFromFile('d:\bbb.xrf');
+
+  
+  //planview.Clear;
+  //planview.LoadFromFile('d:\bbb.xrf');
   {for i:=0 to planview.SelectedObjectCount-1 do
   begin
     if(planview.SelectedObjects[i] as TPlanObject).ObjectType=ptArticle then
@@ -590,5 +586,27 @@ end;
 
 
 
+
+procedure TfrmCatchPlan.CatchPlanEnableAutoListChange(Sender: TObject);
+begin
+  //showmessage(CatchPlanEnableAutoList.DisplayText);
+end;
+
+procedure TfrmCatchPlan.CatchPlanEnableAutoListToggleClick(Sender: TObject;
+  const Text: String; State: TdxCheckBoxState);
+begin
+  //showmessage(text);
+end;
+
+procedure TfrmCatchPlan.dxInspector1Edited(Sender: TObject;
+  Node: TdxInspectorNode; Row: TdxInspectorRow);
+begin
+  if (planview.SelectedObject<>nil) then
+  begin
+    (planview.SelectedObject as TPlanObject).ItemProperty:=UTF8Decode(SaveInspectorToJson(dxInspector1));
+    memo1.Lines.Clear;
+    memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
+  end;
+end;
 
 end.

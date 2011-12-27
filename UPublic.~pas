@@ -6,11 +6,11 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,CommCtrl,TFlatCheckBoxUnit,
-  TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,activex,
+  TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,activex,dxExEdtr,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles;
 type
   TWinControlArray=Array of TControl;
-  
+  TInspectorButtonClick =procedure(Sender: TObject;AbsoluteIndex: Integer)of object;
   
 function FindControlByName(controls:TWinControlArray;name:String):TControl;
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
@@ -24,8 +24,9 @@ procedure InitControlEvent(ParentControl:TWinControl;ControlEvent:TNotifyEvent);
 function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String):String;
 procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
 function SaveInspectorToJson(aTdxInspedtor:TdxInspector):String;
-procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnRowChange:TNotifyEvent);
+procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnInspectorButtonClick:TInspectorButtonClick);
 Function GetGUID:string;
+procedure MakeDir(newFolder:String);
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -64,9 +65,9 @@ begin
     result:=(row as TdxInspectorTextRow).EditText
   else if (row is TdxInspectorTextCheckRow) then
   begin
-    if(row as TdxInspectorTextCheckRow).EditText='' then
-     (row as TdxInspectorTextCheckRow).EditText:=(row as TdxInspectorTextCheckRow).ValueUnchecked;
-    result:=(row as TdxInspectorTextCheckRow).EditText;
+    //if(row as TdxInspectorTextCheckRow).EditText='' then
+    // (row as TdxInspectorTextCheckRow).EditText:=(row as TdxInspectorTextCheckRow).ValueUnchecked;
+    result:=(row as TdxInspectorTextCheckRow).Text;
   end
   else if row is TdxInspectorTextPickRow then
     result:=(row as TdxInspectorTextPickRow).EditText
@@ -130,7 +131,9 @@ begin
   
 end;
 
-procedure LoadOneInspectorRow(aTdxInspedtor:TdxInspector;JsonObject:TlkJSONobject;parentRow:TDxinspectorRow;OnRowChange:TNotifyEvent);
+
+
+procedure LoadOneInspectorRow(aTdxInspedtor:TdxInspector;JsonObject:TlkJSONobject;parentRow:TDxinspectorRow;OnInspectorButtonClick:TInspectorButtonClick);
 var
   childRow,row:TDxinspectorRow;
   childsJsonObject,pickItems:TlkJSONobject;
@@ -146,7 +149,9 @@ begin
     parentRow.Node.Expand(true);
     row:=parentRow.Node.AddChildEx(GetRowClassTypeByClassName(rowClass)).Row;
   end;
-  row.OnChange:=OnRowChange;
+  if(row is TdxInspectorTextButtonRow) then
+     (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
+
   row.Caption:=JsonObject.Field['name'] .Value;
   row.EditText:=JsonObject.Field['value'].Value;
   childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
@@ -166,12 +171,12 @@ begin
 
     for i:=0 to childsJsonObject.Count -1 do
     begin
-      LoadOneInspectorRow(aTdxInspedtor,childsJsonObject.FieldByIndex[i] as TlkJSONobject,row,OnRowChange);
+      LoadOneInspectorRow(aTdxInspedtor,childsJsonObject.FieldByIndex[i] as TlkJSONobject,row,OnInspectorButtonClick);
     end;
   end;
 end;
 
-procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnRowChange:TNotifyEvent);
+procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnInspectorButtonClick:TInspectorButtonClick);
 var
   JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
   i:integer;
@@ -182,7 +187,7 @@ begin
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
   for i:=0 to JsonRoot.Count-1 do
   begin
-    LoadOneInspectorRow(aTdxInspedtor,JsonRoot.FieldByIndex[i] as TlkJSONobject,nil,OnRowChange);
+    LoadOneInspectorRow(aTdxInspedtor,JsonRoot.FieldByIndex[i] as TlkJSONobject,nil,OnRowChange,OnInspectorButtonClick);
   end;
 end;
 
