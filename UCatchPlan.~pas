@@ -159,7 +159,7 @@ var
   frmCatchPlan: TfrmCatchPlan;
 
 implementation
-uses UHelp,UPlanViewHelp;
+uses UHelp,UPlanViewHelp,UInspectorTextEditor;
 {$R *.dfm}
 procedure TfrmCatchPlan.CreateCatchRule();
 begin
@@ -169,7 +169,16 @@ end;
 
 procedure TfrmCatchPlan.OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
 begin
-  (sender as TdxInspectorTextCheckRow).EditText:=text;
+  FrmInspectorTextEditor.buttonRow:=sender as TdxInspectorButtonRow;
+  FrmInspectorTextEditor.showmodal();
+  if (planview.SelectedObject<>nil) then
+  begin
+    (planview.SelectedObject as TPlanObject).ItemProperty:=UTF8Decode(SaveInspectorToJson(dxInspector1));
+    memo1.Lines.Clear;
+    memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
+  end;
+  //showmessage('button click');
+  //(sender as TdxInspectorTextCheckRow).EditText:=text;
   //OnInspectorRowChange(sender);
 end;
 

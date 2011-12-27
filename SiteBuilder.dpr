@@ -9,7 +9,7 @@ uses
   UEngine in 'UEngine.pas',
   UCatchPlan in 'UCatchPlan.pas' {frmCatchPlan},
   uXML in 'uXml.pas',
-  UHelp in 'UHelp.pas' {FrmHelp},
+  UInspectorTextEditor in 'UInspectorTextEditor.pas' {FrmInspectorTextEditor},
   UTabpage in 'UTabpage.pas',
   UPlanObject in 'UPlanObject.pas',
   UPlanView in 'UPlanView.pas',
@@ -22,6 +22,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmCatchPlan, frmCatchPlan);
-  Application.CreateForm(TFrmHelp, FrmHelp);
+  Application.CreateForm(TFrmInspectorTextEditor, FrmInspectorTextEditor);
   Application.Run;
 end.

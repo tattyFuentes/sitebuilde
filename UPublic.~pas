@@ -150,7 +150,9 @@ begin
     row:=parentRow.Node.AddChildEx(GetRowClassTypeByClassName(rowClass)).Row;
   end;
   if(row is TdxInspectorTextButtonRow) then
+  begin
      (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
+  end;
 
   row.Caption:=JsonObject.Field['name'] .Value;
   row.EditText:=JsonObject.Field['value'].Value;
@@ -187,7 +189,7 @@ begin
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
   for i:=0 to JsonRoot.Count-1 do
   begin
-    LoadOneInspectorRow(aTdxInspedtor,JsonRoot.FieldByIndex[i] as TlkJSONobject,nil,OnRowChange,OnInspectorButtonClick);
+    LoadOneInspectorRow(aTdxInspedtor,JsonRoot.FieldByIndex[i] as TlkJSONobject,nil,OnInspectorButtonClick);
   end;
 end;
 

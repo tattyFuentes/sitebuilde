@@ -150,7 +150,10 @@ begin
     row:=parentRow.Node.AddChildEx(GetRowClassTypeByClassName(rowClass)).Row;
   end;
   if(row is TdxInspectorTextButtonRow) then
-     (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
+  begin
+    (row as TdxInspectorTextButtonRow).ReadOnly:=true;
+    (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
+  end;
 
   row.Caption:=JsonObject.Field['name'] .Value;
   row.EditText:=JsonObject.Field['value'].Value;
