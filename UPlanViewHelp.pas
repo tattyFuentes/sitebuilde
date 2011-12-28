@@ -16,7 +16,7 @@ var
  CATCHPLANPROPERTY,LISTPROPERTY,ARTICLEPROPERTY,LIMITPROPERTY,ARRANGEROPERTY,ARTICLESPLITPROPERTY,CATCHITEMSPROPERTY:String;
 
 procedure InitNewCatchPlan(aView:TPlanView;aPlanName:String);
-procedure InitNewArticle(aView:TPlanView;listobj:TdxFcObject;y:integer);
+procedure InitNewArticle(aView:TPlanView;listobj:TdxFcObject;y:integer;aName:string);
 function AddOneViewObject(aView: TPlanView;text:String;x:integer;y:integer;width:integer;height:integer;shape:integer;aProperty:String):TPlanObject;
 procedure AddConnection(aView: TPlanView;sObj:TdxFcObject;dObj:TdxFcObject;sPoint:integer;dPoint:integer);
 implementation
@@ -43,11 +43,11 @@ begin
   conn.ArrowDest.Width := 10;
   conn.ArrowDest.Height :=10;
 end;
-procedure InitNewArticle(aView:TPlanView;listobj:TdxFcObject;y:integer);
+procedure InitNewArticle(aView:TPlanView;listobj:TdxFcObject;y:integer;aName:string);
 var
   articleObj,limitObj,arrangeObj,articleSplitObj,catchItemsObj:TPlanObject;
 begin
-  articleObj:=addOneViewObject(aView,'文章分析',listobj.Left+listobj.Width+50 , y+70, objectWidth, objectHeight, 9,ARTICLEPROPERTY);
+  articleObj:=addOneViewObject(aView,aName,listobj.Left+listobj.Width+50 , y+70, objectWidth, objectHeight, 9,ARTICLEPROPERTY);
   articleObj.ObjectType:=ptArticle;
   addConnection(aView,listobj,articleObj,6,14);
   limitObj:=addOneViewObject(aView,'限制条件',articleObj.Left+articleObj.Width+30,articleObj.Top-65, objectWidth, objectHeight, 1,LIMITPROPERTY);
@@ -82,8 +82,8 @@ begin
   listobj:=addOneViewObject(aView,'列表分析',catchObj.Left , catchObj.Top+catchObj.Height+splitheight, objectWidth, objectHeight, 9,LISTPROPERTY);
   listobj.ObjectType:=ptList;
   addConnection(aView,catchObj,listobj,10,2);
-  InitNewArticle(aView,listobj,baseY-10);
-  InitNewArticle(aView,listobj,baseY+180);
+  InitNewArticle(aView,listobj,baseY-10,'文章分析');
+  InitNewArticle(aView,listobj,baseY+180,'文章分析2');
 end;
 
 end.

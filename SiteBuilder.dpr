@@ -14,7 +14,8 @@ uses
   UPlanObject in 'UPlanObject.pas',
   UPlanView in 'UPlanView.pas',
   UPlanConnection in 'UPlanConnection.pas',
-  UPlanViewHelp in 'UPlanViewHelp.pas';
+  UPlanViewHelp in 'UPlanViewHelp.pas',
+  UHelp in 'UHelp.pas' {FrmHelp};
 
 {$R *.res}
 
@@ -23,5 +24,6 @@ begin
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmCatchPlan, frmCatchPlan);
   Application.CreateForm(TFrmInspectorTextEditor, FrmInspectorTextEditor);
+  Application.CreateForm(TFrmHelp, FrmHelp);
   Application.Run;
 end.

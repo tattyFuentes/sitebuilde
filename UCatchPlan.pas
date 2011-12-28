@@ -426,7 +426,8 @@ begin
     contentStream:=TMemoryStream.Create();
     planview.SaveToStream(contentStream);
     updatePlanContent(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode).Data),contentStream);
-    showmessage('成功保存方案!')
+    MessageBox(self.Handle,'成功保存方案!','提示信息',MB_OK+MB_ICONINFORMATION);
+    //showmessage('成功保存方案!')
   end;
 
   {memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorBaseConfig)));

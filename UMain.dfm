@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 68
-  Top = 216
+  Left = 364
+  Top = 247
   Width = 1278
   Height = 766
   Caption = 'SiteBuild '#31449#32676#21457#24067#31995#32479
