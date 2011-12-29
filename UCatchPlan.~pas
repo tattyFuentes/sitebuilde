@@ -9,7 +9,8 @@ uses
   TFlatRadioButtonUnit, TFlatGroupBoxUnit, TFlatEditUnit, TFlatButtonUnit,
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
   TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML,UPlanView,
-  dxExEdtr, dxInspRw, dxInspct, dxCntner,uLkJSON,uPlanObject,dxflchrt;
+  dxExEdtr, dxInspRw, dxInspct, dxCntner,uLkJSON,uPlanObject,dxflchrt,
+  OleCtrls, SHDocVw,MSHTML,Shellapi,richedit;
 type
 
   TfrmCatchPlan = class(TForm)
@@ -104,8 +105,8 @@ type
     CatchPlanIsArrangeTitile: TdxInspectorTextCheckRow;
     CatchPlanIsArrangeContent: TdxInspectorTextCheckRow;
     CatchPlanIsArrangeExcerpt: TdxInspectorTextCheckRow;
-    Memo1: TMemo;
     dxInspector1: TdxInspector;
+    RichEdit1: TRichEdit;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -174,8 +175,8 @@ begin
   if (planview.SelectedObject<>nil) then
   begin
     (planview.SelectedObject as TPlanObject).ItemProperty:=UTF8Decode(SaveInspectorToJson(dxInspector1));
-    memo1.Lines.Clear;
-    memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
+    //.Lines.Clear;
+    //memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
   end;
   //showmessage('button click');
   //(sender as TdxInspectorTextCheckRow).EditText:=text;
@@ -401,8 +402,9 @@ end;
 
 procedure TfrmCatchPlan.BtnApplyClick(Sender: TObject);
 begin
-  InitNewCatchPlan(PlanView,'新采集规则');
-  PlanView.OnMouseDown:=OnPlanViewMouseDown;
+  showmessage(richedit1.Text);
+  //InitNewCatchPlan(PlanView,'新采集规则');
+  //PlanView.OnMouseDown:=OnPlanViewMouseDown;
   //StringGridGroupContent.RowCount:=StringGridGroupContent.RowCount+10;
 end;
 
@@ -474,9 +476,15 @@ var
   nodelist:IXMLNodeList;
   i:integer;
   controlArray:TWinControlArray;
+  mask: Word;
 begin
 
-  
+  mask := SendMessage(RichEdit1.Handle, EM_GETEVENTMASK, 0, 0);
+ SendMessage(RichEdit1.Handle, EM_SETEVENTMASK, 0, mask or ENM_LINK);
+ SendMessage(RichEdit1.Handle, EM_AUTOURLDETECT, Integer(True), 0);  
+
+
+ //(webbrowser1.Document as IHTMLDocument2).
   //planview.Clear;
   //planview.LoadFromFile('d:\bbb.xrf');
   {for i:=0 to planview.SelectedObjectCount-1 do
@@ -614,8 +622,9 @@ begin
   if (planview.SelectedObject<>nil) then
   begin
     (planview.SelectedObject as TPlanObject).ItemProperty:=UTF8Decode(SaveInspectorToJson(dxInspector1));
-    memo1.Lines.Clear;
-    memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
+    
+    //memo1.Lines.Clear;
+    //memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
   end;
 end;
 

@@ -196,7 +196,7 @@ end;
 procedure TForm1.WebBrowser1NewWindow2(Sender: TObject;
   var ppDisp: IDispatch; var Cancel: WordBool);
 begin
-//cancel:=true;
+  cancel:=true;
 end;
 
 end.
