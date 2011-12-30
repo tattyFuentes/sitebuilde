@@ -1,0 +1,78 @@
+unit UGetCookies;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML,dxInspRw;
+
+type
+  TfrmGetCookies = class(TForm)
+    Panel1: TPanel;
+    WebBrowser1: TWebBrowser;
+    Panel2: TPanel;
+    Label1: TLabel;
+    edturl: TEdit;
+    Button1: TButton;
+    memcookies: TMemo;
+    btnsave: TButton;
+    Button2: TButton;
+    procedure Button2Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure WebBrowser1DocumentComplete(Sender: TObject;
+      const pDisp: IDispatch; var URL: OleVariant);
+    procedure FormShow(Sender: TObject);
+    procedure btnsaveClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    buttonRow:TdxInspectorButtonRow;
+  end;
+
+var
+  frmGetCookies: TfrmGetCookies;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmGetCookies.Button2Click(Sender: TObject);
+begin
+  close;
+end;
+
+procedure TfrmGetCookies.Button1Click(Sender: TObject);
+begin
+  WebBrowser1.Navigate(edturl.Text);
+end;
+
+procedure TfrmGetCookies.WebBrowser1DocumentComplete(Sender: TObject;
+  const pDisp: IDispatch; var URL: OleVariant);
+var
+  htmlDoc : IHTMLDocument2;
+begin
+  htmlDoc := WebBrowser1.Document as IHTMLDocument2;
+  memcookies.Lines.add(htmlDoc.cookie);
+end;
+
+procedure TfrmGetCookies.FormShow(Sender: TObject);
+begin
+  if(buttonRow<>nil) then
+  begin
+    //self.Caption:=buttonRow.Caption;
+    memCookies.Lines.Clear;
+    if(buttonRow.EditText<>'') then
+    begin
+      memCookies.Lines.Add(buttonRow.EditText);
+    end;
+  end;
+end;
+
+procedure TfrmGetCookies.btnsaveClick(Sender: TObject);
+begin
+  buttonRow.EditText:=memCookies.Lines.Text;
+  close;
+end;
+
+end.
