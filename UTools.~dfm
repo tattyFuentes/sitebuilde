@@ -1,6 +1,6 @@
 object FrmTools: TFrmTools
-  Left = 219
-  Top = 144
+  Left = 385
+  Top = 200
   Width = 1305
   Height = 814
   Caption = #36741#21161#24037#20855
@@ -78,12 +78,14 @@ object FrmTools: TFrmTools
     Height = 295
     Align = alClient
     TabOrder = 2
-    object Memo1: TMemo
-      Left = 8
-      Top = 37
-      Width = 857
+    object Memo2: TMemo
+      Left = 1032
+      Top = 5
+      Width = 145
       Height = 250
+      ScrollBars = ssBoth
       TabOrder = 0
+      WordWrap = False
     end
     object edtSearch: TEdit
       Left = 8
@@ -100,6 +102,32 @@ object FrmTools: TFrmTools
       Caption = #25628#32034
       TabOrder = 2
       OnClick = btnSearchClick
+    end
+    object Button2: TButton
+      Left = 280
+      Top = 8
+      Width = 145
+      Height = 25
+      Caption = 'Button2'
+      TabOrder = 3
+      OnClick = Button2Click
+    end
+    object RichEdit1: TRichEdit
+      Left = 8
+      Top = 48
+      Width = 905
+      Height = 241
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      Lines.Strings = (
+        'RichEdit1')
+      ParentFont = False
+      ScrollBars = ssBoth
+      TabOrder = 4
+      WordWrap = False
     end
   end
 end

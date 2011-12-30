@@ -17,17 +17,13 @@ uses
   UPlanViewHelp in 'UPlanViewHelp.pas',
   UHelp in 'UHelp.pas' {FrmHelp},
   UGetCookies in 'UGetCookies.pas' {FrmGetCookies},
-  UTools in 'UTools.pas' {FrmTools};
+  UTools in 'UTools.pas' {FrmTools},
+  UTest in 'UTest.pas' {Form1};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmCatchPlan, frmCatchPlan);
-  Application.CreateForm(TFrmInspectorTextEditor, FrmInspectorTextEditor);
-  Application.CreateForm(TFrmHelp, FrmHelp);
-  Application.CreateForm(TFrmGetCookies, FrmGetCookies);
-  Application.CreateForm(TFrmTools, FrmTools);
   Application.Run;
 end.

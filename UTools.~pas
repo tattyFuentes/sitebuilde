@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML;
+  Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML, ComCtrls;
 
 type
   TObjectProcedure = procedure of object;
@@ -29,9 +29,11 @@ type
     edturl: TEdit;
     Button1: TButton;
     Panel3: TPanel;
-    Memo1: TMemo;
+    Memo2: TMemo;
     edtSearch: TEdit;
     btnSearch: TButton;
+    Button2: TButton;
+    RichEdit1: TRichEdit;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
@@ -39,6 +41,7 @@ type
       const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
       Headers: OleVariant; var Cancel: WordBool);
     procedure btnSearchClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
@@ -48,7 +51,6 @@ type
   end;
 
 var
-  FrmTools: TFrmTools;
   htmlDoc : IHTMLDocument2;
   oldelement : IHTMLElement;
 implementation
@@ -142,9 +144,15 @@ var
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
-   memo1.Clear;
+   RichEdit1.Clear;
    if(element<>nil) then
-     memo1.Lines.Add(element.outerHTML);
+   begin
+     if(lowercase(element.tagName)<>'html') then
+       RichEdit1.Text:=element.outerHTML;
+       //RichEdit1.Lines.Add();
+   end;
+
+     //memo1.Lines.Add(element.outerHTML);
 end; (*Document_OnMouseOver*)
 
 
@@ -156,12 +164,19 @@ begin
      htmlDoc := WebBrowser1.Document as IHTMLDocument2;
      htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
      htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
-     htmlDoc.onmouseup:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
+     //htmlDoc.onmouseup:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
    end;
 end;
 
 procedure TFrmTools.Button1Click(Sender: TObject);
 begin
+  oldelement:=nil;
+  if(htmlDoc<>nil) then
+  begin
+    htmlDoc.onmouseover:='';
+    htmlDoc.onmousedown:='';
+    htmlDoc.onmouseover := '';
+  end;
   WebBrowser1.Navigate(edturl.Text);
 end;
 
@@ -175,33 +190,65 @@ end;
 
 procedure TFrmTools.btnSearchClick(Sender: TObject);
 var
+  FoundAt: LongInt;
+  StartPos, ToEnd: Integer;
+begin
+  with RichEdit1 do
+  begin
+    { begin the search after the current selection if there is one }
+    { otherwise, begin at the start of the text }
+    if SelLength <> 0 then
+      StartPos := SelStart + SelLength
+    else
+
+      StartPos := 0;
+
+    { ToEnd is the length from StartPos to the end of the text in the rich edit control }
+
+    ToEnd := Length(Text) - StartPos;
+
+    FoundAt := FindText(edtSearch.Text, StartPos, ToEnd, [stMatchCase]);
+    if FoundAt <> -1 then
+    begin
+      SetFocus;
+      SelStart := FoundAt;
+      SelLength := Length(edtSearch.Text);
+      Perform(EM_SCROLLCARET,   0,   0);
+    end else
+      MessageBox(self.Handle,'已经搜索到最后！','提示信息',MB_OK+MB_ICONINFORMATION);
+      ('已经搜索到最后！');
+  end;
+end;
+{
+procedure TFrmTools.btnSearchClick(Sender: TObject);
+var
   I, J, PosReturn, SkipChars: Integer;
 begin
-{  PosReturn := Pos(edtSearch.Text,Memo1.Lines.Text);
-  if PosReturn <> 0 then
-  begin
-    Memo1.SetFocus;
-    Memo1.SelStart := SkipChars;
-    Memo1.SelLength := Length(edtSearch.Text);
-  end;                  }
 
-  for I := 0 to Memo1.Lines.Count do
+  RichEdit1.FindText()
+  for I := 0 to RichEdit1.Lines.Count do
   begin
-    PosReturn := Pos(edtSearch.Text,Memo1.Lines[I]);
+    PosReturn := Pos(edtSearch.Text,RichEdit1.Lines[I]);
     if PosReturn <> 0 then
     begin
       SkipChars := 0;
       for J := 0 to I - 1 do
-        SkipChars := SkipChars + Length(Memo1.Lines[J]);
+        SkipChars := SkipChars + Length(RichEdit1.Lines[J]);
         SkipChars := SkipChars + (I*2);
         SkipChars := SkipChars + PosReturn - 1;
-        Memo1.SetFocus;
-        Memo1.SelStart := SkipChars;
-        Memo1.SelLength := Length(edtSearch.Text);
+        RichEdit1.SetFocus;
+        RichEdit1.SelStart := SkipChars;
+        RichEdit1.SelLength := Length(edtSearch.Text);
         Break;
     end;
   end;
 
+end;
+
+}
+procedure TFrmTools.Button2Click(Sender: TObject);
+begin
+  showmessage(inttostr(RichEdit1.Lines.IndexOf(edtsearch.Text)));
 end;
 
 end.

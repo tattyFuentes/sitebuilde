@@ -162,7 +162,7 @@ var
   frmCatchPlan: TfrmCatchPlan;
 
 implementation
-uses UHelp,UPlanViewHelp,UInspectorTextEditor,UGetCookies,UTools;
+uses UHelp,UPlanViewHelp,UInspectorTextEditor,UGetCookies,UTools,UTest;
 {$R *.dfm}
 procedure TfrmCatchPlan.CreateCatchRule();
 begin
@@ -173,16 +173,20 @@ end;
 procedure TfrmCatchPlan.OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
 var
   frmGetCookies:TFrmGetCookies;
+  FrmInspectorTextEditor:TFrmInspectorTextEditor;
 begin
   if (sender as TdxInspectorButtonRow).Caption='µ«¬ºCookies…Ë÷√' then
   begin
     frmGetCookies:=TFrmGetCookies.Create(self);
     FrmGetCookies.buttonRow:=sender as TdxInspectorButtonRow;
     FrmGetCookies.ShowModal();
+    FrmGetCookies.Free;
   end else
   begin
+    FrmInspectorTextEditor:=TFrmInspectorTextEditor.Create(self);
     FrmInspectorTextEditor.buttonRow:=sender as TdxInspectorButtonRow;
     FrmInspectorTextEditor.showmodal();
+    FrmInspectorTextEditor.Free;
   end;
   if (planview.SelectedObject<>nil) then
   begin
@@ -637,9 +641,10 @@ end;
 procedure TfrmCatchPlan.btntoolsClick(Sender: TObject);
 var
   frmTools:TFrmTools;
+  //frmTools:TForm1;
 begin
   frmTools:=TFrmTools.Create(self);
-  FrmTools.ShowModal;
+  frmTools.ShowModal;
 end;
 
 end.

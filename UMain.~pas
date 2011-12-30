@@ -70,7 +70,7 @@ var
   frmMain: TfrmMain;
 
 implementation
-uses UCatchPlan;
+uses UCatchPlan,UTest;
 {$R *.dfm}
 
 procedure TfrmMain.FormCreate(Sender: TObject);
@@ -242,7 +242,10 @@ begin
 end;
 
 procedure TfrmMain.N7Click(Sender: TObject);
+var
+  frmCatchPlan:TfrmCatchPlan;
 begin
+  frmCatchPlan:=TfrmCatchPlan.Create(self);
   frmCatchPlan.ShowModal();
 end;
 
@@ -273,8 +276,11 @@ end;
 
 
 procedure TfrmMain.Button6Click(Sender: TObject);
+var
+  //frmTools:TFrmTools;
+  frmTools1:TForm1;
 begin
-  LoadPictureToDatabase();
+  frmTools1:=TForm1.Create(self);
+  FrmTools1.ShowModal;
 end;
-
 end.
