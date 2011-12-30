@@ -33,78 +33,6 @@ type
     Panel5: TPanel;
     PanelView: TPanel;
     PanelProperty: TPanel;
-    InspectorBaseConfig: TdxInspector;
-    CatchPlanBaseName: TdxInspectorTextRow;
-    CatchPlanBaseNeedEncode: TdxInspectorTextCheckRow;
-    CatchPlanBaseIsArchive: TdxInspectorTextCheckRow;
-    CatchPlanBasePageEncode: TdxInspectorTextPickRow;
-    CatchPlanBaseCatchOrder: TdxInspectorTextPickRow;
-    InspectorBaseConfigRow7: TdxInspectorTextRow;
-    CatchPlanBaseCookies: TdxInspectorTextButtonRow;
-    InspectorListConifg: TdxInspector;
-    CatchPlanListName: TdxInspectorTextRow;
-    CatchPlanEnableAutoList: TdxInspectorTextCheckRow;
-    CatchPlanAutoListFirstPage: TdxInspectorTextPickRow;
-    CatchPlanAutoListEndPage: TdxInspectorTextPopupRow;
-    CatchPlanAutoListStep: TdxInspectorTextRow;
-    CatchPlanListUrl: TdxInspectorTextButtonRow;
-    CatchPlanAutoListUrl: TdxInspectorTextButtonRow;
-    CatchPlanAutoListBeginEnd: TdxInspectorTextButtonRow;
-    CatchPlanAutoListPageUrl: TdxInspectorTextButtonRow;
-    CatchPlanBaseIsCatchAll: TdxInspectorTextCheckRow;
-    CatchPlanBaseCatchNumber: TdxInspectorTextRow;
-    InspectorPageConifg: TdxInspector;
-    CatchPlanPageName: TdxInspectorTextRow;
-    CatchPlanPageAllowFileUrl: TdxInspectorTextButtonRow;
-    CatchPlanPageBlockFileUrl: TdxInspectorTextButtonRow;
-    CatchPlanPageUrl: TdxInspectorTextButtonRow;
-    CatchPlanPageEnableDownFile: TdxInspectorTextCheckRow;
-    CatchPlanPageHtmlName: TdxInspectorTextButtonRow;
-    CatchPlanPageFileExtension: TdxInspectorTextButtonRow;
-    InspectorPageItems: TdxInspector;
-    CatchPlanPageItems: TdxInspectorTextRow;
-    CatchPlanItemTitle: TdxInspectorTextButtonRow;
-    CatchPlanItemThumb: TdxInspectorTextButtonRow;
-    CatchPlanItemContent: TdxInspectorTextButtonRow;
-    CatchPlanItemTags: TdxInspectorTextButtonRow;
-    CatchPlanItemExcerpt: TdxInspectorTextButtonRow;
-    CatchPlanItemUrl: TdxInspectorTextPickRow;
-    CatchPlanItemAuthor: TdxInspectorTextButtonRow;
-    CatchPlanItemCategory: TdxInspectorTextButtonRow;
-    InspectorDataLimit: TdxInspector;
-    CatchPlanLimitName: TdxInspectorTextRow;
-    CatchPlanLimitTitleMax: TdxInspectorTextButtonRow;
-    CatchPlanLimitTitleIncludeWords: TdxInspectorTextButtonRow;
-    CatchPlanLimitTitleNoIncludeWords: TdxInspectorTextButtonRow;
-    CatchPlanLimitContentIncludeWords: TdxInspectorTextButtonRow;
-    CatchPlanLimitContentNoIncludeWords: TdxInspectorTextPickRow;
-    CatchPlanLimitAuthorIncludeWords: TdxInspectorTextButtonRow;
-    CatchPlanLimitCategoryIncludeWords: TdxInspectorTextButtonRow;
-    CatchPlanLimitTitleMin: TdxInspectorTextRow;
-    CatchPlanLimitCategoryNoIncludeWords: TdxInspectorTextButtonRow;
-    InspectorDataArrange: TdxInspector;
-    CatchPlanArrangeName: TdxInspectorTextRow;
-    CatchPlanItemDownloadFile: TdxInspectorTextButtonRow;
-    CatchPlanArrangeContent: TdxInspectorTextButtonRow;
-    CatchPlanArrangeTitle: TdxInspectorTextButtonRow;
-    CatchPlanArrangeExcerpt: TdxInspectorTextButtonRow;
-    CatchPlanArrangeCategory: TdxInspectorTextButtonRow;
-    CatchPlanArrangeAuthor: TdxInspectorTextButtonRow;
-    InspectorSplitContent: TdxInspector;
-    CatchPlanSplitContentName: TdxInspectorTextRow;
-    CatchPlanSplitContentUrl: TdxInspectorTextButtonRow;
-    CatchPlanSplitContentValidPage: TdxInspectorTextButtonRow;
-    CatchPlanSplitContentScope: TdxInspectorTextButtonRow;
-    CatchPlanSplitContentStep: TdxInspectorTextRow;
-    CatchPlanSplitContentBeginPage: TdxInspectorTextRow;
-    CatchPlanSplitContentEndPage: TdxInspectorTextRow;
-    CatchPlanSplitContentIsUseLogic: TdxInspectorTextCheckRow;
-    CatchPlanSplitContentUrlRule: TdxInspectorTextButtonRow;
-    CatchPlanSplitContentNewUrl: TdxInspectorTextButtonRow;
-    CatchPlanSplitContentIsUseCatch: TdxInspectorTextCheckRow;
-    CatchPlanIsArrangeTitile: TdxInspectorTextCheckRow;
-    CatchPlanIsArrangeContent: TdxInspectorTextCheckRow;
-    CatchPlanIsArrangeExcerpt: TdxInspectorTextCheckRow;
     dxInspector1: TdxInspector;
     RichEdit1: TRichEdit;
     btntools: TFlatButton;
@@ -434,28 +362,31 @@ var
   childRow,row:TDxinspectorRow;
   contentStream:TMemoryStream;
 begin
-  if(currentPlanNode<>nil) then
+  {if(currentPlanNode<>nil) then
   begin
     contentStream:=TMemoryStream.Create();
     planview.SaveToStream(contentStream);
     updatePlanContent(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode).Data),contentStream);
     MessageBox(self.Handle,'成功保存方案!','提示信息',MB_OK+MB_ICONINFORMATION);
     //showmessage('成功保存方案!')
-  end;
+  end;}
 
-  {memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorBaseConfig)));
-  memo1.Lines.Append('---------------------------');
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorListConifg)));
-  memo1.Lines.Append('---------------------------');
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorPageConifg)));
-  memo1.Lines.Append('---------------------------');
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorDataLimit)));
-  memo1.Lines.Append('---------------------------');
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorPageItems)));
-  memo1.Lines.Append('---------------------------');
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorSplitContent)));
-  memo1.Lines.Append('---------------------------');
-  memo1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorDataArrange)));
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (dxInspector1)));
+  RichEdit1.Lines.Append('---------------------------');
+
+  {RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorBaseConfig)));
+  RichEdit1.Lines.Append('---------------------------');
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorListConifg)));
+  RichEdit1.Lines.Append('---------------------------');
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorPageConifg)));
+  RichEdit1.Lines.Append('---------------------------');
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorDataLimit)));
+  RichEdit1.Lines.Append('---------------------------');
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorPageItems)));
+  RichEdit1.Lines.Append('---------------------------');
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorSplitContent)));
+  RichEdit1.Lines.Append('---------------------------');
+  RichEdit1.Lines.Append(UTF8Decode(SaveInspectorToJson (InspectorDataArrange)));}
 
 
 
@@ -644,7 +575,7 @@ var
   //frmTools:TForm1;
 begin
   frmTools:=TFrmTools.Create(self);
-  FrmTools.ShowModal;
+  frmTools.ShowModal;
 end;
 
 end.

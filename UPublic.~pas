@@ -85,7 +85,8 @@ var
   childsNode,textPickRowItems:TlkJSONobject;
 begin
   result:=TlkJSONobject.Create;
-  result.Add('name',row.Caption);
+  result.Add('caption',row.Caption);
+  result.Add('name',row.Name);
   result.Add('value',GetOneInspectorRowValue(row));
   result.Add('classname',row.ClassName);
   if(row is TdxInspectorTextPickRow) then
@@ -151,10 +152,11 @@ begin
   end;
   if(row is TdxInspectorTextButtonRow) then
   begin
-     (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
+    (row as TdxInspectorTextButtonRow).ReadOnly:=true;
+    (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
   end;
-
-  row.Caption:=JsonObject.Field['name'] .Value;
+  row.Name:=JsonObject.Field['name'] .Value;
+  row.Caption:=JsonObject.Field['caption'] .Value;
   row.EditText:=JsonObject.Field['value'].Value;
   childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
   if(rowClass='TdxInspectorTextPickRow') then

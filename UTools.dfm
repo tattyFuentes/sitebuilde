@@ -1,6 +1,6 @@
 object FrmTools: TFrmTools
-  Left = -10
-  Top = 152
+  Left = 201
+  Top = 123
   Width = 1263
   Height = 732
   Caption = #36741#21161#24037#20855
@@ -126,6 +126,16 @@ object FrmTools: TFrmTools
         Width = 345
         Height = 21
         TabOrder = 1
+      end
+      object btnselect: TFlatButton
+        Left = 433
+        Top = 4
+        Width = 96
+        Height = 25
+        ColorDown = clYellow
+        Caption = #36873#25321#20803#32032
+        TabOrder = 2
+        OnClick = btnselectClick
       end
     end
   end
