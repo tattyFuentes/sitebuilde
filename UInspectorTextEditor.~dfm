@@ -52,5 +52,6 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
     Height = 30
     Caption = #21462#28040
     TabOrder = 2
+    OnClick = Button2Click
   end
 end

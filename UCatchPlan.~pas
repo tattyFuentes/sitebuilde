@@ -107,6 +107,7 @@ type
     CatchPlanIsArrangeExcerpt: TdxInspectorTextCheckRow;
     dxInspector1: TdxInspector;
     RichEdit1: TRichEdit;
+    btntools: TFlatButton;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -132,6 +133,7 @@ type
       const Text: String; State: TdxCheckBoxState);
     procedure dxInspector1Edited(Sender: TObject; Node: TdxInspectorNode;
       Row: TdxInspectorRow);
+    procedure btntoolsClick(Sender: TObject);
 
 
 
@@ -160,7 +162,7 @@ var
   frmCatchPlan: TfrmCatchPlan;
 
 implementation
-uses UHelp,UPlanViewHelp,UInspectorTextEditor;
+uses UHelp,UPlanViewHelp,UInspectorTextEditor,UGetCookies,UTools;
 {$R *.dfm}
 procedure TfrmCatchPlan.CreateCatchRule();
 begin
@@ -169,18 +171,23 @@ end;
 
 
 procedure TfrmCatchPlan.OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
+var
+  frmGetCookies:TFrmGetCookies;
 begin
-  FrmInspectorTextEditor.buttonRow:=sender as TdxInspectorButtonRow;
-  FrmInspectorTextEditor.showmodal();
+  if (sender as TdxInspectorButtonRow).Caption='µ«¬ºCookies…Ë÷√' then
+  begin
+    frmGetCookies:=TFrmGetCookies.Create(self);
+    FrmGetCookies.buttonRow:=sender as TdxInspectorButtonRow;
+    FrmGetCookies.ShowModal();
+  end else
+  begin
+    FrmInspectorTextEditor.buttonRow:=sender as TdxInspectorButtonRow;
+    FrmInspectorTextEditor.showmodal();
+  end;
   if (planview.SelectedObject<>nil) then
   begin
     (planview.SelectedObject as TPlanObject).ItemProperty:=UTF8Decode(SaveInspectorToJson(dxInspector1));
-    //.Lines.Clear;
-    //memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
   end;
-  //showmessage('button click');
-  //(sender as TdxInspectorTextCheckRow).EditText:=text;
-  //OnInspectorRowChange(sender);
 end;
 
 
@@ -626,6 +633,14 @@ begin
     //memo1.Lines.Clear;
     //memo1.Lines.Add((planview.SelectedObject as TPlanObject).ItemProperty)
   end;
+end;
+
+procedure TfrmCatchPlan.btntoolsClick(Sender: TObject);
+var
+  frmTools:TFrmTools;
+begin
+  frmTools:=TFrmTools.Create(self);
+  FrmTools.ShowModal;
 end;
 
 end.

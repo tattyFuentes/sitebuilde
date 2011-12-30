@@ -15,7 +15,9 @@ uses
   UPlanView in 'UPlanView.pas',
   UPlanConnection in 'UPlanConnection.pas',
   UPlanViewHelp in 'UPlanViewHelp.pas',
-  UHelp in 'UHelp.pas' {FrmHelp};
+  UHelp in 'UHelp.pas' {FrmHelp},
+  UGetCookies in 'UGetCookies.pas' {FrmGetCookies},
+  UTools in 'UTools.pas' {FrmTools};
 
 {$R *.res}
 
@@ -25,5 +27,7 @@ begin
   Application.CreateForm(TfrmCatchPlan, frmCatchPlan);
   Application.CreateForm(TFrmInspectorTextEditor, FrmInspectorTextEditor);
   Application.CreateForm(TFrmHelp, FrmHelp);
+  Application.CreateForm(TFrmGetCookies, FrmGetCookies);
+  Application.CreateForm(TFrmTools, FrmTools);
   Application.Run;
 end.
