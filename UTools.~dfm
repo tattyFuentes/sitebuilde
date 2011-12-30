@@ -1,8 +1,8 @@
 object FrmTools: TFrmTools
-  Left = 385
-  Top = 200
-  Width = 1305
-  Height = 814
+  Left = 134
+  Top = 189
+  Width = 1263
+  Height = 732
   Caption = #36741#21161#24037#20855
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,26 +12,36 @@ object FrmTools: TFrmTools
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  WindowState = wsMaximized
   PixelsPerInch = 96
   TextHeight = 13
+  object Splitter1: TSplitter
+    Left = 0
+    Top = 485
+    Width = 1255
+    Height = 1
+    Cursor = crVSplit
+    Align = alTop
+    Beveled = True
+  end
   object Panel1: TPanel
     Left = 0
     Top = 44
-    Width = 1297
+    Width = 1255
     Height = 441
     Align = alTop
     TabOrder = 0
     object WebBrowser1: TWebBrowser
       Left = 1
       Top = 1
-      Width = 1295
+      Width = 1253
       Height = 439
       Align = alClient
       TabOrder = 0
       OnBeforeNavigate2 = WebBrowser1BeforeNavigate2
       OnDocumentComplete = WebBrowser1DocumentComplete
       ControlData = {
-        4C000000D88500005F2D00000000000000000000000000000000000000000000
+        4C000000808100005F2D00000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126208000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -41,7 +51,7 @@ object FrmTools: TFrmTools
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 1297
+    Width = 1255
     Height = 44
     Align = alTop
     TabOrder = 1
@@ -73,61 +83,50 @@ object FrmTools: TFrmTools
   end
   object Panel3: TPanel
     Left = 0
-    Top = 485
-    Width = 1297
-    Height = 295
+    Top = 486
+    Width = 1255
+    Height = 212
     Align = alClient
     TabOrder = 2
-    object Memo2: TMemo
-      Left = 1032
-      Top = 5
-      Width = 145
-      Height = 250
-      ScrollBars = ssBoth
-      TabOrder = 0
-      WordWrap = False
-    end
-    object edtSearch: TEdit
-      Left = 8
-      Top = 10
-      Width = 145
-      Height = 21
-      TabOrder = 1
-    end
-    object btnSearch: TButton
-      Left = 160
-      Top = 9
-      Width = 57
-      Height = 25
-      Caption = #25628#32034
-      TabOrder = 2
-      OnClick = btnSearchClick
-    end
-    object Button2: TButton
-      Left = 280
-      Top = 8
-      Width = 145
-      Height = 25
-      Caption = 'Button2'
-      TabOrder = 3
-      OnClick = Button2Click
-    end
     object RichEdit1: TRichEdit
-      Left = 8
-      Top = 48
-      Width = 905
-      Height = 241
+      Left = 1
+      Top = 33
+      Width = 800
+      Height = 178
+      Align = alLeft
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = []
-      Lines.Strings = (
-        'RichEdit1')
       ParentFont = False
       ScrollBars = ssBoth
-      TabOrder = 4
-      WordWrap = False
+      TabOrder = 0
+    end
+    object Panel4: TPanel
+      Left = 1
+      Top = 1
+      Width = 1253
+      Height = 32
+      Align = alTop
+      TabOrder = 1
+      object btnSearch: TButton
+        Left = 350
+        Top = 4
+        Width = 57
+        Height = 25
+        Caption = #25628#32034
+        Default = True
+        TabOrder = 0
+        OnClick = btnSearchClick
+      end
+      object edtSearch: TEdit
+        Left = 0
+        Top = 4
+        Width = 345
+        Height = 21
+        TabOrder = 1
+      end
     end
   end
 end

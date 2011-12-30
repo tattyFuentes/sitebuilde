@@ -29,11 +29,11 @@ type
     edturl: TEdit;
     Button1: TButton;
     Panel3: TPanel;
-    Memo2: TMemo;
-    edtSearch: TEdit;
-    btnSearch: TButton;
-    Button2: TButton;
     RichEdit1: TRichEdit;
+    Splitter1: TSplitter;
+    Panel4: TPanel;
+    btnSearch: TButton;
+    edtSearch: TEdit;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
