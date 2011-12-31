@@ -1,6 +1,6 @@
 object FrmTools: TFrmTools
-  Left = 201
-  Top = 123
+  Left = 367
+  Top = 152
   Width = 1263
   Height = 732
   Caption = #36741#21161#24037#20855
@@ -88,12 +88,27 @@ object FrmTools: TFrmTools
     Height = 212
     Align = alClient
     TabOrder = 2
-    object RichEdit1: TRichEdit
+    object Splitter2: TSplitter
       Left = 1
       Top = 33
-      Width = 800
+      Width = 1
       Height = 178
-      Align = alLeft
+      Cursor = crHSplit
+    end
+    object Splitter3: TSplitter
+      Left = 534
+      Top = 33
+      Width = 2
+      Height = 178
+      Cursor = crHSplit
+      Align = alRight
+    end
+    object RichEdit1: TRichEdit
+      Left = 536
+      Top = 33
+      Width = 718
+      Height = 178
+      Align = alRight
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -137,6 +152,16 @@ object FrmTools: TFrmTools
         TabOrder = 2
         OnClick = btnselectClick
       end
+    end
+    object TreeView1: TTreeView
+      Left = 2
+      Top = 33
+      Width = 532
+      Height = 178
+      Align = alClient
+      Indent = 19
+      TabOrder = 2
+      OnMouseDown = TreeView1MouseDown
     end
   end
 end

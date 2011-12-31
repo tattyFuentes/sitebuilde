@@ -9,6 +9,7 @@ uses
 procedure buildTree(checkboxTreeView:TCheckBoxTreeView;cateTableName:String;planTableName:String;rootId:integer;parentNode:TTreeNode);
 procedure freeTreeData(checkboxTreeView:TCheckBoxTreeView);
 function isGroupNode(node:TTreeNode):boolean;
+function AddTreeNode(treeView:TTreeView;nodeName:String;nodeData:TTreeNodeData;parentNode:TTreeNode):TTreeNode;
 implementation
 
 function isGroupNode(node:TTreeNode):boolean;
@@ -50,6 +51,27 @@ begin
     sqlDataSet.Next;
   end;
   sqlDataSet.Close;
+end;
+
+
+function AddTreeNode(treeView:TTreeView;nodeName:String;nodeData:TTreeNodeData;parentNode:TTreeNode):TTreeNode;
+var
+  treeNodeData: PTreeNodeData;
+begin
+  result:=nil;
+  New(treeNodeData);
+  treeNodeData^.Data := nodeData.Data;
+  treeNodeData^.content := nodeData.content;
+  with treeView do
+  begin
+    if parentNode=nil then
+    begin
+      result:=Items.AddObject(nil, nodeName, treeNodeData)
+    end else begin
+      result:=Items.AddChildObject(parentNode,nodeName,treeNodeData);
+    end;
+
+  end;
 end;
 
 

@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML, ComCtrls,
-  TFlatButtonUnit;
+  Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML, ComCtrls,xmldom,
+  TFlatButtonUnit, CheckBoxTreeView,msxml,uTree;
 
 type
   TObjectProcedure = procedure of object;
@@ -36,6 +36,9 @@ type
     btnSearch: TButton;
     edtSearch: TEdit;
     btnselect: TFlatButton;
+    TreeView1: TTreeView;
+    Splitter2: TSplitter;
+    Splitter3: TSplitter;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
@@ -45,10 +48,15 @@ type
     procedure btnSearchClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure btnselectClick(Sender: TObject);
+    procedure TreeView1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
     procedure Document_OnMouseDown;
+    procedure getOneNode(node:IHTMLDOMNode;parentTreeNode:TTreeNode);
+    function findNode(parentNode:IHTMLDOMNode;index:integer):IHTMLDOMNode;
+    procedure setElementBorder(element:IHTMLElement);
   public
     { Public declarations }
   end;
@@ -94,6 +102,22 @@ begin
    else Result := E_NOTIMPL;
 end;
 
+procedure TFrmTools.setElementBorder(element:IHTMLElement);
+begin
+  if(oldelement=nil) then
+  begin
+    oldelement:= element;
+  end;
+  if(oldelement<>element) then
+  begin
+    if(oldelement<>nil) then
+    begin
+      oldelement.style.setAttribute('border','#FF0000 0px solid',0);
+      oldelement:= element;
+    end;
+  end;
+  element.style.setAttribute('border','#FF0000 2px solid',0);
+end;
 
 procedure TFrmTools.Document_OnMouseOver;
 var
@@ -101,7 +125,9 @@ var
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
-   if(oldelement=nil) then
+
+   setElementBorder(element);
+{   if(oldelement=nil) then
    begin
      oldelement:= element;
    end;
@@ -144,18 +170,21 @@ end; (*Document_OnMouseOver*)
 procedure TFrmTools.Document_OnMouseDown;
 var
    element : IHTMLElement;
+   tmpHtmlNode:IHTMLDOMNode;
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
-   RichEdit1.Clear;
+   tmpHtmlNode:=element as IHTMLDOMNode;
+
    if(element<>nil) then
    begin
      if(lowercase(element.tagName)<>'html') then
-       RichEdit1.Text:=element.outerHTML;
-       //RichEdit1.Lines.Add();
+     begin
+       RichEdit1.Clear;
+       if(element as IHTMLDOMNode).nodeType=ELEMENT_NODE then
+         RichEdit1.Text:=element.outerHTML;
+     end;
    end;
-
-     //memo1.Lines.Add(element.outerHTML);
 end; (*Document_OnMouseOver*)
 
 
@@ -164,6 +193,7 @@ procedure TFrmTools.WebBrowser1DocumentComplete(Sender: TObject;
 begin
   if Assigned(WebBrowser1.Document) then
    begin
+     RichEdit1.Text:='加载完成，请点击上方网页中的内容可以在此看到源代码。';
      htmlDoc := WebBrowser1.Document as IHTMLDocument2;
      htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
      htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
@@ -181,6 +211,9 @@ begin
     htmlDoc.onmouseover := '';
   end;
   WebBrowser1.Navigate(edturl.Text);
+  RichEdit1.Clear;
+  RichEdit1.Lines.Add('加载中......');
+
 end;
 
 procedure TFrmTools.WebBrowser1BeforeNavigate2(Sender: TObject;
@@ -221,43 +254,114 @@ begin
       MessageBox(self.Handle,'已经搜索到最后！','提示信息',MB_OK+MB_ICONINFORMATION);
   end;
 end;
-{
-procedure TFrmTools.btnSearchClick(Sender: TObject);
-var
-  I, J, PosReturn, SkipChars: Integer;
-begin
 
-  RichEdit1.FindText()
-  for I := 0 to RichEdit1.Lines.Count do
-  begin
-    PosReturn := Pos(edtSearch.Text,RichEdit1.Lines[I]);
-    if PosReturn <> 0 then
-    begin
-      SkipChars := 0;
-      for J := 0 to I - 1 do
-        SkipChars := SkipChars + Length(RichEdit1.Lines[J]);
-        SkipChars := SkipChars + (I*2);
-        SkipChars := SkipChars + PosReturn - 1;
-        RichEdit1.SetFocus;
-        RichEdit1.SelStart := SkipChars;
-        RichEdit1.SelLength := Length(edtSearch.Text);
-        Break;
-    end;
-  end;
-
-end;
-
-}
 procedure TFrmTools.Button2Click(Sender: TObject);
 begin
   showmessage(inttostr(RichEdit1.Lines.IndexOf(edtsearch.Text)));
 end;
 
-procedure TFrmTools.btnselectClick(Sender: TObject);
+
+procedure TFrmTools.getOneNode(node:IHTMLDOMNode;parentTreeNode:TTreeNode);
+var
+  tmpNode:IHTMLDOMNode;
+  tmpTreeNode:TTreeNode;
+  nodeData:TTreeNodeData;
+  tmpElement : IHTMLElement;
+  a:IHTMLAttributeCollection;
+  b:IDOMNamedNodeMap;
+  i,intPos:integer;
+  nodeAttributes:String;
+  cc:string;
 begin
-  btnselect.Color:=clYellow;
-  btnselect.ColorFocused:=clYellow;
-  btnselect.Down:=true;
+
+  //if(node.nodeName<>'#text') and (node.nodeName<>'#comment') then
+  if(node.nodeType=ELEMENT_NODE) then
+  begin
+    cc:=(node as IHTMLElement).outerHTML;
+    intPos:=pos('>',cc);
+    cc:=copy(cc,0,intPos)
+  end;
+
+
+  if(cc='') then
+    cc:=node.nodeName;
+  tmpTreeNode:=AddTreeNode(TreeView1,cc,nodeData,parentTreeNode);
+  if (node.nodeName='A') then
+  begin
+    //node.attributes.QueryInterface(IID_IHTMLAttributeCollection,a);
+    //cc:=(node as IHtmlElement).getAttribute('href',0);
+    //a.item(cc);
+    //tmpTreeNode:=CheckBoxTreeView1.AddTreeNode('<'+node.nodeName+' href="'+cc+'">'+inttostr(a.length),nodeData,parentTreeNode);
+  end;
+  tmpNode:=node.firstChild;
+  while tmpNode<>nil do
+  begin
+    getOneNode(tmpNode,tmpTreeNode);
+    tmpNode:=tmpNode.nextSibling;
+  end;
+end;
+
+procedure TFrmTools.btnselectClick(Sender: TObject);
+var
+  rootNode : IHTMLDOMNode;
+  rootElement : IHTMLElement;
+  mydoc:IHTMLDocument3;
+  mydoc2:IHTMLDocument2;
+  i:integer;
+begin
+  mydoc:=webbrowser1.Document as IHTMLDocument3;
+  rootNode:=mydoc.documentElement as IHTMLDOMNode;
+  getOneNode(rootNode,nil);
+  treeview1.Items[0].Expand(false);
+end;
+
+
+function TFrmTools.findNode(parentNode:IHTMLDOMNode;index:integer):IHTMLDOMNode;
+var
+  i,tmpIndex:integer;
+  tmpNode:IHTMLDOMNode;
+begin
+  tmpNode:=parentNode.firstChild;
+  for i:=1 to index do
+  begin
+    tmpNode:=tmpNode.nextSibling;
+  end;
+  result:=tmpNode;
+end;
+
+procedure TFrmTools.TreeView1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  node:TTreeNode;
+  nodeIndexArray:array of integer;
+  i,intLevel,intIndex:integer;
+  rootHtmlNode,tmpHtmlNode:IHTMLDOMNode;
+  mydoc:IHTMLDocument3;
+begin
+  node:=treeview1.GetNodeAt(x,y);
+  while (node<>nil) do
+  begin
+    setlength(nodeIndexArray,length(nodeIndexArray)+1);
+    nodeIndexArray[length(nodeIndexArray)-1]:=node.Index;
+    node:=node.Parent;
+  end;
+
+  mydoc:=webbrowser1.Document as IHTMLDocument3;
+  if(mydoc=nil) then
+    exit;
+  rootHtmlNode:=mydoc.documentElement as IHTMLDOMNode;
+  tmpHtmlNode:= rootHtmlNode;
+  for i:=length(nodeIndexArray)-2 downto 0  do
+  begin
+     intIndex:=nodeIndexArray[i];
+     tmpHtmlNode:=findNode(tmpHtmlNode,intIndex);
+  end;
+  richedit1.Clear;
+  if(tmpHtmlNode.nodeType=ELEMENT_NODE) then
+  begin
+    richedit1.Lines.Add((tmpHtmlNode as IHtmlElement).outerHTML);
+    setElementBorder((tmpHtmlNode as IHtmlElement));
+  end;
 end;
 
 end.
