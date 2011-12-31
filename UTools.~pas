@@ -170,11 +170,39 @@ end; (*Document_OnMouseOver*)
 procedure TFrmTools.Document_OnMouseDown;
 var
    element : IHTMLElement;
-   tmpHtmlNode:IHTMLDOMNode;
+   tmpHtmlNode,tmpHtmlNode2:IHTMLDOMNode;
+   allchild:IHTMLDOMChildrenCollection;
+   intLength,i,intPos:integer;
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
    tmpHtmlNode:=element as IHTMLDOMNode;
+   intLength:=0;
+   tmpHtmlNode:=tmpHtmlNode.previousSibling;
+   while tmpHtmlNode<>nil do
+   begin
+     intLength:=intLength+1;
+     tmpHtmlNode:=tmpHtmlNode.previousSibling;
+   end;
+   //tmpHtmlNode.parentNode.childNodes.QueryInterface(IID_IHTMLDOMChildrenCollection,allchild);
+   //tmpHtmlNode.parentNode.childNodes
+   // allchild := tmpHtmlNode.
+    //intLength:= allchild.length;
+
+    {for i:=0 to intLength-1 do
+    begin
+     allchild.item(i).QueryInterface(IID_IHTMLDOMNode,tmpHtmlNode2);
+     if(tmpHtmlNode2=tmpHtmlNode) then
+     begin
+       intPos:=i;
+     end;
+     //IHTMLDOMNode child_node = (IHTMLDOMNode)allchild.item(i);
+    end;}
+
+
+    showmessage(inttostr(intLength));
+
+
 
    if(element<>nil) then
    begin
