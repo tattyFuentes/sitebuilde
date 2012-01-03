@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML, ComCtrls,xmldom,
-  TFlatButtonUnit, CheckBoxTreeView,msxml,uTree;
+  TFlatButtonUnit, CheckBoxTreeView,msxml,uTree, Buttons, Menus, ToolWin,
+  ActnMan, ActnCtrls, ImgList;
 
 type
   TObjectProcedure = procedure of object;
@@ -33,12 +34,22 @@ type
     RichEdit1: TRichEdit;
     Splitter1: TSplitter;
     Panel4: TPanel;
-    btnSearch: TButton;
-    edtSearch: TEdit;
-    btnselect: TFlatButton;
     TreeView1: TTreeView;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
+    Panel6: TPanel;
+    btnSearch: TButton;
+    edtSearch: TEdit;
+    SpeedButton1: TSpeedButton;
+    PopupMenu1: TPopupMenu;
+    aaaaaaa1: TMenuItem;
+    vvvvv1: TMenuItem;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    N1: TMenuItem;
+    ImageList1: TImageList;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
@@ -50,6 +61,14 @@ type
     procedure btnselectClick(Sender: TObject);
     procedure TreeView1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure TreeView1AdvancedCustomDrawItem(Sender: TCustomTreeView;
+      Node: TTreeNode; State: TCustomDrawState; Stage: TCustomDrawStage;
+      var PaintImages, DefaultDraw: Boolean);
+    procedure ToolBar1AdvancedCustomDrawButton(Sender: TToolBar;
+      Button: TToolButton; State: TCustomDrawState;
+      Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
+      var DefaultDraw: Boolean);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
@@ -57,6 +76,7 @@ type
     procedure getOneNode(node:IHTMLDOMNode;parentTreeNode:TTreeNode);
     function findNode(parentNode:IHTMLDOMNode;index:integer):IHTMLDOMNode;
     procedure setElementBorder(element:IHTMLElement);
+    function GetHtmlNodeIndex(node:IHTMLDOMNode):integer;
   public
     { Public declarations }
   end;
@@ -165,6 +185,21 @@ begin
 
 end; (*Document_OnMouseOver*)
 
+function TFrmTools.GetHtmlNodeIndex(node:IHTMLDOMNode):integer;
+var
+  intLength:integer;
+  tmpHtmlNode:IHTMLDOMNode;
+
+begin
+  intLength:=0;
+  tmpHtmlNode:=node.previousSibling;
+  while tmpHtmlNode<>nil do
+  begin
+    intLength:=intLength+1;
+    tmpHtmlNode:=tmpHtmlNode.previousSibling;
+  end;
+  result:=intLength;
+end;
 
 
 procedure TFrmTools.Document_OnMouseDown;
@@ -172,17 +207,38 @@ var
    element : IHTMLElement;
    tmpHtmlNode,tmpHtmlNode2:IHTMLDOMNode;
    allchild:IHTMLDOMChildrenCollection;
-   intLength,i,intPos:integer;
+   intIndex,i,intPos:integer;
+   nodeIndexArray:array of integer;
+   treeNode:TTreeNode;
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
-   tmpHtmlNode:=element as IHTMLDOMNode;
-   intLength:=0;
-   tmpHtmlNode:=tmpHtmlNode.previousSibling;
-   while tmpHtmlNode<>nil do
+
+   try
+   if(treeview1.Items.Count>0) then
    begin
-     intLength:=intLength+1;
-     tmpHtmlNode:=tmpHtmlNode.previousSibling;
+     tmpHtmlNode:=element as IHTMLDOMNode;
+     while (tmpHtmlNode<>nil) do
+     begin
+       intIndex:=GetHtmlNodeIndex(tmpHtmlNode);
+       //richedit1.Lines.Add(tmpHtmlNode.nodeName+' '+inttostr(intIndex));
+       setlength(nodeIndexArray,length(nodeIndexArray)+1);
+       nodeIndexArray[length(nodeIndexArray)-1]:=intIndex;
+       tmpHtmlNode:=tmpHtmlNode.parentNode;
+     end;
+
+
+     treeNode:= treeview1.Items[0];
+     for i:=length(nodeIndexArray)-3 downto 0  do
+     begin
+       intIndex:=nodeIndexArray[i];
+       treeNode:=treeNode.Item[intIndex];
+     end;
+     treeNode.Selected:=true;
+     treeview1.SetFocus;
+     treeView1.Selected.Focused:=true;
+   end;
+   except
    end;
    //tmpHtmlNode.parentNode.childNodes.QueryInterface(IID_IHTMLDOMChildrenCollection,allchild);
    //tmpHtmlNode.parentNode.childNodes
@@ -200,15 +256,12 @@ begin
     end;}
 
 
-    showmessage(inttostr(intLength));
-
-
-
+    //showmessage(inttostr(intLength));
    if(element<>nil) then
    begin
      if(lowercase(element.tagName)<>'html') then
      begin
-       RichEdit1.Clear;
+       RichEdit1.Lines.Clear;
        if(element as IHTMLDOMNode).nodeType=ELEMENT_NODE then
          RichEdit1.Text:=element.outerHTML;
      end;
@@ -218,14 +271,23 @@ end; (*Document_OnMouseOver*)
 
 procedure TFrmTools.WebBrowser1DocumentComplete(Sender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
+var
+  mydoc:IHTMLDocument3;
+  rootNode:IHTMLDOMNode;
 begin
+  //if (treeview1.Items.Count>0) then
+  //  exit;
   if Assigned(WebBrowser1.Document) then
    begin
      RichEdit1.Text:='加载完成，请点击上方网页中的内容可以在此看到源代码。';
      htmlDoc := WebBrowser1.Document as IHTMLDocument2;
      htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
      htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
-     //htmlDoc.onmouseup:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
+     mydoc:=webbrowser1.Document as IHTMLDocument3;
+     rootNode:=mydoc.documentElement as IHTMLDOMNode;
+     treeview1.Items.Clear;
+     getOneNode(rootNode,nil);
+     treeview1.Items[0].Expand(false);
    end;
 end;
 
@@ -238,10 +300,10 @@ begin
     htmlDoc.onmousedown:='';
     htmlDoc.onmouseover := '';
   end;
+  treeview1.Items.Clear;
   WebBrowser1.Navigate(edturl.Text);
-  RichEdit1.Clear;
+  RichEdit1.Lines.Clear;
   RichEdit1.Lines.Add('加载中......');
-
 end;
 
 procedure TFrmTools.WebBrowser1BeforeNavigate2(Sender: TObject;
@@ -339,9 +401,12 @@ var
 begin
   mydoc:=webbrowser1.Document as IHTMLDocument3;
   rootNode:=mydoc.documentElement as IHTMLDOMNode;
+  treeview1.Items.Clear;
   getOneNode(rootNode,nil);
   treeview1.Items[0].Expand(false);
 end;
+
+
 
 
 function TFrmTools.findNode(parentNode:IHTMLDOMNode;index:integer):IHTMLDOMNode;
@@ -384,12 +449,47 @@ begin
      intIndex:=nodeIndexArray[i];
      tmpHtmlNode:=findNode(tmpHtmlNode,intIndex);
   end;
-  richedit1.Clear;
+  richedit1.Lines.Clear;
   if(tmpHtmlNode.nodeType=ELEMENT_NODE) then
   begin
     richedit1.Lines.Add((tmpHtmlNode as IHtmlElement).outerHTML);
     setElementBorder((tmpHtmlNode as IHtmlElement));
+    htmlDoc.parentWindow.scrollTo(0,(tmpHtmlNode as IHtmlElement).offsetTop);
   end;
+end;
+
+procedure TFrmTools.SpeedButton1Click(Sender: TObject);
+begin
+  //SpeedButton1.SetBounds:=true;
+end;
+
+procedure TFrmTools.TreeView1AdvancedCustomDrawItem(
+  Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
+  Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
+begin
+  if(node.Selected) then
+  begin
+    TreeView1.Canvas.Brush.Style := bsFDiagonal;
+    TreeView1.Canvas.Brush.Color := clHighlight;
+    TreeView1.Canvas.Font.Color := clHighlightText;
+  end;
+
+end;
+
+procedure TFrmTools.ToolBar1AdvancedCustomDrawButton(Sender: TToolBar;
+  Button: TToolButton; State: TCustomDrawState; Stage: TCustomDrawStage;
+  var Flags: TTBCustomDrawFlags; var DefaultDraw: Boolean);
+var
+    c:TCanvas;
+begin
+    if   cdsHot   in   State   then
+        begin
+            c:=TControlCanvas.Create;
+            TControlCanvas(c).Control:=Button;
+            //C.Font.Name:= '黑体 ';
+            C.TextOut(100,200,Button.Caption);// 此处由你自己确定文字的位置
+            FreeAndNil(c);
+        end;
 end;
 
 end.

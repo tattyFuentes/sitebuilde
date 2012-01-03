@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 137
-  Top = 294
+  Left = -24
+  Top = 161
   Width = 1278
-  Height = 766
+  Height = 585
   Caption = 'SiteBuild '#31449#32676#21457#24067#31995#32479
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 0
     Width = 193
-    Height = 712
+    Height = 609
     Align = alLeft
     Images = ImageList1
     Indent = 19
@@ -119,6 +119,45 @@ object frmMain: TfrmMain
     Caption = 'Button6'
     TabOrder = 9
     OnClick = Button6Click
+  end
+  object ControlBar1: TControlBar
+    Left = 1008
+    Top = 8
+    Width = 225
+    Height = 57
+    TabOrder = 10
+    object ToolBar1: TToolBar
+      Left = 24
+      Top = 2
+      Width = 193
+      Height = 48
+      ButtonHeight = 21
+      ButtonWidth = 79
+      Caption = 'ToolBar1'
+      Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
+      ShowCaptions = True
+      TabOrder = 0
+      object ToolButton1: TToolButton
+        Left = 0
+        Top = 2
+        Caption = #25554#20837#20320#30340#26631#35760
+        ImageIndex = 0
+        Style = tbsDropDown
+      end
+      object ToolButton2: TToolButton
+        Left = 92
+        Top = 2
+        Caption = 'ToolButton2'
+        ImageIndex = 1
+      end
+    end
   end
   object MainMenu: TMainMenu
     Left = 480

@@ -18,7 +18,8 @@ uses
   UHelp in 'UHelp.pas' {FrmHelp},
   UGetCookies in 'UGetCookies.pas' {FrmGetCookies},
   UTools in 'UTools.pas' {FrmTools},
-  UTest in 'UTest.pas' {Form1};
+  UTest in 'UTest.pas' {Form1},
+  UVariableDefine in 'UVariableDefine.pas';
 
 {$R *.res}
 
