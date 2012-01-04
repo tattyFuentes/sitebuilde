@@ -1,9 +1,9 @@
 object FrmGetCookies: TFrmGetCookies
-  Left = 304
-  Top = 125
+  Left = 260
+  Top = 133
   BorderStyle = bsDialog
   Caption = #33719#24471#32593#31449#30331#24405#20449#24687
-  ClientHeight = 762
+  ClientHeight = 693
   ClientWidth = 1049
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

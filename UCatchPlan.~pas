@@ -327,9 +327,10 @@ begin
    inherited;
    if(AObject.Selected) then
    begin
-     Sender.Canvas.Brush.Style := bsFDiagonal;
+     //Sender.
+     {Sender.Canvas.Brush.Style := bsFDiagonal;
      Sender.Canvas.Brush.Color := clHighlight;
-     Sender.Canvas.Font.Color := clHighlightText;
+     Sender.Canvas.Font.Color := clHighlightText; }
    end;  
 end;
 

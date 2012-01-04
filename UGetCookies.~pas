@@ -7,7 +7,7 @@ uses
   Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML,dxInspRw;
 
 type
-  TfrmGetCookies = class(TForm)
+  TFrmGetCookies = class(TForm)
     Panel1: TPanel;
     WebBrowser1: TWebBrowser;
     Panel2: TPanel;
@@ -31,23 +31,23 @@ type
   end;
 
 var
-  frmGetCookies: TfrmGetCookies;
+  FrmGetCookies: TFrmGetCookies;
 
 implementation
 
 {$R *.dfm}
 
-procedure TfrmGetCookies.Button2Click(Sender: TObject);
+procedure TFrmGetCookies.Button2Click(Sender: TObject);
 begin
   close;
 end;
 
-procedure TfrmGetCookies.Button1Click(Sender: TObject);
+procedure TFrmGetCookies.Button1Click(Sender: TObject);
 begin
   WebBrowser1.Navigate(edturl.Text);
 end;
 
-procedure TfrmGetCookies.WebBrowser1DocumentComplete(Sender: TObject;
+procedure TFrmGetCookies.WebBrowser1DocumentComplete(Sender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
 var
   htmlDoc : IHTMLDocument2;
@@ -56,7 +56,7 @@ begin
   memcookies.Lines.add(htmlDoc.cookie);
 end;
 
-procedure TfrmGetCookies.FormShow(Sender: TObject);
+procedure TFrmGetCookies.FormShow(Sender: TObject);
 begin
   if(buttonRow<>nil) then
   begin
@@ -69,7 +69,7 @@ begin
   end;
 end;
 
-procedure TfrmGetCookies.btnsaveClick(Sender: TObject);
+procedure TFrmGetCookies.btnsaveClick(Sender: TObject);
 begin
   buttonRow.EditText:=memCookies.Lines.Text;
   close;

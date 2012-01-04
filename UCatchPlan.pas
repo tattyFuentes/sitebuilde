@@ -328,9 +328,9 @@ begin
    if(AObject.Selected) then
    begin
      //Sender.
-     Sender.Canvas.Brush.Style := bsFDiagonal;
+     {Sender.Canvas.Brush.Style := bsFDiagonal;
      Sender.Canvas.Brush.Color := clHighlight;
-     Sender.Canvas.Font.Color := clHighlightText;
+     Sender.Canvas.Font.Color := clHighlightText; }
    end;  
 end;
 
@@ -345,7 +345,7 @@ begin
   PlanView.Parent:=PanelView;
   PlanView.BorderStyle:=bsNone;
   PlanView.Align:=alClient;
-  PlanView.OnDrawObject
+  //PlanView.OnDrawObject
 
   //FView.Images:=ilWfObj;
   //PlanView.LoadFromFile('²É¼¯.pf');

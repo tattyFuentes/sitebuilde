@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, OleCtrls, SHDocVw, ExtCtrls,MSHTML, ComCtrls,xmldom,
   TFlatButtonUnit, CheckBoxTreeView,msxml,uTree, Buttons, Menus, ToolWin,
-  ActnMan, ActnCtrls, ImgList;
+  ActnMan, ActnCtrls, ImgList,UVariableDefine;
 
 type
   TObjectProcedure = procedure of object;
@@ -38,20 +38,26 @@ type
     Splitter2: TSplitter;
     Splitter3: TSplitter;
     PopupMenu1: TPopupMenu;
-    aaaaaaa1: TMenuItem;
-    vvvvv1: TMenuItem;
-    N1: TMenuItem;
+    menuarticlecontent: TMenuItem;
+    menuarticlethumb: TMenuItem;
+    menuarticletitle: TMenuItem;
     ImageList1: TImageList;
     panelsearch: TPanel;
     btnSearch: TButton;
     edtSearch: TEdit;
     ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
+    btnlistflag: TToolButton;
     ToolButton3: TToolButton;
-    ToolButton2: TToolButton;
+    btnarticleid: TToolButton;
     panelbutton: TPanel;
     btnShowTreeview: TSpeedButton;
     btnSelectElement: TSpeedButton;
+    btnvariable: TToolButton;
+    menuarticleauthor: TMenuItem;
+    menuarticlecategory: TMenuItem;
+    menuarticletags: TMenuItem;
+    menuarticleexcerpt: TMenuItem;
+    menuarticledownloadfile: TMenuItem;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
@@ -74,6 +80,17 @@ type
     procedure btnShowTreeviewClick(Sender: TObject);
     procedure WebBrowser1ProgressChange(Sender: TObject; Progress,
       ProgressMax: Integer);
+    procedure btnlistflagClick(Sender: TObject);
+    procedure btnarticleidClick(Sender: TObject);
+    procedure menuarticlecontentClick(Sender: TObject);
+    procedure menuarticlethumbClick(Sender: TObject);
+    procedure menuarticletitleClick(Sender: TObject);
+    procedure menuarticleauthorClick(Sender: TObject);
+    procedure menuarticlecategoryClick(Sender: TObject);
+    procedure menuarticletagsClick(Sender: TObject);
+    procedure menuarticleexcerptClick(Sender: TObject);
+    procedure menuarticledownloadfileClick(Sender: TObject);
+    procedure btnvariableClick(Sender: TObject);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
@@ -82,6 +99,7 @@ type
     function findNode(parentNode:IHTMLDOMNode;index:integer):IHTMLDOMNode;
     procedure setElementBorder(element:IHTMLElement);
     function GetHtmlNodeIndex(node:IHTMLDOMNode):integer;
+    procedure insertVariableTag(tag:String;bOnlyOne:boolean);
   public
     { Public declarations }
   end;
@@ -437,7 +455,11 @@ begin
     begin
       htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
       htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
-
+    end
+    else begin
+      btnSelectElement.Down:=false;
+      MessageBox(self.Handle,'请加载目标网页后点击！','提示信息',MB_OK+MB_ICONINFORMATION);
+      exit;
     end;
     btnSelectElement.Hint:='单击取消选择元素';
   end
@@ -512,6 +534,79 @@ begin
       IsWebLoadComplete := True;
   end;
   OldProgress := Progress;}
+end;
+
+procedure TFrmTools.insertVariableTag(tag:String;bOnlyOne:boolean);
+var
+  FoundAt:integer;
+begin
+  if(bOnlyOne) then //只允许插入一个标记
+  begin
+    FoundAt := RichEdit1.FindText(tag, 0, length(RichEdit1.Text), [stMatchCase]);
+    if FoundAt <> -1 then
+    begin
+      MessageBox(self.Handle,'此标记只能插入一次！','警告信息',MB_OK+MB_ICONWARNING);
+      exit;
+    end;
+  end;
+  richedit1.SelAttributes.Color := clred;
+  RichEdit1.SelText:=tag;
+  richedit1.SelAttributes.Color := clblack;
+end;
+
+procedure TFrmTools.btnlistflagClick(Sender: TObject);
+begin
+  insertVariableTag(VARLISTCONTENT,true);
+end;
+
+procedure TFrmTools.btnarticleidClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEID,true);
+end;
+
+procedure TFrmTools.menuarticlecontentClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLECONTENT,true);
+end;
+
+procedure TFrmTools.menuarticlethumbClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLETHUMB,true);
+end;
+
+procedure TFrmTools.menuarticletitleClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLETITLE,true);
+end;
+
+procedure TFrmTools.menuarticleauthorClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEAUTHOR,true);
+end;
+
+procedure TFrmTools.menuarticlecategoryClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLECATEGORY,true);
+end;
+
+procedure TFrmTools.menuarticletagsClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLETAGS,true);
+end;
+
+procedure TFrmTools.menuarticleexcerptClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEEXCERPT,true);
+end;
+
+procedure TFrmTools.menuarticledownloadfileClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEDOWNLOADFILE,true);
+end;
+
+procedure TFrmTools.btnvariableClick(Sender: TObject);
+begin
+  insertVariableTag(VARIABLE,false);
 end;
 
 end.
