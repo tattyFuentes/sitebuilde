@@ -62,6 +62,9 @@ type
     procedure dxInspector1Edited(Sender: TObject; Node: TdxInspectorNode;
       Row: TdxInspectorRow);
     procedure btntoolsClick(Sender: TObject);
+    procedure checkBoxTreePlanCategoryAdvancedCustomDrawItem(
+      Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
+      Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
 
 
 
@@ -84,6 +87,7 @@ type
     { Public declarations }
     procedure OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
     procedure OnPlanViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
+    procedure PlanViewOnDrawObject(Sender: TdxCustomFlowChart; AObject: TdxFcObject;R: TRect);
   end;
 
 var
@@ -316,6 +320,20 @@ begin
   end;
 end;
 
+
+procedure TfrmCatchPlan.PlanViewOnDrawObject(Sender: TdxCustomFlowChart; AObject: TdxFcObject;
+          R: TRect);
+begin
+   inherited;
+   if(AObject.Selected) then
+   begin
+     //Sender.
+     Sender.Canvas.Brush.Style := bsFDiagonal;
+     Sender.Canvas.Brush.Color := clHighlight;
+     Sender.Canvas.Font.Color := clHighlightText;
+   end;  
+end;
+
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
   //InitControlEvent(self,ControlEvent);
@@ -327,7 +345,8 @@ begin
   PlanView.Parent:=PanelView;
   PlanView.BorderStyle:=bsNone;
   PlanView.Align:=alClient;
-  
+  PlanView.OnDrawObject
+
   //FView.Images:=ilWfObj;
   //PlanView.LoadFromFile('²É¼¯.pf');
 
@@ -576,6 +595,19 @@ var
 begin
   frmTools:=TFrmTools.Create(self);
   frmTools.ShowModal;
+end;
+
+procedure TfrmCatchPlan.checkBoxTreePlanCategoryAdvancedCustomDrawItem(
+  Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
+  Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
+begin
+  if(node.Selected) then
+  begin
+    checkBoxTreePlanCategory.Canvas.Brush.Style := bsFDiagonal;
+    checkBoxTreePlanCategory.Canvas.Brush.Color := clHighlight;
+    checkBoxTreePlanCategory.Canvas.Font.Color := clHighlightText;
+  end;
+
 end;
 
 end.

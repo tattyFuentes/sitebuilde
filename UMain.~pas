@@ -43,10 +43,6 @@ type
     Button5: TButton;
     PerlRegEx1: TPerlRegEx;
     Button6: TButton;
-    ControlBar1: TControlBar;
-    ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);

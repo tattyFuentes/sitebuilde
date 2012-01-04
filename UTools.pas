@@ -37,19 +37,21 @@ type
     TreeView1: TTreeView;
     Splitter2: TSplitter;
     Splitter3: TSplitter;
-    Panel6: TPanel;
-    btnSearch: TButton;
-    edtSearch: TEdit;
-    SpeedButton1: TSpeedButton;
     PopupMenu1: TPopupMenu;
     aaaaaaa1: TMenuItem;
     vvvvv1: TMenuItem;
-    ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
     N1: TMenuItem;
     ImageList1: TImageList;
+    panelsearch: TPanel;
+    btnSearch: TButton;
+    edtSearch: TEdit;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton2: TToolButton;
+    panelbutton: TPanel;
+    btnShowTreeview: TSpeedButton;
+    btnSelectElement: TSpeedButton;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
@@ -61,7 +63,7 @@ type
     procedure btnselectClick(Sender: TObject);
     procedure TreeView1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure btnSelectElementClick(Sender: TObject);
     procedure TreeView1AdvancedCustomDrawItem(Sender: TCustomTreeView;
       Node: TTreeNode; State: TCustomDrawState; Stage: TCustomDrawStage;
       var PaintImages, DefaultDraw: Boolean);
@@ -69,6 +71,9 @@ type
       Button: TToolButton; State: TCustomDrawState;
       Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
       var DefaultDraw: Boolean);
+    procedure btnShowTreeviewClick(Sender: TObject);
+    procedure WebBrowser1ProgressChange(Sender: TObject; Progress,
+      ProgressMax: Integer);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
@@ -84,6 +89,10 @@ type
 var
   htmlDoc : IHTMLDocument2;
   oldelement : IHTMLElement;
+  oldElementBorder:String;
+  oldElementOuterHtml:String;
+  IsWebLoadComplete : boolean;
+  OldProgress :integer;
 implementation
 
 {$R *.dfm}
@@ -132,10 +141,14 @@ begin
   begin
     if(oldelement<>nil) then
     begin
-      oldelement.style.setAttribute('border','#FF0000 0px solid',0);
+      //oldelement.style.setAttribute('border','#FF0000 0px solid',0);
+      oldelement.style.setAttribute('border',oldElementBorder,0);
       oldelement:= element;
     end;
   end;
+  oldElementBorder:=oldelement.style.getAttribute('border',0);
+  if(oldelement as IHTMLDOMNode).nodeType=ELEMENT_NODE then
+    oldElementOuterHtml:=oldelement.outerHTML;
   element.style.setAttribute('border','#FF0000 2px solid',0);
 end;
 
@@ -147,41 +160,7 @@ begin
    element := htmlDoc.parentWindow.event.srcElement;
 
    setElementBorder(element);
-{   if(oldelement=nil) then
-   begin
-     oldelement:= element;
-   end;
-   if(oldelement<>element) then
-   begin
-     if(oldelement<>nil) then
-     begin
-        oldelement.style.setAttribute('border','#FF0000 0px solid',0);
-        oldelement:= element;
-     end;
-   end;
-   element.style.setAttribute('border','#FF0000 2px solid',0);
 
-   //elementInfo.Clear;
-   //if(element.parentElement<>nil) then
-
-     //elementInfo.Lines.Add(element.outerHTML);
-    //element.outerHTML
-
-   {if LowerCase(element.tagName) = 'a' then
-   begin
-     elementInfo.Lines.Add('LINK info') ;
-     elementInfo.Lines.Add(Format('HREF : %s',[element.getAttribute('href',0)])) ;
-   end
-   else if LowerCase(element.tagName) = 'img' then
-   begin
-     elementInfo.Lines.Add('IMAGE info') ;
-     elementInfo.Lines.Add(Format('SRC : %s',[element.getAttribute('src',0)])) ;
-   end
-   else
-   begin
-     elementInfo.Lines.Add(Format('TAG : %s',[element.tagName])) ;
-   end;
-   element.style.setAttribute('border','#FF0000 2px solid',0);  }
 
 end; (*Document_OnMouseOver*)
 
@@ -210,6 +189,8 @@ var
    intIndex,i,intPos:integer;
    nodeIndexArray:array of integer;
    treeNode:TTreeNode;
+   hButton : HWND;
+
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
@@ -235,35 +216,21 @@ begin
        treeNode:=treeNode.Item[intIndex];
      end;
      treeNode.Selected:=true;
-     treeview1.SetFocus;
-     treeView1.Selected.Focused:=true;
    end;
    except
    end;
-   //tmpHtmlNode.parentNode.childNodes.QueryInterface(IID_IHTMLDOMChildrenCollection,allchild);
-   //tmpHtmlNode.parentNode.childNodes
-   // allchild := tmpHtmlNode.
-    //intLength:= allchild.length;
 
-    {for i:=0 to intLength-1 do
-    begin
-     allchild.item(i).QueryInterface(IID_IHTMLDOMNode,tmpHtmlNode2);
-     if(tmpHtmlNode2=tmpHtmlNode) then
-     begin
-       intPos:=i;
-     end;
-     //IHTMLDOMNode child_node = (IHTMLDOMNode)allchild.item(i);
-    end;}
-
-
-    //showmessage(inttostr(intLength));
    if(element<>nil) then
    begin
      if(lowercase(element.tagName)<>'html') then
      begin
        RichEdit1.Lines.Clear;
        if(element as IHTMLDOMNode).nodeType=ELEMENT_NODE then
-         RichEdit1.Text:=element.outerHTML;
+       begin
+         RichEdit1.Text:=oldElementOuterHtml;
+         btnSelectElement.down:=false;
+         btnSelectElement.Click;
+       end;
      end;
    end;
 end; (*Document_OnMouseOver*)
@@ -277,12 +244,14 @@ var
 begin
   //if (treeview1.Items.Count>0) then
   //  exit;
+  if(not IsWebLoadComplete) then
+    exit;
   if Assigned(WebBrowser1.Document) then
    begin
-     RichEdit1.Text:='加载完成，请点击上方网页中的内容可以在此看到源代码。';
+     RichEdit1.Text:='加载完成，请点击箭头以选择上方网页中的内容块。';
      htmlDoc := WebBrowser1.Document as IHTMLDocument2;
-     htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
-     htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
+     //htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
+     //htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
      mydoc:=webbrowser1.Document as IHTMLDocument3;
      rootNode:=mydoc.documentElement as IHTMLDOMNode;
      treeview1.Items.Clear;
@@ -294,12 +263,14 @@ end;
 procedure TFrmTools.Button1Click(Sender: TObject);
 begin
   oldelement:=nil;
+  IsWebLoadComplete:=false;
   if(htmlDoc<>nil) then
   begin
     htmlDoc.onmouseover:='';
     htmlDoc.onmousedown:='';
     htmlDoc.onmouseover := '';
   end;
+  htmlDoc:=nil;
   treeview1.Items.Clear;
   WebBrowser1.Navigate(edturl.Text);
   RichEdit1.Lines.Clear;
@@ -458,8 +429,29 @@ begin
   end;
 end;
 
-procedure TFrmTools.SpeedButton1Click(Sender: TObject);
+procedure TFrmTools.btnSelectElementClick(Sender: TObject);
 begin
+  if(btnSelectElement.Down) then
+  begin
+    if(htmlDoc<>nil) then
+    begin
+      htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
+      htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
+
+    end;
+    btnSelectElement.Hint:='单击取消选择元素';
+  end
+  else
+  begin
+    if(htmlDoc<>nil) then
+    begin
+      htmlDoc.onmouseover:='';
+      htmlDoc.onmousedown:='';
+      htmlDoc.onmouseover := '';
+    end;
+    btnSelectElement.Hint:='单击选择元素';
+  end;
+
   //SpeedButton1.SetBounds:=true;
 end;
 
@@ -490,6 +482,36 @@ begin
             C.TextOut(100,200,Button.Caption);// 此处由你自己确定文字的位置
             FreeAndNil(c);
         end;
+end;
+
+procedure TFrmTools.btnShowTreeviewClick(Sender: TObject);
+begin
+  if(btnShowTreeview.Down) then
+  begin
+    treeview1.Visible:=true;
+    btnShowTreeview.Hint:='隐藏HTML元素节点树';
+    btnShowTreeview.Caption:='隐藏节点树';
+  end else
+  begin
+    treeview1.Visible:=false;
+    btnShowTreeview.Hint:='显示HTML元素节点树';
+    btnShowTreeview.Caption:='显示节点树';
+  end;
+end;
+
+procedure TFrmTools.WebBrowser1ProgressChange(Sender: TObject; Progress,
+  ProgressMax: Integer);
+begin
+  if(Progress=ProgressMax) then
+  begin
+    IsWebLoadComplete := True;
+  end;
+  {if ( Progress = 0 ) and ( ProgressMax = 0 ) and
+      ( OldProgress = -1 ) then
+  begin
+      IsWebLoadComplete := True;
+  end;
+  OldProgress := Progress;}
 end;
 
 end.
