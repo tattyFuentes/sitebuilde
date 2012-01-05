@@ -650,7 +650,7 @@ begin
   begin
     btnuserdefine.Caption:='隐藏用户定义规则';
     btnuserdefine.hint:='隐藏用户定义规则';
-    paneluserdefine.Height:=300
+    paneluserdefine.Height:=200
   end
   else
   begin

@@ -630,13 +630,8 @@ begin
     if SelLength <> 0 then
       StartPos := SelStart + SelLength
     else
-
       StartPos := 0;
-
-    { ToEnd is the length from StartPos to the end of the text in the rich edit control }
-
     ToEnd := Length(Text) - StartPos;
-
     FoundAt := FindText(edtsearchuserdefine.Text, StartPos, ToEnd, [stMatchCase]);
     if FoundAt <> -1 then
     begin
@@ -655,7 +650,7 @@ begin
   begin
     btnuserdefine.Caption:='隐藏用户定义规则';
     btnuserdefine.hint:='隐藏用户定义规则';
-    paneluserdefine.Height:=300
+    paneluserdefine.Height:=200
   end
   else
   begin
