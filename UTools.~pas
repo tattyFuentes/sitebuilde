@@ -30,13 +30,12 @@ type
     Label1: TLabel;
     edturl: TEdit;
     Button1: TButton;
-    Panel3: TPanel;
+    Panelnodetext: TPanel;
     RichEdit1: TRichEdit;
     Splitter1: TSplitter;
-    Panel4: TPanel;
+    Panelnodetexttoolbar: TPanel;
     TreeView1: TTreeView;
     Splitter2: TSplitter;
-    Splitter3: TSplitter;
     PopupMenu1: TPopupMenu;
     menuarticlecontent: TMenuItem;
     menuarticlethumb: TMenuItem;
@@ -45,19 +44,27 @@ type
     panelsearch: TPanel;
     btnSearch: TButton;
     edtSearch: TEdit;
-    ToolBar1: TToolBar;
-    btnlistflag: TToolButton;
-    ToolButton3: TToolButton;
-    btnarticleid: TToolButton;
     panelbutton: TPanel;
     btnShowTreeview: TSpeedButton;
     btnSelectElement: TSpeedButton;
-    btnvariable: TToolButton;
     menuarticleauthor: TMenuItem;
     menuarticlecategory: TMenuItem;
     menuarticletags: TMenuItem;
     menuarticleexcerpt: TMenuItem;
     menuarticledownloadfile: TMenuItem;
+    Paneluserdefine: TPanel;
+    RichEdit3: TRichEdit;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    Button3: TButton;
+    edtsearchuserdefine: TEdit;
+    ToolBar3: TToolBar;
+    btnlistflag: TToolButton;
+    ToolButton7: TToolButton;
+    btnarticleid: TToolButton;
+    btnvariable: TToolButton;
+    btnuserdefine: TSpeedButton;
+    Splitter3: TSplitter;
     procedure WebBrowser1DocumentComplete(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
     procedure Button1Click(Sender: TObject);
@@ -91,6 +98,8 @@ type
     procedure menuarticleexcerptClick(Sender: TObject);
     procedure menuarticledownloadfileClick(Sender: TObject);
     procedure btnvariableClick(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure btnuserdefineClick(Sender: TObject);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
@@ -458,7 +467,7 @@ begin
     end
     else begin
       btnSelectElement.Down:=false;
-      MessageBox(self.Handle,'请显示目标网页后点击！','提示信息',MB_OK+MB_ICONINFORMATION);
+      MessageBox(self.Handle,'请加载目标网页后点击！','提示信息',MB_OK+MB_ICONINFORMATION);
       exit;
     end;
     btnSelectElement.Hint:='单击取消选择元素';
@@ -542,16 +551,16 @@ var
 begin
   if(bOnlyOne) then //只允许插入一个标记
   begin
-    FoundAt := RichEdit1.FindText(tag, 0, length(RichEdit1.Text), [stMatchCase]);
+    FoundAt := RichEdit3.FindText(tag, 0, length(RichEdit3.Text), [stMatchCase]);
     if FoundAt <> -1 then
     begin
       MessageBox(self.Handle,'此标记只能插入一次！','警告信息',MB_OK+MB_ICONWARNING);
       exit;
     end;
   end;
-  richedit1.SelAttributes.Color := clred;
-  RichEdit1.SelText:=tag;
-  richedit1.SelAttributes.Color := clblack;
+  richedit3.SelAttributes.Color := clred;
+  RichEdit3.SelText:=tag;
+  richedit3.SelAttributes.Color := clblack;
 end;
 
 procedure TFrmTools.btnlistflagClick(Sender: TObject);
@@ -607,6 +616,53 @@ end;
 procedure TFrmTools.btnvariableClick(Sender: TObject);
 begin
   insertVariableTag(VARIABLE,false);
+end;
+
+procedure TFrmTools.Button3Click(Sender: TObject);
+var
+  FoundAt: LongInt;
+  StartPos, ToEnd: Integer;
+begin
+  with RichEdit3 do
+  begin
+    { begin the search after the current selection if there is one }
+    { otherwise, begin at the start of the text }
+    if SelLength <> 0 then
+      StartPos := SelStart + SelLength
+    else
+
+      StartPos := 0;
+
+    { ToEnd is the length from StartPos to the end of the text in the rich edit control }
+
+    ToEnd := Length(Text) - StartPos;
+
+    FoundAt := FindText(edtsearchuserdefine.Text, StartPos, ToEnd, [stMatchCase]);
+    if FoundAt <> -1 then
+    begin
+      SetFocus;
+      SelStart := FoundAt;
+      SelLength := Length(edtsearchuserdefine.Text);
+      Perform(EM_SCROLLCARET,   0,   0);
+    end else
+      MessageBox(self.Handle,'已经搜索到最后！','提示信息',MB_OK+MB_ICONINFORMATION);
+  end;
+end;
+
+procedure TFrmTools.btnuserdefineClick(Sender: TObject);
+begin
+  if btnuserdefine.Down then
+  begin
+    btnuserdefine.Caption:='隐藏用户定义规则';
+    btnuserdefine.hint:='隐藏用户定义规则';
+    paneluserdefine.Height:=300
+  end
+  else
+  begin
+    btnuserdefine.Caption:='显示用户定义规则';
+    btnuserdefine.Hint:='显示用户定义规则';
+    paneluserdefine.Height:=1
+  end;
 end;
 
 end.
