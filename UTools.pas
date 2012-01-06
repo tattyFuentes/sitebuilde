@@ -100,6 +100,7 @@ type
     procedure btnvariableClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure btnuserdefineClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     procedure Document_OnMouseOver;
@@ -658,6 +659,11 @@ begin
     btnuserdefine.Hint:='显示用户定义规则';
     paneluserdefine.Height:=1
   end;
+end;
+
+procedure TFrmTools.FormCreate(Sender: TObject);
+begin
+  paneluserdefine.Height:=1;
 end;
 
 end.

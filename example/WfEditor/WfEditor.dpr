@@ -20,7 +20,7 @@ begin
   Application.Initialize;
   Application.Title := '¹ý³Ì±à¼­';
 
-  //Application.CreateForm(TfWfEditorUI, fWfEditorUI);
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TfWfEditorUI, fWfEditorUI);
+  //Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

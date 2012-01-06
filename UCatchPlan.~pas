@@ -36,6 +36,7 @@ type
     dxInspector1: TdxInspector;
     RichEdit1: TRichEdit;
     btntools: TFlatButton;
+    btntestrule: TFlatButton;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -83,6 +84,7 @@ type
     procedure ShowHelp(title:string;content:String);
     procedure ControlEvent(Sender: TObject);
     procedure renamePlanName(newName:string);
+    procedure DrawRectByPoint(x,y:integer;dc:HDC);
   public
     { Public declarations }
     procedure OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
@@ -117,6 +119,13 @@ begin
   begin
     FrmInspectorTextEditor:=TFrmInspectorTextEditor.Create(self);
     FrmInspectorTextEditor.buttonRow:=sender as TdxInspectorButtonRow;
+    if((planview.SelectedObject as TPlanObject).ObjectType=ptLimit) or ((planview.SelectedObject as TPlanObject).ObjectType=ptArrange) then
+    begin
+       FrmInspectorTextEditor.panelbutton.Visible:=false;
+    end;
+
+    
+
     FrmInspectorTextEditor.showmodal();
     FrmInspectorTextEditor.Free;
   end;
@@ -250,6 +259,11 @@ begin
   LoadJsonStringToInspector(dxInspector1,UTF8ENCODE(aPlanObject.ItemProperty),OnInspectorButtonClick);
   dxInspector1.Rows[0].EditText:= aPlanObject.text;
   dxInspector1.Rows[0].ReadOnly:=true;
+  if((planview.SelectedObject as TPlanObject).ObjectType=ptList) or ((planview.SelectedObject as TPlanObject).ObjectType=ptArticle) then
+    btntestrule.Enabled:=true
+  else
+    btntestrule.Enabled:=false;
+
 end;
 
 procedure TfrmCatchPlan.renamePlanName(newName:string);
@@ -277,6 +291,11 @@ var
   parentNodeData,nodeId:string;
   nodeData:TTreeNodeData;
 begin
+  if(Node.Parent=nil) then
+  begin
+    s:=node.Text;
+    exit;
+  end;
   if(not isGroupNode(node)) then
   begin
     nodeId:=checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data;
@@ -323,16 +342,43 @@ end;
 
 procedure TfrmCatchPlan.PlanViewOnDrawObject(Sender: TdxCustomFlowChart; AObject: TdxFcObject;
           R: TRect);
+var
+  DC: HDC;
 begin
-   inherited;
-   if(AObject.Selected) then
-   begin
-     //Sender.
-     {Sender.Canvas.Brush.Style := bsFDiagonal;
-     Sender.Canvas.Brush.Color := clHighlight;
-     Sender.Canvas.Font.Color := clHighlightText; }
-   end;  
+  DC:=(Sender as TPlanView).Canvas.handle;
+  with AObject do
+  begin
+    if(Selected) then
+    begin
+      DrawRectByPoint(RealLeft,RealTop,DC);
+      DrawRectByPoint(RealLeft+RealWidth div 2,RealTop,DC);
+      DrawRectByPoint(RealLeft+RealWidth,RealTop,DC);
+      DrawRectByPoint(RealLeft+RealWidth,RealTop+RealHeight div 2,DC);
+      DrawRectByPoint(RealLeft+RealWidth,RealTop+RealHeight,DC);
+      DrawRectByPoint(RealLeft+RealWidth div 2,RealTop+RealHeight,DC);
+      DrawRectByPoint(RealLeft,RealTop+RealHeight,DC);
+      DrawRectByPoint(RealLeft,RealTop+RealHeight div 2,DC);
+    end;
+    if Text <> '' then PaintText(R);
+  end;
 end;
+
+procedure TfrmCatchPlan.DrawRectByPoint(x,y:integer;dc:HDC);
+var
+  splitwidth:integer;
+  top,left,right,bottom:integer;
+begin
+  splitwidth:=3;
+  left:=x-splitwidth;
+  top:=y-splitwidth;
+  right:=x+splitwidth;
+  bottom:=y+splitwidth;
+  SelectObject(dc, GetStockObject(BLACK_PEN));
+  SelectObject(dc, GetStockObject(BLACK_BRUSH));
+  Rectangle(dc, left, top, right, bottom);
+end;
+
+
 
 procedure TfrmCatchPlan.FormCreate(Sender: TObject);
 begin
@@ -345,7 +391,8 @@ begin
   PlanView.Parent:=PanelView;
   PlanView.BorderStyle:=bsNone;
   PlanView.Align:=alClient;
-  PlanView.OnDrawObject
+  PlanView.OnDrawObject:=PlanViewOnDrawObject;
+  //PlanView.OnDrawObject
 
   //FView.Images:=ilWfObj;
   //PlanView.LoadFromFile('²É¼¯.pf');

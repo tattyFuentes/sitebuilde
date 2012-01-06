@@ -1,10 +1,10 @@
 object FrmGetCookies: TFrmGetCookies
-  Left = 260
-  Top = 133
+  Left = 248
+  Top = 104
   BorderStyle = bsDialog
   Caption = #33719#24471#32593#31449#30331#24405#20449#24687
-  ClientHeight = 693
-  ClientWidth = 1049
+  ClientHeight = 765
+  ClientWidth = 1105
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,20 +19,20 @@ object FrmGetCookies: TFrmGetCookies
   object Panel1: TPanel
     Left = 0
     Top = 44
-    Width = 1049
+    Width = 1105
     Height = 441
     Align = alTop
     TabOrder = 0
     object WebBrowser1: TWebBrowser
       Left = 1
       Top = 1
-      Width = 1047
+      Width = 1103
       Height = 439
       Align = alClient
       TabOrder = 0
       OnDocumentComplete = WebBrowser1DocumentComplete
       ControlData = {
-        4C000000366C00005F2D00000000000000000000000000000000000000000000
+        4C000000007200005F2D00000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126208000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -42,7 +42,7 @@ object FrmGetCookies: TFrmGetCookies
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 1049
+    Width = 1105
     Height = 44
     Align = alTop
     TabOrder = 1
@@ -75,7 +75,7 @@ object FrmGetCookies: TFrmGetCookies
   object memcookies: TMemo
     Left = 0
     Top = 485
-    Width = 1049
+    Width = 1105
     Height = 220
     Align = alTop
     TabOrder = 2

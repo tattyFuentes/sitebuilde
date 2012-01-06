@@ -1,10 +1,10 @@
 object FrmInspectorTextEditor: TFrmInspectorTextEditor
-  Left = 587
-  Top = 261
+  Left = 369
+  Top = 211
   BorderStyle = bsDialog
   Caption = 'FrmInspectorTextEditor'
-  ClientHeight = 459
-  ClientWidth = 487
+  ClientHeight = 434
+  ClientWidth = 485
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,17 +18,18 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 33
-    Width = 487
-    Height = 329
-    Align = alTop
+    Top = 34
+    Width = 485
+    Height = 343
+    Align = alClient
     Caption = 'Panel1'
     TabOrder = 0
     object MemText: TRichEdit
-      Left = 11
-      Top = 11
-      Width = 463
-      Height = 304
+      Left = 1
+      Top = 1
+      Width = 483
+      Height = 341
+      Align = alClient
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -41,92 +42,102 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
       WordWrap = False
     end
   end
-  object Button1: TButton
-    Left = 216
-    Top = 386
-    Width = 113
-    Height = 30
-    Caption = #20445#23384
+  object panelbutton: TPanel
+    Left = 0
+    Top = 0
+    Width = 485
+    Height = 34
+    Align = alTop
     TabOrder = 1
-    OnClick = Button1Click
-  end
-  object Button2: TButton
-    Left = 352
-    Top = 386
-    Width = 113
-    Height = 30
-    Caption = #21462#28040
-    TabOrder = 2
-    OnClick = Button2Click
+    object ToolBar3: TToolBar
+      Left = 12
+      Top = 4
+      Width = 408
+      Height = 29
+      Align = alNone
+      ButtonHeight = 21
+      ButtonWidth = 85
+      Caption = 'ToolBar1'
+      EdgeBorders = []
+      Flat = True
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlue
+      Font.Height = -13
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+      ShowCaptions = True
+      TabOrder = 0
+      OnAdvancedCustomDrawButton = ToolBar3AdvancedCustomDrawButton
+      object btnlistflag: TToolButton
+        Left = 0
+        Top = 0
+        Caption = #21015#34920#21306#22495#26631#35760
+        DropdownMenu = PopupMenu2
+        ImageIndex = 0
+        Style = tbsDropDown
+        OnClick = btnlistflagClick
+      end
+      object ToolButton7: TToolButton
+        Left = 98
+        Top = 0
+        Width = 12
+        Caption = 'ToolButton3'
+        ImageIndex = 2
+        Style = tbsSeparator
+      end
+      object btnarticleid: TToolButton
+        Left = 110
+        Top = 0
+        Caption = #25991#31456#22320#22336#26631#35760
+        DropdownMenu = PopupMenu1
+        ImageIndex = 1
+        Style = tbsDropDown
+        OnClick = btnarticleidClick
+      end
+      object btnvariable: TToolButton
+        Left = 208
+        Top = 0
+        Caption = #25554#20837#21464#37327#26631#35760
+        ImageIndex = 2
+        OnClick = btnvariableClick
+      end
+    end
   end
   object Panel2: TPanel
     Left = 0
-    Top = 0
-    Width = 487
-    Height = 33
-    Align = alTop
+    Top = 377
+    Width = 485
+    Height = 57
+    Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 3
-    object Panel3: TPanel
-      Left = 0
-      Top = 0
-      Width = 487
-      Height = 300
-      Align = alTop
+    TabOrder = 2
+    object Button1: TButton
+      Left = 216
+      Top = 11
+      Width = 113
+      Height = 30
+      Caption = #20445#23384
       TabOrder = 0
-      object ToolBar3: TToolBar
-        Left = 12
-        Top = 4
-        Width = 408
-        Height = 29
-        Align = alNone
-        ButtonHeight = 21
-        ButtonWidth = 85
-        Caption = 'ToolBar1'
-        EdgeBorders = []
-        Flat = True
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clBlue
-        Font.Height = -13
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        ShowCaptions = True
-        TabOrder = 0
-        OnAdvancedCustomDrawButton = ToolBar3AdvancedCustomDrawButton
-        object btnlistflag: TToolButton
-          Left = 0
-          Top = 0
-          Caption = #21015#34920#21306#22495#26631#35760
-          ImageIndex = 0
-          Style = tbsDropDown
-          OnClick = btnlistflagClick
-        end
-        object ToolButton7: TToolButton
-          Left = 98
-          Top = 0
-          Width = 21
-          Caption = 'ToolButton3'
-          ImageIndex = 2
-          Style = tbsSeparator
-        end
-        object btnarticleid: TToolButton
-          Left = 119
-          Top = 0
-          Caption = #25991#31456#22320#22336#26631#35760
-          DropdownMenu = PopupMenu1
-          ImageIndex = 1
-          Style = tbsDropDown
-          OnClick = btnarticleidClick
-        end
-        object btnvariable: TToolButton
-          Left = 217
-          Top = 0
-          Caption = #25554#20837#21464#37327#26631#35760
-          ImageIndex = 2
-          OnClick = btnvariableClick
-        end
-      end
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Left = 352
+      Top = 11
+      Width = 113
+      Height = 30
+      Caption = #21462#28040
+      TabOrder = 1
+      OnClick = Button2Click
+    end
+    object btntools: TButton
+      Left = 8
+      Top = 11
+      Width = 97
+      Height = 30
+      Caption = #36741#21161#24037#20855
+      TabOrder = 2
+      OnClick = btntoolsClick
     end
   end
   object PopupMenu1: TPopupMenu

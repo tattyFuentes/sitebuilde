@@ -5,15 +5,11 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, TFlatMemoUnit, ExtCtrls, TFlatPanelUnit,dxInspRw,
-  ComCtrls, ToolWin, Menus,UVariableDefine;
+  ComCtrls, ToolWin, Menus,UVariableDefine,uTools;
 
 type
   TFrmInspectorTextEditor = class(TForm)
     Panel1: TPanel;
-    Button1: TButton;
-    Button2: TButton;
-    Panel2: TPanel;
-    Panel3: TPanel;
     PopupMenu1: TPopupMenu;
     menuarticlecontent: TMenuItem;
     menuarticlethumb: TMenuItem;
@@ -23,14 +19,19 @@ type
     menuarticletags: TMenuItem;
     menuarticleexcerpt: TMenuItem;
     menuarticledownloadfile: TMenuItem;
+    PopupMenu2: TPopupMenu;
+    N1: TMenuItem;
+    MemText: TRichEdit;
+    panelbutton: TPanel;
     ToolBar3: TToolBar;
     btnlistflag: TToolButton;
     ToolButton7: TToolButton;
     btnarticleid: TToolButton;
     btnvariable: TToolButton;
-    PopupMenu2: TPopupMenu;
-    N1: TMenuItem;
-    MemText: TRichEdit;
+    Panel2: TPanel;
+    Button1: TButton;
+    Button2: TButton;
+    btntools: TButton;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -50,6 +51,7 @@ type
       Button: TToolButton; State: TCustomDrawState;
       Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
       var DefaultDraw: Boolean);
+    procedure btntoolsClick(Sender: TObject);
   private
     { Private declarations }
     procedure insertVariableTag(tag:String;bOnlyOne:boolean);
@@ -80,7 +82,7 @@ end;
 
 procedure TFrmInspectorTextEditor.Button1Click(Sender: TObject);
 begin
-  buttonRow.EditText:=memText.Lines.Text;
+   buttonRow.EditText:=memText.Lines.Text;
   close;
 end;
 
@@ -180,6 +182,15 @@ begin
             C.TextOut(100,200,Button.Caption);// 此处由你自己确定文字的位置
             FreeAndNil(c);
         end;
+end;
+
+procedure TFrmInspectorTextEditor.btntoolsClick(Sender: TObject);
+var
+  frmTools:TFrmTools;
+  //frmTools:TForm1;
+begin
+  frmTools:=TFrmTools.Create(self);
+  frmTools.ShowModal;
 end;
 
 end.
