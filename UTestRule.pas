@@ -4,13 +4,15 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls;
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls;
 
 type
   TfrmTestRule = class(TForm)
     Panel1: TPanel;
     Panel2: TPanel;
     Splitter1: TSplitter;
+    RichEdit1: TRichEdit;
+    RichEdit2: TRichEdit;
   private
     { Private declarations }
   public

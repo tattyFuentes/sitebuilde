@@ -10,7 +10,7 @@ uses
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
   TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML,UPlanView,
   dxExEdtr, dxInspRw, dxInspct, dxCntner,uLkJSON,uPlanObject,dxflchrt,
-  OleCtrls, SHDocVw,MSHTML,Shellapi,richedit;
+  OleCtrls, SHDocVw,MSHTML,Shellapi,richedit,UTestRule;
 type
 
   TfrmCatchPlan = class(TForm)
@@ -66,6 +66,7 @@ type
     procedure checkBoxTreePlanCategoryAdvancedCustomDrawItem(
       Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
       Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
+    procedure btntestruleClick(Sender: TObject);
 
 
 
@@ -655,6 +656,14 @@ begin
     checkBoxTreePlanCategory.Canvas.Font.Color := clHighlightText;
   end;
 
+end;
+
+procedure TfrmCatchPlan.btntestruleClick(Sender: TObject);
+var
+  frmTestRule:TfrmTestRule;
+begin
+  frmTestRule:=TfrmTestRule.Create(self);
+  frmTestRule.ShowModal;
 end;
 
 end.
