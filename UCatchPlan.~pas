@@ -663,6 +663,9 @@ var
   frmTestRule:TfrmTestRule;
 begin
   frmTestRule:=TfrmTestRule.Create(self);
+  frmTestRule.parseType:=1;
+  frmTestRule.planView:=PlanView£»
+  frmTestRule.ShowModal;
 end;
 
 end.

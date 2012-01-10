@@ -1,6 +1,6 @@
 object frmTestRule: TfrmTestRule
-  Left = 190
-  Top = 112
+  Left = 537
+  Top = 150
   BorderStyle = bsDialog
   Caption = #27979#35797#35268#21017
   ClientHeight = 666
