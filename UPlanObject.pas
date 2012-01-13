@@ -3,7 +3,7 @@ unit UPlanObject;
 interface
 
 uses
-  Classes,dxflchrt;
+  Classes,dxflchrt,uLkJSON;
 type
   TPlanObjectType = (ptCatchPlan,ptList,ptArticle,ptLimit,ptArrange,ptArticlePage,ptCatchItems);
   TPlanObject = class(TdxFcObject)
@@ -17,6 +17,8 @@ type
   public
     property ObjectType:TPlanObjectType read FType write FType;
     property ItemProperty:String read FProperty write FProperty;
+    function getProperty(name:String):String;
+    function getLinkObjectByType(aType:TPlanObjectType):TPlanObject;
   end;
 
 implementation
@@ -36,6 +38,32 @@ begin
   Stream.WriteBuffer(FType, SizeOf(FType));
   WriteStr(Stream, FProperty);
 end;
+
+function TPlanObject.getProperty(name:String):String;
+var
+  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
+  i:integer;
+begin
+  result:='';
+  JsonRoot:=TlkJSON.ParseText(ItemProperty) as TlkJSONobject;
+  result:=JsonRoot.Field[name].Value;
+end;
+
+function TPlanObject.getLinkObjectByType(aType:TPlanObjectType):TPlanObject;
+var
+  i:integer;
+begin
+  result:=nil;
+  for i:=0 to self.LinkedObjectCount-1 do
+  begin
+    if(self.LinkedObjects[i] as TPlanObject).ObjectType=aType then
+    begin
+      result:=self.LinkedObjects[i] as TPlanObject;
+      exit;
+    end;
+  end;
+end;
+
 
 end.
 

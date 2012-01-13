@@ -187,6 +187,8 @@ var
   i:integer;
 begin
   JsonRoot:=TlkJSON.ParseText(JsonString) as TlkJSONobject;
+  //JsonRoot.Field(
+
   aTdxInspedtor.ClearRows;
   //JsonObject:=JsonRoot.FieldByIndex[0] as TlkJSONobject;
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);

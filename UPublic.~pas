@@ -155,6 +155,7 @@ begin
     (row as TdxInspectorTextButtonRow).ReadOnly:=true;
     (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
   end;
+  
   row.Name:=JsonObject.Field['name'] .Value;
   row.Caption:=JsonObject.Field['caption'] .Value;
   row.EditText:=JsonObject.Field['value'].Value;

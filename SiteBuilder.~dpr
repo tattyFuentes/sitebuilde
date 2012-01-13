@@ -19,12 +19,14 @@ uses
   UGetCookies in 'UGetCookies.pas' {FrmGetCookies},
   UTools in 'UTools.pas' {FrmTools},
   UTest in 'UTest.pas' {Form1},
-  UVariableDefine in 'UVariableDefine.pas';
+  UVariableDefine in 'UVariableDefine.pas',
+  UTestRule in 'UTestRule.pas' {frmTestRule};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmTestRule, frmTestRule);
   Application.Run;
 end.
