@@ -1,6 +1,6 @@
 object frmTestRule: TfrmTestRule
-  Left = 537
-  Top = 150
+  Left = 398
+  Top = 278
   BorderStyle = bsDialog
   Caption = #27979#35797#35268#21017
   ClientHeight = 666
@@ -48,6 +48,15 @@ object frmTestRule: TfrmTestRule
         'RichEdit1')
       ParentFont = False
       TabOrder = 0
+    end
+    object dxInspector1: TdxInspector
+      Left = 560
+      Top = 160
+      Width = 169
+      Height = 57
+      TabOrder = 1
+      Visible = False
+      DividerPos = 75
     end
   end
   object Panel2: TPanel
