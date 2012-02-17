@@ -20,7 +20,8 @@ uses
   UTools in 'UTools.pas' {FrmTools},
   UTest in 'UTest.pas' {Form1},
   UVariableDefine in 'UVariableDefine.pas',
-  UTestRule in 'UTestRule.pas' {frmTestRule};
+  UTestRule in 'UTestRule.pas' {frmTestRule},
+  UCatchPlanHttp in 'UCatchPlanHttp.pas';
 
 {$R *.res}
 
