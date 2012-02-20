@@ -382,6 +382,7 @@ begin
     //a.item(cc);
     //tmpTreeNode:=CheckBoxTreeView1.AddTreeNode('<'+node.nodeName+' href="'+cc+'">'+inttostr(a.length),nodeData,parentTreeNode);
   end;
+
   tmpNode:=node.firstChild;
   while tmpNode<>nil do
   begin

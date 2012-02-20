@@ -1,6 +1,6 @@
 object FrmTools: TFrmTools
-  Left = 489
-  Top = 165
+  Left = 181
+  Top = 193
   Width = 1292
   Height = 762
   Caption = #36741#21161#24037#20855
