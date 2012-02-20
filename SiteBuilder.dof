@@ -45,7 +45,7 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source
+SearchPath=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source;D:\Program Files\Borland\Delphi6\Lib\Protocols;D:\Program Files\Borland\Delphi6\Lib\system;D:\Program Files\Borland\Delphi6\Lib\core
 Packages=VCL50;VCLX50;VCLSMP50;VCLDB50;VCLADO50;ibevnt50;VCLBDE50;VCLDBX50;QRPT50;TEEUI50;TEEDB50;TEE50;DSS50;TEEQR50;VCLIB50;WinSkinD5;vcl;rtl;vclx
 Conditionals=
 DebugSourceDirs=
@@ -88,18 +88,21 @@ Comments=
 [Excluded Packages]
 d:\program files\borland\delphi6\Projects\Bpl\WinSkinD6R.bpl=VclSkin Runtime
 d:\program files\borland\delphi6\Projects\Bpl\WinSkinD6D.bpl=VclSkin
+C:\Program Files\Developer Express Inc\ExpressInspector\Delphi 6\Lib\dcldxExRwD6.bpl=ExpressInspector Extended Rows
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=10
-Item0=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source
-Item1=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6
-Item2=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components
-Item3=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML
-Item4=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components
-Item5=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx
-Item6=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source;D:\work\网站\工具\sitebuild\components;D:\work\网站\工具\sitebuild\components\TPerlRegEx;D:\work\网站\工具\sitebuild\components\FlatStyle6\Source
-Item7=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source;D:\work\网站\工具\sitebuild\components;D:\work\网站\工具\sitebuild\components\TPerlRegEx
-Item8=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source;D:\work\网站\工具\sitebuild\components
-Item9=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source
+Count=12
+Item0=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source;D:\Program Files\Borland\Delphi6\Lib\Protocols;D:\Program Files\Borland\Delphi6\Lib\system;D:\Program Files\Borland\Delphi6\Lib\core
+Item1=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source;D:\Program Files\Borland\Delphi6\Source\Indy
+Item2=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source
+Item3=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6
+Item4=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components
+Item5=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML
+Item6=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components
+Item7=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx
+Item8=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source;D:\work\网站\工具\sitebuild\components;D:\work\网站\工具\sitebuild\components\TPerlRegEx;D:\work\网站\工具\sitebuild\components\FlatStyle6\Source
+Item9=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source;D:\work\网站\工具\sitebuild\components;D:\work\网站\工具\sitebuild\components\TPerlRegEx
+Item10=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source;D:\work\网站\工具\sitebuild\components
+Item11=E:\private\program\delphi\vclskin530src\source;E:\private\program\delphi\gdiplus\pas;E:\privte\myprogram\delphi\sitebuild\components;E:\privte\myprogram\delphi\flatstyl\Source

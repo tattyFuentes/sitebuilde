@@ -1,6 +1,6 @@
 object frmTestRule: TfrmTestRule
-  Left = 398
-  Top = 278
+  Left = 148
+  Top = 70
   BorderStyle = bsDialog
   Caption = #27979#35797#35268#21017
   ClientHeight = 666
@@ -37,8 +37,8 @@ object frmTestRule: TfrmTestRule
       Left = 1
       Top = 1
       Width = 1122
-      Height = 335
-      Align = alClient
+      Height = 256
+      Align = alTop
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -57,6 +57,15 @@ object frmTestRule: TfrmTestRule
       TabOrder = 1
       Visible = False
       DividerPos = 75
+    end
+    object Button1: TButton
+      Left = 16
+      Top = 272
+      Width = 153
+      Height = 41
+      Caption = 'Button1'
+      TabOrder = 2
+      OnClick = Button1Click
     end
   end
   object Panel2: TPanel
@@ -84,5 +93,22 @@ object frmTestRule: TfrmTestRule
       ParentFont = False
       TabOrder = 0
     end
+  end
+  object IdHTTP1: TIdHTTP
+    AuthRetries = 0
+    AuthProxyRetries = 0
+    AllowCookies = True
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = 0
+    Request.ContentRangeStart = 0
+    Request.ContentRangeInstanceLength = 0
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 240
+    Top = 272
   end
 end

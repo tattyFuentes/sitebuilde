@@ -6,6 +6,7 @@ uses
   Classes,dxflchrt,uLkJSON;
 type
   TPlanObjectType = (ptCatchPlan,ptList,ptArticle,ptLimit,ptArrange,ptArticlePage,ptCatchItems);
+  TPlanObjectArray=array of TdxFcObject;
   TPlanObject = class(TdxFcObject)
   private
     FStop:Boolean;
@@ -18,7 +19,7 @@ type
     property ObjectType:TPlanObjectType read FType write FType;
     property ItemProperty:String read FProperty write FProperty;
     function getProperty(name:String):String;
-    function getLinkObjectByType(aType:TPlanObjectType):TPlanObject;
+    function getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;
   end;
 
 implementation
@@ -49,7 +50,7 @@ begin
   result:=JsonRoot.Field[name].Value;
 end;
 
-function TPlanObject.getLinkObjectByType(aType:TPlanObjectType):TPlanObject;
+function TPlanObject.getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;
 var
   i:integer;
 begin
@@ -58,8 +59,10 @@ begin
   begin
     if(self.LinkedObjects[i] as TPlanObject).ObjectType=aType then
     begin
-      result:=self.LinkedObjects[i] as TPlanObject;
-      exit'
+      setlength(result,length(result)+1);
+      result[length(result)-1]:=self.LinkedObjects[i] as TPlanObject;
+      //result:=self.LinkedObjects[i] as TPlanObject;
+      //exit;
     end;
   end;
 end;

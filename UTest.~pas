@@ -23,7 +23,7 @@ implementation
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  WebBrowser1.Destroy;
+  //WebBrowser1.;
 end;
 
 end.

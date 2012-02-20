@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 515
-  Top = 419
+  Left = 157
+  Top = 33
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 703
