@@ -62,7 +62,7 @@ end;
 
 procedure TfrmTestRule.Button1Click(Sender: TObject);
 begin
-//IdHTTP1.pos
+  //IdHTTP1.pos
   memo1.Lines.Clear;
   memo1.Lines.Add(mCachePlan.ItemProperty);
   memo1.Lines.Add('----------------------------');

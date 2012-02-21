@@ -505,7 +505,6 @@ begin
   end; }
   //GetChildControls(self,controlArray,'');
   //LoadXmlInitControls('xml\catchplaninit.xml',self,arrayListBoxStoreData);
-
 end;
 
 procedure TfrmCatchPlan.pop_createplanClick(Sender: TObject);

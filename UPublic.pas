@@ -25,6 +25,7 @@ function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:St
 procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
 function SaveInspectorToJson(aTdxInspedtor:TdxInspector):String;
 procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnInspectorButtonClick:TInspectorButtonClick);
+function GetRowValueByName(name:String;JsonString:String):string;
 Function GetGUID:string;
 procedure MakeDir(newFolder:String);
 
@@ -75,6 +76,53 @@ begin
     result:=(row as TdxInspectorTextPopupRow).EditText
   else if row is TdxInspectorTextButtonRow then
     result:=(row as TdxInspectorTextButtonRow).EditText;
+end;
+
+
+
+function FindOneRowByName(name:String;JsonObject:TlkJSONobject):string;
+var
+  childsJsonObject:TlkJSONobject;
+  i:integer;
+
+begin
+  result:='';
+  if (JsonObject.Field['name'].Value=name) then
+  begin
+    result:=JsonObject.Field['value'].Value;
+    exit;
+  end;
+  childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
+  if(childsJsonObject<>nil) then
+  begin
+    for i:=0 to childsJsonObject.Count -1 do
+    begin
+      result:=FindOneRowByName(name,childsJsonObject.FieldByIndex[i] as TlkJSONobject);
+      if result<>'' then
+        exit;
+    end;
+  end;
+end;
+
+
+
+
+function GetRowValueByName(name:String;JsonString:String):string;
+var
+  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
+  i:integer;
+begin
+  result:='';
+  JsonRoot:=TlkJSON.ParseText(JsonString) as TlkJSONobject;
+  JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
+  for i:=0 to JsonRoot.Count-1 do
+  begin
+    JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
+    //showmessage(JsonObject.Field['value'].Value);
+    result:=FindOneRowByName(name,JsonRoot.FieldByIndex[i] as TlkJSONobject);
+    if(result<>'') then
+      exit;
+  end;
 end;
 
 
@@ -156,8 +204,8 @@ begin
     (row as TdxInspectorTextButtonRow).OnButtonClick:= OnInspectorButtonClick;
   end;
   
-  row.Name:=JsonObject.Field['name'] .Value;
-  row.Caption:=JsonObject.Field['caption'] .Value;
+  row.Name:=JsonObject.Field['name'].Value;
+  row.Caption:=JsonObject.Field['caption'].Value;
   row.EditText:=JsonObject.Field['value'].Value;
   childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
   if(rowClass='TdxInspectorTextPickRow') then

@@ -21,7 +21,9 @@ uses
   UTest in 'UTest.pas' {Form1},
   UVariableDefine in 'UVariableDefine.pas',
   UTestRule in 'UTestRule.pas' {frmTestRule},
-  UHttp in 'UHttp.pas';
+  UHttp in 'UHttp.pas',
+  UCatchPlanSyntax in 'UCatchPlanSyntax.pas',
+  UArticleObject in 'UArticleObject.pas';
 
 {$R *.res}
 

@@ -1,6 +1,6 @@
 object frmTestRule: TfrmTestRule
-  Left = 148
-  Top = 70
+  Left = 296
+  Top = 308
   BorderStyle = bsDialog
   Caption = #27979#35797#35268#21017
   ClientHeight = 666
@@ -66,6 +66,15 @@ object frmTestRule: TfrmTestRule
       Caption = 'Button1'
       TabOrder = 2
       OnClick = Button1Click
+    end
+    object Memo1: TMemo
+      Left = 280
+      Top = 280
+      Width = 713
+      Height = 49
+      Lines.Strings = (
+        'Memo1')
+      TabOrder = 3
     end
   end
   object Panel2: TPanel

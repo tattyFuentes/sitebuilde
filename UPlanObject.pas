@@ -3,7 +3,7 @@ unit UPlanObject;
 interface
 
 uses
-  Classes,dxflchrt,uLkJSON;
+  Classes,dxflchrt,uLkJSON,dxInspRw,dxInspct,uPublic;
 type
   TPlanObjectType = (ptCatchPlan,ptList,ptArticle,ptLimit,ptArrange,ptArticlePage,ptCatchItems);
   TPlanObjectArray=array of TdxFcObject;
@@ -41,13 +41,8 @@ begin
 end;
 
 function TPlanObject.getProperty(name:String):String;
-var
-  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
-  i:integer;
 begin
-  result:='';
-  JsonRoot:=TlkJSON.ParseText(ItemProperty) as TlkJSONobject;
-  result:=JsonRoot.Field[name].Value;
+  result:=GetRowValueByName(name,UTF8ENCODE(FProperty));
 end;
 
 function TPlanObject.getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;
