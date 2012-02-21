@@ -20,6 +20,7 @@ type
     dxInspector1: TdxInspector;
     Button1: TButton;
     IdHTTP1: TIdHTTP;
+    Memo1: TMemo;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
 
@@ -62,10 +63,27 @@ end;
 procedure TfrmTestRule.Button1Click(Sender: TObject);
 begin
 //IdHTTP1.pos
-  showmessage(mCachePlan.ItemProperty);
-  showmessage(getStringFromUrl('http://www.baidu.com/','gbk',false));
-  showmessage(inttostr(length(planview.GetObjectByType(ptList).getLinkObjectsByType(ptArticle))));
-  showmessage(inttostr(planview.ObjectCount));
+  memo1.Lines.Clear;
+  memo1.Lines.Add(mCachePlan.ItemProperty);
+  memo1.Lines.Add('----------------------------');
+  memo1.Lines.Add(mPlanList.ItemProperty);
+  memo1.Lines.Add('----------------------------');
+  memo1.Lines.Add(mPlanArticle1.ItemProperty);
+  memo1.Lines.Add('----------------------------');
+  memo1.Lines.Add(mPlanLimit1.ItemProperty);
+  memo1.Lines.Add('----------------------------');
+  memo1.Lines.Add(mPlanArrange1.ItemProperty);
+  memo1.Lines.Add('----------------------------');
+  memo1.Lines.Add(mPlanAtriclePage1.ItemProperty);
+  memo1.Lines.Add('----------------------------');
+  memo1.Lines.Add(mPlanCatchItem1.ItemProperty);
+  
+
+  //showmessage(mCachePlan.getProperty('CatchPlanBaseName'));
+  //showmessage(mCachePlan.ItemProperty);
+  //showmessage(getStringFromUrl('http://www.baidu.com/','gbk',false));
+  //showmessage(inttostr(length(planview.GetObjectByType(ptList).getLinkObjectsByType(ptArticle))));
+  //showmessage(inttostr(planview.ObjectCount));
 end;
 
 end.
