@@ -11,7 +11,7 @@ uses
 type
   TWinControlArray=Array of TControl;
   TInspectorButtonClick =procedure(Sender: TObject;AbsoluteIndex: Integer)of object;
-  
+  EUserDefineError=class(Exception);
 function FindControlByName(controls:TWinControlArray;name:String):TControl;
 function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashMap:THashedStringList):String;
 procedure LoadXmlInitControls(xml:string;parentControl:TWinControl;listBoxDataHashMap:THashedStringList);
@@ -25,7 +25,7 @@ function getValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:St
 procedure modifyValueFromHashMap(listBoxDataHashMap:THashedStringList;controlName:String;itemName:String;itemValue:String);
 function SaveInspectorToJson(aTdxInspedtor:TdxInspector):String;
 procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String;OnInspectorButtonClick:TInspectorButtonClick);
-function GetRowValueByName(name:String;JsonString:String):string;
+function GetRowPropertyByName(name:String;JsonString:String;aPropertyName:String):string;
 Function GetGUID:string;
 procedure MakeDir(newFolder:String);
 
@@ -80,16 +80,15 @@ end;
 
 
 
-function FindOneRowByName(name:String;JsonObject:TlkJSONobject):string;
+function FindOneRowByName(name:String;JsonObject:TlkJSONobject;aPropertyName:String):string;
 var
   childsJsonObject:TlkJSONobject;
   i:integer;
-
 begin
-  result:='';
+  result:='-1';
   if (JsonObject.Field['name'].Value=name) then
   begin
-    result:=JsonObject.Field['value'].Value;
+    result:=JsonObject.Field[aPropertyName].Value;
     exit;
   end;
   childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
@@ -97,8 +96,8 @@ begin
   begin
     for i:=0 to childsJsonObject.Count -1 do
     begin
-      result:=FindOneRowByName(name,childsJsonObject.FieldByIndex[i] as TlkJSONobject);
-      if result<>'' then
+      result:=FindOneRowByName(name,childsJsonObject.FieldByIndex[i] as TlkJSONobject,aPropertyName);
+      if result<>'-1' then
         exit;
     end;
   end;
@@ -107,20 +106,20 @@ end;
 
 
 
-function GetRowValueByName(name:String;JsonString:String):string;
+function GetRowPropertyByName(name:String;JsonString:String;aPropertyName:String):string;
 var
   JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
   i:integer;
 begin
-  result:='';
+  result:='-1';
   JsonRoot:=TlkJSON.ParseText(JsonString) as TlkJSONobject;
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
   for i:=0 to JsonRoot.Count-1 do
   begin
     JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
     //showmessage(JsonObject.Field['value'].Value);
-    result:=FindOneRowByName(name,JsonRoot.FieldByIndex[i] as TlkJSONobject);
-    if(result<>'') then
+    result:=FindOneRowByName(name,JsonRoot.FieldByIndex[i] as TlkJSONobject,aPropertyName);
+    if(result<>'-1') then
       exit;
   end;
 end;

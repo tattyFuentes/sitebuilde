@@ -18,7 +18,7 @@ type
   public
     property ObjectType:TPlanObjectType read FType write FType;
     property ItemProperty:String read FProperty write FProperty;
-    function getProperty(name:String):String;
+    function getProperty(name:String;aPropertyName:String):String;
     function getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;
   end;
 
@@ -40,9 +40,9 @@ begin
   WriteStr(Stream, FProperty);
 end;
 
-function TPlanObject.getProperty(name:String):String;
+function TPlanObject.getProperty(name:String;aPropertyName:String):String;
 begin
-  result:=GetRowValueByName(name,UTF8ENCODE(FProperty));
+  result:=GetRowPropertyByName(name,UTF8ENCODE(FProperty),aPropertyName);
 end;
 
 function TPlanObject.getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;

@@ -6,7 +6,7 @@ uses
   Windows, Messages,dxExEdtr, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, StdCtrls, dxCntner, dxInspct,
   ComCtrls, Controls, ExtCtrls, Classes,SysUtils, Variants, Graphics, Forms,
-  Dialogs,UPlanView,UPlanObject,UHttp;
+  Dialogs,UPlanView,UPlanObject,UHttp,UCatchPlanSyntax,UPublic;
 
 
 type
@@ -63,7 +63,13 @@ end;
 procedure TfrmTestRule.Button1Click(Sender: TObject);
 begin
   //IdHTTP1.pos
-  memo1.Lines.Clear;
+  try
+    GetList(mCachePlan,mPlanList);
+  except
+  on e:EUserDefineError do
+    showmessage( e.Message);
+  end;
+  {memo1.Lines.Clear;
   memo1.Lines.Add(mCachePlan.ItemProperty);
   memo1.Lines.Add('----------------------------');
   memo1.Lines.Add(mPlanList.ItemProperty);
@@ -76,7 +82,7 @@ begin
   memo1.Lines.Add('----------------------------');
   memo1.Lines.Add(mPlanAtriclePage1.ItemProperty);
   memo1.Lines.Add('----------------------------');
-  memo1.Lines.Add(mPlanCatchItem1.ItemProperty);
+  memo1.Lines.Add(mPlanCatchItem1.ItemProperty);   }
   
 
   //showmessage(mCachePlan.getProperty('CatchPlanBaseName'));
