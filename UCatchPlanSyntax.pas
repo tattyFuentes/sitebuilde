@@ -40,12 +40,20 @@ begin
   result:=getStringFromUrl(aUrl,pageEncode,isZip);
 end;
 
-function parseListUrl(aBaseConfig:TPlanObject;aListConfig:TPlanObject;aUrl):String;
+//根据列表设置解析返回的页面内容
+function parseListArticleUrl(aBaseConfig:TPlanObject;aListConfig:TPlanObject;aUrl:String):String;
 var
   sResponse:String;
+  listScope:String;
+  listPageUrl:String;
 begin
   sResponse:=RequestUrl(aBaseConfig,aUrl);
-
+  listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
+  if(listScope<>'') then
+  begin
+  end;
+  //checkConfig(aListConfig,'CatchPlanAutoListBeginEnd');
+  listPageUrl:=checkConfig(aListConfig,'CatchPlanAutoListPageUrl');
 end;
 
 
@@ -55,29 +63,32 @@ var
   listBeginPage:string;
   listEndPage:string;
   listStep:String;
-  listScope:String;
-  listPageUrl:String;
+  intStep:integer;
   i,intBegin,intEnd:integer;
 begin
   listUrl:=checkConfig(aListConfig,'CatchPlanAutoListUrl');
   listBeginPage:=checkConfig(aListConfig,'CatchPlanAutoListFirstPage');
   listEndPage:=checkConfig(aListConfig,'CatchPlanAutoListEndPage');
   listStep:=checkConfig(aListConfig,'CatchPlanAutoListStep');
-  listScope:=checkConfig(aListConfig,'CatchPlanAutoListBeginEnd');
-  listPageUrl:=checkConfig(aListConfig,'CatchPlanAutoListPageUrl');
+  intStep:=strtoint(listStep);
+
   intBegin:=strtoint(listBeginPage);
   intEnd:=strtoint(listEndPage);
   if (intBegin>intEnd) then
   begin
-    for i:=intBegin downto intEnd do
+    i:=intBegin;
+    while i>=intEnd do
     begin
       listUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
+      i:=i-intStep;
     end;
   end else
   begin
-    for i:=intBegin to intEnd do
+    i:=intBegin;
+    while i<=intEnd do
     begin
       listUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
+      i:=i+intStep;
     end;
   end;
 

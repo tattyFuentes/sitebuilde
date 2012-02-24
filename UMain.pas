@@ -254,16 +254,48 @@ var
 reg: TPerlRegEx;
 begin
 reg := TPerlRegEx.Create(nil);
+reg.Subject:='CodeGear　Delphi2007 Delphi2008 Delphi2009 for win32 1111111';
+reg.RegEx:='Delphi([^ ]*)';
 
-reg.Subject := 'abc A1111 BB222 CCC33 DDDD4';
-reg.RegEx   :='\b([B-D]+)([1-3]+)\b'; //这个表达式有两个子表达式构成
+{while reg.MatchAgain do //很明显:　本例只能找到一个结果　
+begin
+ShowMessage(reg.MatchedExpression);//找到的字符串:　Delphi　
+end;}
+
+
+
+
+  //reg.Subject := 'abc A1111 BB222 CCC33 DDDD4';
+  //reg.RegEx   :='([B-D]+)'; //这个表达式有两个子表达式构成
+
+  //reg.Subject := 'abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff';
+  //reg.RegEx:='<%([^<^ ]*)%>';
+//  reg.Subject:=memo2.Text;
+//  reg.RegEx:='<a title=[.\n]*href="([^"]*)">';
+  //if reg.Match then
+  // showmessage('1');
+
+//showmessage(reg.MatchedExpression);
+//reg.RegEx:='(a.*)';
+//reg.Replacement:='-';
+//reg.ReplaceAll;
+//showmessage(reg.Subject);
+//showmessage(reg.MatchedExpression);
+//reg.Replace;
+
+//if reg.Match then
+//  showmessage('finc');
 //([1-4]+)\b
 
 while reg.MatchAgain do
 begin
-  ShowMessage(inttostr(reg.SubExpressionCount));
-  ShowMessage(reg.SubExpressions[0]); //将分别显示: A1111 BB222 CCC33DDDD4
+  ShowMessage(reg.MatchedExpression);
+  //ShowMessage(inttostr(reg.SubExpressionCount));
+  //ShowMessage(reg.SubExpressions[0]); //将分别显示: A1111 BB222 CCC33DDDD4
   ShowMessage(reg.SubExpressions[1]); //将分别显示: A BB CCC DDDD
+  //ShowMessage(reg.SubExpressions[2]); //将分别显示: A BB CCC DDDD
+  //ShowMessage(reg.SubExpressions[3]); //将分别显示: A BB CCC DDDD
+  //ShowMessage(reg.SubExpressions[1]); //将分别显示: A BB CCC DDDD
   //ShowMessage(reg.SubExpressions[2]); //将分别显示: 1111 222 33 4
    {另外:
      reg.Subexpression_rCount     是子表达式的个数;

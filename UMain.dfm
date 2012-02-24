@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 191
-  Top = 112
+  Left = 359
+  Top = 243
   Width = 1280
   Height = 733
   Caption = 'SiteBuild '#31449#32676#21457#24067#31995#32479
@@ -99,7 +99,84 @@ object frmMain: TfrmMain
     Width = 425
     Height = 73
     Lines.Strings = (
-      'Memo2')
+      '<div class="articleCell SG_j_linedot1">'
+      #9#9#9#9#9#9'<p class="atc_main '
+      'SG_dot">'
+      #9#9#9#9#9#9#9'<span '
+      'class="atc_ic_f"></span>'
+      #9#9#9#9#9#9#9'<span '
+      'class="atc_title">'
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9#9'<a title="tyj'#29436#30495#30340#35201#26469#20102'" '
+      
+        'target="_blank" href="http://blog.sina.com.cn/s/blog_59880a7b010' +
+        '2e6mf.html">tyj'#29436
+      #30495#30340#35201#26469#20102'</a></span> '
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9'<span class="atc_ic_b"><img '
+      'class="SG_icon SG_icon18" '
+      
+        'src="http://simg.sinajs.cn/blog7style/images/common/sg_trans.gif' +
+        '" width="15" '
+      'height="15" title="'#27492#21338#25991#21253#21547#22270#29255'" align="absmiddle" /></span>'
+      #9#9#9#9#9#9'</p>'
+      #9#9#9#9#9#9'<p class="atc_info">'
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9'<span class="atc_data" '
+      'id="count_59880a7b0102e6mf"></span>'
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9'<span class="atc_tm SG_txtc">2012-02-22 '
+      '19:00</span>'
+      #9#9#9#9#9#9#9'<span '
+      'class="atc_set">'
+      #9#9#9#9#9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9'</span>'
+      #9#9#9#9#9#9'</p>'
+      #9#9#9#9#9'</div>'
+      #9#9#9#9#9#9#9#9'<div '
+      'class="articleCell SG_j_linedot1">'
+      #9#9#9#9#9#9'<p class="atc_main '
+      'SG_dot">'
+      #9#9#9#9#9#9#9'<span '
+      'class="atc_ic_f"></span>'
+      #9#9#9#9#9#9#9'<span '
+      'class="atc_title">'
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9#9'<a title="tyj'#26085#32447#32423#21035#20108#28010
+      #35843#25972#19979#21322#21608#21040#26469'" target="_blank" '
+      
+        'href="http://blog.sina.com.cn/s/blog_59880a7b0102e6m0.html">tyj'#26085 +
+        #32447#32423#21035#20108#28010#35843#25972
+      #19979#21322#21608#21040#26469'</a></span> '
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9'<span class="atc_ic_b"><img '
+      'class="SG_icon SG_icon18" '
+      
+        'src="http://simg.sinajs.cn/blog7style/images/common/sg_trans.gif' +
+        '" width="15" '
+      'height="15" title="'#27492#21338#25991#21253#21547#22270#29255'" align="absmiddle" /></span>'
+      #9#9#9#9#9#9'</p>'
+      #9#9#9#9#9#9'<p class="atc_info">'
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9'<span class="atc_data" '
+      'id="count_59880a7b0102e6m0"></span>'
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9'<span class="atc_tm SG_txtc">2012-02-21 '
+      '22:35</span>'
+      #9#9#9#9#9#9#9'<span '
+      'class="atc_set">'
+      #9#9#9#9#9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9
+      #9#9#9#9#9#9#9#9#9
+      #9#9#9#9#9#9#9#9#9)
     TabOrder = 7
   end
   object Button5: TButton

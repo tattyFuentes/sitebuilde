@@ -641,7 +641,7 @@ var
   //frmTools:TForm1;
 begin
   frmTools:=TFrmTools.Create(self);
-  frmTools.ShowModal;
+  frmTools.Show;
 end;
 
 procedure TfrmCatchPlan.checkBoxTreePlanCategoryAdvancedCustomDrawItem(
