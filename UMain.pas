@@ -263,14 +263,15 @@ begin
 ShowMessage(reg.MatchedExpression);//找到的字符串:　Delphi　
 end;}
 
-
+    //reg.
 
 
   //reg.Subject := 'abc A1111 BB222 CCC33 DDDD4';
   //reg.RegEx   :='([B-D]+)'; //这个表达式有两个子表达式构成
 
-  //reg.Subject := 'abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff';
+  reg.Subject := 'abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff';
   //reg.RegEx:='<%([^<^ ]*)%>';
+
   reg.Subject:=memo2.Text;
   //reg.RegEx:='<a(.|\s)*?href="((.|\s)*?)">';
   //reg.RegEx:='<a(.|\s)*?href="(.*?)">';
@@ -279,6 +280,12 @@ end;}
 
   //if reg.Match then
   // showmessage('1');
+
+
+  //reg.RegEx:='<a title="([^">]*)"[^>]*href="([^">]*)">';
+  //reg.RegEx:='title=([^ ]*)';
+  //reg.RegEx:='title=([.\n]*)href="([^"]*)">';
+
 
 //showmessage(reg.MatchedExpression);
 //reg.RegEx:='(a.*)';
@@ -299,8 +306,8 @@ begin
   //ShowMessage(reg.SubExpressions[0]); //将分别显示: A1111 BB222 CCC33DDDD4
   ShowMessage(reg.SubExpressions[1]); //将分别显示: A BB CCC DDDD
   ShowMessage(reg.SubExpressions[2]); //将分别显示: A BB CCC DDDD
-  ShowMessage(reg.SubExpressions[3]); //将分别显示: A BB CCC DDDD
-  ShowMessage(reg.SubExpressions[4]); //将分别显示: A BB CCC DDDD
+  //ShowMessage(reg.SubExpressions[3]); //将分别显示: A BB CCC DDDD
+  //ShowMessage(reg.SubExpressions[4]); //将分别显示: A BB CCC DDDD
   //ShowMessage(reg.SubExpressions[2]); //将分别显示: 1111 222 33 4
    {另外:
      reg.Subexpression_rCount     是子表达式的个数;
