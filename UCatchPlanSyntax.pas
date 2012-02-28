@@ -2,7 +2,7 @@ unit UCatchPlanSyntax;
 
 interface
 
-uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine;
+uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes;
 Type ArticleList=Array of TArticleObject;
 
 
@@ -46,11 +46,21 @@ var
   sResponse:String;
   listScope:String;
   listPageUrl:String;
+  searchStrings:TStringList;
 begin
+
+  //searchStrings.
   sResponse:=RequestUrl(aBaseConfig,aUrl);
   listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   if(listScope<>'') then
   begin
+    searchStrings:=RegexSearchString(listScope,'(<%.*?%>)');
+    if(searchStrings<>nil) then
+    begin
+      listScope:=RegexReplaceString(listScope,'<%var%>','((?:.|\s)*?)');
+      listScope:=RegexReplaceString(listScope,'<%.*?%>','((?:.|\s)*?)');
+      RegexSearchString(sResponse,listScope);
+    end;
   end;
   //checkConfig(aListConfig,'CatchPlanAutoListBeginEnd');
   listPageUrl:=checkConfig(aListConfig,'CatchPlanAutoListPageUrl');

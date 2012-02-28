@@ -7,7 +7,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,CommCtrl,TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,activex,dxExEdtr,
-  TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles;
+  TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles,PerlRegEx;
 type
   TWinControlArray=Array of TControl;
   TInspectorButtonClick =procedure(Sender: TObject;AbsoluteIndex: Integer)of object;
@@ -28,6 +28,9 @@ procedure LoadJsonStringToInspector(aTdxInspedtor:TdxInspector;JsonString:String
 function GetRowPropertyByName(name:String;JsonString:String;aPropertyName:String):string;
 Function GetGUID:string;
 procedure MakeDir(newFolder:String);
+function RegexReplaceString(sourceString:String;findExpression:String;replaceValue:String):String;
+function RegexSearchString(sourceString:String;findExpression:String):TStringList;
+
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -35,6 +38,40 @@ const
 implementation
 
 uses uXML,uLKJSON;
+
+function RegexSearchString(sourceString:String;findExpression:String):TStringList;
+var
+  reg: TPerlRegEx;
+  i:integer;
+begin
+  result:=NIL;
+  reg := TPerlRegEx.Create(nil);
+  reg.Subject:=sourceString;
+  reg.RegEx:=findExpression;
+  while reg.MatchAgain do
+  begin
+    if (result=nil) then
+      result:=TStringList.Create;
+    for i:=1 to reg.SubExpressionCount do
+    begin
+      result.Add(reg.SubExpressions[i]);
+    end;
+  end;
+end;
+
+function RegexReplaceString(sourceString:String;findExpression:String;replaceValue:String):String;
+var
+  reg: TPerlRegEx;
+begin
+  result:=sourceString;
+  reg := TPerlRegEx.Create(nil);
+  reg.Subject:=sourceString;
+  reg.RegEx:=findExpression;
+  reg.Replacement:=replaceValue;
+  if(reg.ReplaceAll()) then
+    result:=reg.Subject;
+  FreeAndNil(reg);
+end;
 
 
 procedure MakeDir(newFolder:String);

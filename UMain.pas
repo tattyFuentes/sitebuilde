@@ -252,7 +252,26 @@ end;
 procedure TfrmMain.Button5Click(Sender: TObject);
 var
 reg: TPerlRegEx;
+sss:TStringList;
 begin
+sss:=RegexSearchString('abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff','<%(.*?)%>');
+
+showmessage(sss[0]);
+showmessage(sss[1]);
+showmessage(sss[2]);
+showmessage(sss[3]);
+sss.Free;
+
+showmessage(RegexReplaceString('abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff','<%.*?%>','((?:.|\s)*?)'));
+
+
+
+
+exit;
+
+
+
+
 reg := TPerlRegEx.Create(nil);
 reg.Subject:='CodeGear¡¡Delphi2007 Delphi2008 Delphi2007 for win32 1111111';
 //reg.RegEx:='Delphi([^ ]*)';
