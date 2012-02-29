@@ -1,20 +1,32 @@
 unit UArticleObject;
 interface
 type
+
   TArticleObject = class(TObject)
   private
     FTitle:String;
-    FId:integer;
+    FId:string;
     FCreateDate:TDateTime;
-    FCatchPlanId:integer;
+    FCatchPlanId:String;
     FContent:String;
+    FThumb:String;
+    FAuthor:String;
+    FExcerpt:String;
+    FTags:String;
+    FDownloadFiles:String;    
   public
     property title:string read FTitle write FTitle;
     property content:string read FContent write FContent;
-    property id:integer read FId write FId;
+    property id:string read FId write FId;
     property createDate:TDateTime read FCreateDate write FCreateDate;
-    property catchPlanId:integer read FCatchPlanId write FCatchPlanId;
+    property thumb:string read FThumb write FThumb;
+    property author:string read FAuthor write FAuthor;
+    property excerpt:string read FExcerpt write FExcerpt;
+    property tags:string read FTags write FTags;
+    property downloadFiles:string read FDownloadFiles write FDownloadFiles;
+    property catchPlanId:String read FCatchPlanId write FCatchPlanId;
   end;
+  TArticleObjectList=array of TArticleObject;
 implementation
 
 end.

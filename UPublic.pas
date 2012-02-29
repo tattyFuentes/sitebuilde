@@ -42,7 +42,7 @@ uses uXML,uLKJSON;
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
 var
   reg: TPerlRegEx;
-  i:integer;
+  i,rowCount:integer;
 begin
   result:=NIL;
   reg := TPerlRegEx.Create(nil);
