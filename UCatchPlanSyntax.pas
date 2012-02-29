@@ -34,7 +34,7 @@ begin
   if(pageEncode='自动识别') then
     pageEncode:=''
   else if (pageEncode='UTF8') then
-    pageEncode:='utf8'
+    pageEncode:='UTF8'
   else
     pageEncode:='GBK';
   result:=getStringFromUrl(aUrl,pageEncode,isZip);
@@ -131,7 +131,7 @@ begin
 end;
 
 //根据列表设置解析返回的页面内容
-function parseListArticleUrl(aBaseConfig:TPlanObject;aListConfig:TPlanObject;aUrl:String):String;
+function parseListArticleUrl(aBaseConfig:TPlanObject;aListConfig:TPlanObject;aUrl:String):TArticleObjectList;
 var
   sResponse:String;
   listScope:String;
@@ -142,6 +142,7 @@ begin
   sResponse:=RequestUrl(aBaseConfig,aUrl);
   listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   listContent:=getListScopeContent(sResponse,listScope);
+  getArticleList(listContent,aListConfig);
 end;
 
 
@@ -169,6 +170,7 @@ begin
     begin
       listUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i-intStep;
+      parseListArticleUrl(aBaseConfig,aListConfig,listUrl);
     end;
   end else
   begin
@@ -177,6 +179,7 @@ begin
     begin
       listUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i+intStep;
+      parseListArticleUrl(aBaseConfig,aListConfig,listUrl);
     end;
   end;
 

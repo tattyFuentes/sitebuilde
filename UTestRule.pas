@@ -63,6 +63,7 @@ end;
 procedure TfrmTestRule.Button1Click(Sender: TObject);
 begin
   //IdHTTP1.pos
+  showmessage(memo1.Lines.Text);
   try
     GetList(mCachePlan,mPlanList);
   except

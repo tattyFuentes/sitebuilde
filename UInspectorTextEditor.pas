@@ -82,7 +82,7 @@ end;
 
 procedure TFrmInspectorTextEditor.Button1Click(Sender: TObject);
 begin
-   buttonRow.EditText:=memText.Lines.Text;
+  buttonRow.EditText:=copy(memText.Lines.Text,1,length(memText.Lines.Text)-2);
   close;
 end;
 
