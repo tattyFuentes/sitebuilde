@@ -6,7 +6,7 @@ uses
   Windows, Messages,dxExEdtr, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, StdCtrls, dxCntner, dxInspct,
   ComCtrls, Controls, ExtCtrls, Classes,SysUtils, Variants, Graphics, Forms,
-  Dialogs,UPlanView,UPlanObject,UHttp,UCatchPlanSyntax,UPublic;
+  Dialogs,UPlanView,UPlanObject,UHttp,UCatchPlanSyntax,UPublic,PerlRegEx;
 
 
 type
@@ -61,15 +61,31 @@ begin
 end;
 
 procedure TfrmTestRule.Button1Click(Sender: TObject);
+var
+  reg: TPerlRegEx;
 begin
   //IdHTTP1.pos
-  showmessage(memo1.Lines.Text);
+  //showmessage(memo1.Lines.Text);
+  memo1.Lines.Clear;
+  memo1.Lines.Add(RequestUrl(mCachePlan,'http://blog.sina.com.cn/s/articlelist_1502087803_0_1.html'));
+  reg := TPerlRegEx.Create();
+  reg.Options:=[preSingleLine,preUnGreedy];
+  reg.Subject:=memo1.lines.text;
+  reg.RegEx:='<!-- 列表 START -->(.*)<!-- 列表END -->';
+
+  while reg.MatchAgain do
+  begin
+    //ShowMessage(inttostr(reg.GroupCount));
+    //ShowMessage(reg.Groups[1]); //将分别显示: A BB CCC DDDD
+  end;
   try
     GetList(mCachePlan,mPlanList);
   except
   on e:EUserDefineError do
     showmessage( e.Message);
   end;
+
+
   {memo1.Lines.Clear;
   memo1.Lines.Add(mCachePlan.ItemProperty);
   memo1.Lines.Add('----------------------------');
@@ -84,7 +100,7 @@ begin
   memo1.Lines.Add(mPlanAtriclePage1.ItemProperty);
   memo1.Lines.Add('----------------------------');
   memo1.Lines.Add(mPlanCatchItem1.ItemProperty);   }
-  
+
 
   //showmessage(mCachePlan.getProperty('CatchPlanBaseName'));
   //showmessage(mCachePlan.ItemProperty);

@@ -41,7 +41,6 @@ type
     N12: TMenuItem;
     Memo2: TMemo;
     Button5: TButton;
-    PerlRegEx1: TPerlRegEx;
     Button6: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -254,25 +253,13 @@ var
 reg: TPerlRegEx;
 sss:TStringList;
 begin
-sss:=RegexSearchString('abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff','<%(.*?)%>');
-
-showmessage(sss[0]);
-showmessage(sss[1]);
-showmessage(sss[2]);
-showmessage(sss[3]);
-sss.Free;
-
-showmessage(RegexReplaceString('abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff','<%.*?%>','((?:.|\s)*?)'));
+  sss:=RegexSearchString('<a title="<%article.title%>"<%var%>href="<%article.id%>">','<%(.*)%>');
 
 
 
 
-exit;
-
-
-
-
-reg := TPerlRegEx.Create(nil);
+reg := TPerlRegEx.Create();
+reg.Options:=[preSingleLine,preUnGreedy];
 reg.Subject:='CodeGear　Delphi2007 Delphi2008 Delphi2007 for win32 1111111';
 //reg.RegEx:='Delphi([^ ]*)';
 reg.RegEx:='Delphi((.|\n)*?)7';
@@ -288,13 +275,14 @@ end;}
   //reg.Subject := 'abc A1111 BB222 CCC33 DDDD4';
   //reg.RegEx   :='([B-D]+)'; //这个表达式有两个子表达式构成
 
-  reg.Subject := 'abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff';
-  //reg.RegEx:='<%([^<^ ]*)%>';
+  //reg.Subject := 'abcde<%article.tags%>sdfsdfsd<%article.id%>sdfsdfsd<%article.excerpt%>sdfsddddddddssdfsdfffff';
+  reg.Subject := '<a title="<%article.title%>"<%var%>href="<%article.id%>">';
+  reg.RegEx:='<%(.*)%>';
 
-  reg.Subject:=memo2.Text;
+  //reg.Subject:=memo2.Text;
   //reg.RegEx:='<a(.|\s)*?href="((.|\s)*?)">';
   //reg.RegEx:='<a(.|\s)*?href="(.*?)">';
-  reg.RegEx:='<a title="((?:.|\s)*?)"(?:.|\s)*?href="((?:.|\s)*?)">';
+  //reg.RegEx:='<a title="((?:.|\s)*?)"(?:.|\s)*?href="((?:.|\s)*?)">';
 
 
   //if reg.Match then
@@ -321,10 +309,10 @@ end;}
 while reg.MatchAgain do
 begin
   //ShowMessage(reg.MatchedExpression);
-  ShowMessage(inttostr(reg.SubExpressionCount));
+  ShowMessage(inttostr(reg.GroupCount));
   //ShowMessage(reg.SubExpressions[0]); //将分别显示: A1111 BB222 CCC33DDDD4
-  ShowMessage(reg.SubExpressions[1]); //将分别显示: A BB CCC DDDD
-  ShowMessage(reg.SubExpressions[2]); //将分别显示: A BB CCC DDDD
+  ShowMessage(reg.Groups[1]); //将分别显示: A BB CCC DDDD
+  ShowMessage(reg.Groups[2]); //将分别显示: A BB CCC DDDD
   //ShowMessage(reg.SubExpressions[3]); //将分别显示: A BB CCC DDDD
   //ShowMessage(reg.SubExpressions[4]); //将分别显示: A BB CCC DDDD
   //ShowMessage(reg.SubExpressions[2]); //将分别显示: 1111 222 33 4

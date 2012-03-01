@@ -7,6 +7,7 @@ Type ArticleList=Array of TArticleObject;
 
 
 function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):ArticleList;
+function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 implementation
 
 function checkConfig(aListConfig:TPlanObject;aPropertyName:String):String;
@@ -40,18 +41,33 @@ begin
   result:=getStringFromUrl(aUrl,pageEncode,isZip);
 end;
 
+function parseTagList(aSourceString:String):TStringList;
+var
+  i:integer;
+begin
+  result:=RegexSearchString(aSourceString,'<%(.*)%>');
+  if(result<>nil) then
+  begin
+    for i:=0 to result.Count-1 do
+    begin
+      result.Strings[i]:='<%'+result.Strings[i]+'%>';
+    end;
+  end;
+end;
+
 //获得列表区域的内容
 function getListScopeContent(aResponseStr:String;aListScope:String):String;
 var
   tagStrings,searchStrings:TStringList;
+  i:integer;
 begin
   result:= aResponseStr;
   if(alistScope<>'') then
   begin
-    tagStrings:=RegexSearchString(aListScope,'(<%.*?%>)');
+    tagStrings:=parseTagList(aListScope);
     if(tagStrings<>nil) then
     begin
-      aListScope:=RegexReplaceString(aListScope,'<%.*?%>','((?:.|\s)*?)');
+      aListScope:=RegexReplaceString(aListScope,'<%.*?%>','(.*?)');
       searchStrings:=RegexSearchString(aResponseStr,aListScope);
       if(searchStrings=nil) then
       begin
@@ -108,16 +124,16 @@ var
 begin
   result:=nil;
   listPageUrl:=checkConfig(aListConfig,'CatchPlanAutoListPageUrl');
-  tagStrings:=RegexSearchString(listPageUrl,'(<%.*?%>)');
+  tagStrings:=parseTagList(listPageUrl);
   if(tagStrings<>nil) then
   begin
-    listPageUrl:=RegexReplaceString(listPageUrl,'<%.*?%>','((?:.|\s)*?)');
+    listPageUrl:=RegexReplaceString(listPageUrl,'<%.*%>','(.*)');
     searchStrings:=RegexSearchString(aListContent,listPageUrl);
     if(searchStrings=nil) then
     begin
       raise EUserDefineError.create('列表规则中文章地址设置有误,没找到符合项！');
     end;
-    for i:=0 to  (searchStrings.Count div tagStrings.Count) do
+    for i:=0 to  (searchStrings.Count div tagStrings.Count)-1 do
     begin
       articleObject:=TArticleObject.Create;
       for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
@@ -148,7 +164,7 @@ end;
 
 function GetAutoList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):ArticleList;
 var
-  listUrl:String;
+  listUrl,tmpUrl:String;
   listBeginPage:string;
   listEndPage:string;
   listStep:String;
@@ -168,22 +184,20 @@ begin
     i:=intBegin;
     while i>=intEnd do
     begin
-      listUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
+      tmpUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i-intStep;
-      parseListArticleUrl(aBaseConfig,aListConfig,listUrl);
+      parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
     end;
   end else
   begin
     i:=intBegin;
     while i<=intEnd do
     begin
-      listUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
+      tmpUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i+intStep;
-      parseListArticleUrl(aBaseConfig,aListConfig,listUrl);
+      parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
     end;
   end;
-
-
 end;
 
 function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):ArticleList;

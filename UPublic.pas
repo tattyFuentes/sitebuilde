@@ -45,16 +45,17 @@ var
   i,rowCount:integer;
 begin
   result:=NIL;
-  reg := TPerlRegEx.Create(nil);
+  reg := TPerlRegEx.Create();
+  reg.Options:=[preSingleLine,preUnGreedy];
   reg.Subject:=sourceString;
   reg.RegEx:=findExpression;
   while reg.MatchAgain do
   begin
     if (result=nil) then
       result:=TStringList.Create;
-    for i:=1 to reg.SubExpressionCount do
+    for i:=1 to reg.GroupCount do
     begin
-      result.Add(reg.SubExpressions[i]);
+      result.Add(reg.Groups[i]);
     end;
   end;
 end;
@@ -64,7 +65,8 @@ var
   reg: TPerlRegEx;
 begin
   result:=sourceString;
-  reg := TPerlRegEx.Create(nil);
+  reg := TPerlRegEx.Create();
+  reg.Options:=[preSingleLine,preUnGreedy];
   reg.Subject:=sourceString;
   reg.RegEx:=findExpression;
   reg.Replacement:=replaceValue;

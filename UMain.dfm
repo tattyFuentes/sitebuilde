@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = -6
-  Top = 110
+  Left = 301
+  Top = 253
   Width = 1280
   Height = 733
   Caption = '9'
@@ -435,10 +435,5 @@ object frmMain: TfrmMain
     object pop_editplan: TMenuItem
       Caption = #32534#36753#26041#26696
     end
-  end
-  object PerlRegEx1: TPerlRegEx
-    Options = []
-    Left = 1192
-    Top = 112
   end
 end
