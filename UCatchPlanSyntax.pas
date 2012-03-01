@@ -3,10 +3,10 @@ unit UCatchPlanSyntax;
 interface
 
 uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes;
-Type ArticleList=Array of TArticleObject;
+Type TArticleList=Array of TArticleObject;
 
 
-function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):ArticleList;
+function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 implementation
 
@@ -158,18 +158,19 @@ begin
   sResponse:=RequestUrl(aBaseConfig,aUrl);
   listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   listContent:=getListScopeContent(sResponse,listScope);
-  getArticleList(listContent,aListConfig);
+  result:=getArticleList(listContent,aListConfig);
 end;
 
 
-function GetAutoList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):ArticleList;
+function GetAutoList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 var
   listUrl,tmpUrl:String;
   listBeginPage:string;
   listEndPage:string;
   listStep:String;
   intStep:integer;
-  i,intBegin,intEnd:integer;
+  i,intBegin,intEnd,j:integer;
+  tmpArrays:TArticleObjectList;
 begin
   listUrl:=checkConfig(aListConfig,'CatchPlanAutoListUrl');
   listBeginPage:=checkConfig(aListConfig,'CatchPlanAutoListFirstPage');
@@ -186,7 +187,12 @@ begin
     begin
       tmpUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i-intStep;
-      parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      for j:=0 to length(tmpArrays)-1 do
+      begin
+        setlength(result,length(result)+1);
+        result[length(result)-1]:=tmpArrays[j];
+      end;
     end;
   end else
   begin
@@ -195,19 +201,23 @@ begin
     begin
       tmpUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i+intStep;
-      parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      for j:=0 to length(tmpArrays)-1 do
+      begin
+        setlength(result,length(result)+1);
+        result[length(result)-1]:=tmpArrays[j];
+      end;
     end;
   end;
 end;
 
-function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):ArticleList;
+function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 var
   listUrl:String;
 begin
   if(aListConfig.getProperty('CatchPlanEnableAutoList','value')='True') then
   begin
-    GetAutoList( aBaseConfig,aListConfig);
+    result:=GetAutoList( aBaseConfig,aListConfig);
   end;
-  //getStringFromUrl(
 end;
 end.

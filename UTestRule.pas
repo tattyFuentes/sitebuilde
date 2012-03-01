@@ -63,23 +63,18 @@ end;
 procedure TfrmTestRule.Button1Click(Sender: TObject);
 var
   reg: TPerlRegEx;
+  list:TArticleList;
+  i:integer;
 begin
-  //IdHTTP1.pos
-  //showmessage(memo1.Lines.Text);
-  memo1.Lines.Clear;
-  memo1.Lines.Add(RequestUrl(mCachePlan,'http://blog.sina.com.cn/s/articlelist_1502087803_0_1.html'));
-  reg := TPerlRegEx.Create();
-  reg.Options:=[preSingleLine,preUnGreedy];
-  reg.Subject:=memo1.lines.text;
-  reg.RegEx:='<!-- 列表 START -->(.*)<!-- 列表END -->';
 
-  while reg.MatchAgain do
-  begin
-    //ShowMessage(inttostr(reg.GroupCount));
-    //ShowMessage(reg.Groups[1]); //将分别显示: A BB CCC DDDD
-  end;
+  memo1.Lines.Clear;
   try
-    GetList(mCachePlan,mPlanList);
+    list:=GetList(mCachePlan,mPlanList);
+    for i:=0 to length(list)-1 do
+    begin
+      memo1.Lines.Add(list[i].title);
+      memo1.Lines.Add(list[i].id);
+    end;
   except
   on e:EUserDefineError do
     showmessage( e.Message);
