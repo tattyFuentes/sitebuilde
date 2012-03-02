@@ -6,7 +6,7 @@ uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes;
 Type TArticleList=Array of TArticleObject;
 
 
-function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
+function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 implementation
 
@@ -115,7 +115,7 @@ begin
 end;
 
 //根据列表内容解析文章地址
-function getArticleList(aListContent:String;aListConfig:TPlanObject):TArticleObjectList;
+function getArticleList(aListContent:String;aListConfig:TPlanObject):TArticleList;
 var
   listPageUrl:String;
   tagStrings,searchStrings:TStringList;
@@ -147,7 +147,7 @@ begin
 end;
 
 //根据列表设置解析返回的页面内容
-function parseListArticleUrl(aBaseConfig:TPlanObject;aListConfig:TPlanObject;aUrl:String):TArticleObjectList;
+function parseListArticleUrl(aBaseConfig:TPlanObject;aListConfig:TPlanObject;aUrl:String):TArticleList;
 var
   sResponse:String;
   listScope:String;
@@ -170,7 +170,7 @@ var
   listStep:String;
   intStep:integer;
   i,intBegin,intEnd,j:integer;
-  tmpArrays:TArticleObjectList;
+  tmpArrays:TArticleList;
 begin
   listUrl:=checkConfig(aListConfig,'CatchPlanAutoListUrl');
   listBeginPage:=checkConfig(aListConfig,'CatchPlanAutoListFirstPage');
@@ -210,14 +210,45 @@ begin
     end;
   end;
 end;
-
-function GetList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
+//--------------------------------------------------------------------------------------------
+//公开接口根据列表配置获得文章地址列表
+function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 var
   listUrl:String;
+  tmpUrl:string;
+  tmpArrays:TArticleList;
+  j:integer;
 begin
   if(aListConfig.getProperty('CatchPlanEnableAutoList','value')='True') then
   begin
     result:=GetAutoList( aBaseConfig,aListConfig);
+  end else
+  begin
+    tmpUrl:=checkConfig(aListConfig,'CatchPlanListUrl');
+    tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+    for j:=0 to length(tmpArrays)-1 do
+    begin
+      setlength(result,length(result)+1);
+      result[length(result)-1]:=tmpArrays[j];
+    end;
   end;
 end;
+//根据文章地址填充文章对象属性
+procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
+var
+  articleUrl:String;
+  sResponse:String;
+begin
+  articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
+  articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
+  sResponse:=RequestUrl(aBaseConfig,articleUrl);
+
+  //listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
+  //listContent:=getListScopeContent(sResponse,listScope);
+  //result:=getArticleList(listContent,aListConfig);
+end;
+
+
+
+
 end.

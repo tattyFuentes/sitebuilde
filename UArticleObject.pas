@@ -26,7 +26,6 @@ type
     property downloadFiles:string read FDownloadFiles write FDownloadFiles;
     property catchPlanId:String read FCatchPlanId write FCatchPlanId;
   end;
-  TArticleObjectList=array of TArticleObject;
 implementation
 
 end.
