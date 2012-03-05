@@ -2,7 +2,7 @@ unit UCatchPlanSyntax;
 
 interface
 
-uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes;
+uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes,uLkJSON;
 Type TArticleList=Array of TArticleObject;
 
 
@@ -210,6 +210,67 @@ begin
     end;
   end;
 end;
+
+
+procedure FillOneArticleProperty(aArticleObject:TArticleObject;propertyJson:String;propertyNameJson:String;aRespones:String);
+var
+  tagStrings,searchStrings:TStringList;
+  i:integer;
+begin
+  tagStrings:=parseTagList(propertyJson);
+  if(tagStrings<>nil) then
+  begin
+    propertyJson:=RegexReplaceString(propertyJson,'<%.*%>','(.*)');
+    searchStrings:=RegexSearchString(aRespones,propertyJson);
+    if(searchStrings=nil) then
+    begin
+      raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
+    end;
+
+    if(searchStrings.Count div tagStrings.Count>1) then
+    begin
+      raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')找到多个符合项！');
+    end;
+
+    if(searchStrings.Count div tagStrings.Count<1) then
+    begin
+      raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
+    end;
+
+    for i:=0 to  tagStrings.Count-1 do
+    begin
+      setArticleObjectProperty(aArticleObject,tagStrings[i],searchStrings.Strings[i]);
+    end;
+    tagStrings.Free;
+    searchStrings.Free;    
+  end;
+end;
+
+
+//根据采集项目解析文章页属性
+procedure FillArticleProperty(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aRespones:String);
+var
+  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
+  i:integer;
+  objectValue,objectName:String;
+begin
+  JsonRoot:=TlkJSON.ParseText(aCatchItem.ItemProperty) as TlkJSONobject;
+  JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
+  for i:=0 to JsonRoot.Count-1 do
+  begin
+    JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
+    objectName:=JsonObject.Field['name'].Value;
+    objectValue:=JsonObject.Field['value'].Value;
+    FillOneArticleProperty(aArticleObject,objectValue,objectName,aRespones);
+  end;
+end;
+
+
+
+
+
+
+
 //--------------------------------------------------------------------------------------------
 //公开接口根据列表配置获得文章地址列表
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
@@ -242,7 +303,7 @@ begin
   articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
   articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
   sResponse:=RequestUrl(aBaseConfig,articleUrl);
-
+  FillArticleProperty(aArticleObject,aCatchItem,sResponse);
   //listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   //listContent:=getListScopeContent(sResponse,listScope);
   //result:=getArticleList(listContent,aListConfig);
