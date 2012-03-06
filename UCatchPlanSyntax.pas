@@ -316,6 +316,22 @@ procedure ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObje
 begin
 
 end;
+//处理正文分页
+procedure ParseArticlePage(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aPage:TPlanObject);
+var
+  strUrl,strValidString:String;
+  intBeginPage,intEndPage,intStep:integer;
+begin
+  if(aPage.getProperty('CatchPlanSplitContentIsUseLogic','value')='True') then
+  begin
+     strUrl:=checkConfig(aPage,'CatchPlanSplitContentUrl');
+     intBeginPage:=strtoint(checkConfig(aPage,'CatchPlanSplitContentBeginPage'));
+     intEndPage:=strtoint(checkConfig(aPage,'CatchPlanSplitContentEndPage'));
+     intStep:=strtoint(checkConfig(aPage,'CatchPlanSplitContentStep'));
+     strValidString:=aPage.getProperty('CatchPlanSplitContentValidPage','value');
+
+  end;
+end;
 
 
 
