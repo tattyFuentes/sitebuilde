@@ -212,7 +212,7 @@ begin
 end;
 
 
-procedure FillOneArticleProperty(aArticleObject:TArticleObject;propertyJson:String;propertyNameJson:String;aRespones:String);
+procedure ParseOneCatchItems(aArticleObject:TArticleObject;propertyJson:String;propertyNameJson:String;aRespones:String);
 var
   tagStrings,searchStrings:TStringList;
   i:integer;
@@ -248,7 +248,7 @@ end;
 
 
 //根据采集项目解析文章页属性
-procedure FillArticleProperty(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aRespones:String);
+procedure ParseCatchItems(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aRespones:String);
 var
   JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
   i:integer;
@@ -261,8 +261,60 @@ begin
     JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
     objectName:=JsonObject.Field['name'].Value;
     objectValue:=JsonObject.Field['value'].Value;
-    FillOneArticleProperty(aArticleObject,objectValue,objectName,aRespones);
+    ParseOneCatchItems(aArticleObject,objectValue,objectName,aRespones);
   end;
+end;
+
+//检查一个条目
+procedure ParseOneLimitItem(aSource:String;aFind:String;aPropertyName:String;isInclude:boolean;aLimitItem:TPlanObject);
+begin
+  if(aFind<>'') then
+  begin
+    if(aSource<>'') then
+    begin
+      if(isInclude) then
+      begin
+        if(pos(aFind,aSource)<0) then
+          raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'name')+')检查不符合！');
+      end else
+      begin
+        if(pos(aFind,aSource)>=0) then
+          raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'name')+')检查不符合！');
+      end;
+    end;
+  end;
+end;
+
+//根据限制项目，限制采集的文章
+procedure ParseLimitItems(aArticleObject:TArticleObject;aLimitItem:TPlanObject);
+var
+  sTemp:String;
+begin
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitTitleIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.title,sTemp,'CatchPlanLimitTitleIncludeWords',true,aLimitItem);
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitTitleNoIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.title,sTemp,'CatchPlanLimitTitleNoIncludeWords',false,aLimitItem);
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitContentIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.content,sTemp,'CatchPlanLimitContentIncludeWords',true,aLimitItem);
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitContentNoIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.content,sTemp,'CatchPlanLimitContentNoIncludeWords',false,aLimitItem);
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitAuthorIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.author,sTemp,'CatchPlanLimitAuthorIncludeWords',true,aLimitItem);
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitCategoryIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.catchPlanId,sTemp,'CatchPlanLimitCategoryIncludeWords',true,aLimitItem);
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitCategoryNoIncludeWords','value');
+  ParseOneLimitItem(aArticleObject.catchPlanId,sTemp,'CatchPlanLimitCategoryNoIncludeWords',false,aLimitItem);
+end;
+
+procedure ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObject);
+begin
+
 end;
 
 
@@ -300,10 +352,16 @@ var
   articleUrl:String;
   sResponse:String;
 begin
+  //处理限制条件前后都要限制，前面校验标题后者校验内容等项目
+  ParseLimitItems(aArticleObject,aLimit);  
   articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
   articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
   sResponse:=RequestUrl(aBaseConfig,articleUrl);
-  FillArticleProperty(aArticleObject,aCatchItem,sResponse);
+  //解析采集项目
+  ParseCatchItems(aArticleObject,aCatchItem,sResponse);
+  //处理限制条件
+  ParseLimitItems(aArticleObject,aLimit);
+
   //listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   //listContent:=getListScopeContent(sResponse,listScope);
   //result:=getArticleList(listContent,aListConfig);
