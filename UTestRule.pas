@@ -64,8 +64,11 @@ begin
     list:=ParseArticleList(mCachePlan,mPlanList);
     for i:=0 to length(list)-1 do
     begin
+      RichEdit1.Lines.Add('分解文章');
       RichEdit2.Lines.Add(list[i].title);
       RichEdit2.Lines.Add(list[i].id);
+      ParseArticleObject(list[i],mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
+      RichEdit1.Lines.Add('结束文章分析');
     end;
     RichEdit1.Lines.Add('解析列表结束');
   except

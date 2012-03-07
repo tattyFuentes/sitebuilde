@@ -8,6 +8,7 @@ Type TArticleList=Array of TArticleObject;
 
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
+procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
 implementation
 
 function checkConfig(aListConfig:TPlanObject;aPropertyName:String):String;
@@ -85,7 +86,6 @@ begin
         begin
           result:=searchStrings.Strings[tagStrings.IndexOf(tagName)];
         end;
-        tagStrings.Free;
       end;
     end; 
   finally
@@ -232,12 +232,14 @@ var
 begin
   try
     tagStrings:=parseTagList(propertyJson);
+    searchStrings:=nil;
     if(tagStrings<>nil) then
     begin
       propertyJson:=RegexReplaceString(propertyJson,'<%.*%>','(.*)');
       searchStrings:=RegexSearchString(aRespones,propertyJson);
       if(searchStrings=nil) then
       begin
+        //raise EUserDefineError.create(aRespones);
         raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
       end;
 
@@ -255,8 +257,7 @@ begin
       begin
         setArticleObjectProperty(aArticleObject,tagStrings[i],searchStrings.Strings[i]);
       end;
-      tagStrings.Free;
-      searchStrings.Free;
+      
     end;
   finally
     if(searchStrings<>nil) then
@@ -274,12 +275,12 @@ var
   i:integer;
   objectValue,objectName:String;
 begin
-  JsonRoot:=TlkJSON.ParseText(aCatchItem.ItemProperty) as TlkJSONobject;
+  JsonRoot:=TlkJSON.ParseText(UTF8Encode(aCatchItem.ItemProperty)) as TlkJSONobject;
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
   for i:=0 to JsonRoot.Count-1 do
   begin
     JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
-    objectName:=JsonObject.Field['name'].Value;
+    objectName:=JsonObject.Field['caption'].Value;
     objectValue:=JsonObject.Field['value'].Value;
     ParseOneCatchItems(aArticleObject,objectValue,objectName,aRespones);
   end;
@@ -547,6 +548,8 @@ begin
   ParseLimitItems(aArticleObject,aLimit);
   //处理正文分页
   ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
+  //数据整理
+
   //listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   //listContent:=getListScopeContent(sResponse,listScope);
   //result:=getArticleList(listContent,aListConfig);
