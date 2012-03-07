@@ -252,9 +252,15 @@ procedure TfrmMain.Button5Click(Sender: TObject);
 var
 reg: TPerlRegEx;
 sss:TStringList;
+i:integer;
 begin
-  sss:=RegexSearchString('<a title="<%article.title%>"<%var%>href="<%article.id%>">','<%(.*)%>');
+ for i:=0 to 100000 do
+ begin
+   sss:=RegexSearchString('<a title="<%article.title%>"<%var%>href="<%article.id%>">','<%(.*)%>');
+   //sss.Free;
+ end;
 
+ EXIT;
 
 
 

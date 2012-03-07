@@ -58,6 +58,7 @@ begin
       result.Add(reg.Groups[i]);
     end;
   end;
+  FreeAndNil(reg);
 end;
 
 function RegexReplaceString(sourceString:String;findExpression:String;replaceValue:String):String;

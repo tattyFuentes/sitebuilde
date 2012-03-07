@@ -55,40 +55,46 @@ begin
   end;
 end;
 
-//获得列表区域的内容
-function getListScopeContent(aResponseStr:String;aListScope:String):String;
+//获得一个区域的内容
+function getScopeContent(aResponseStr:String;aScope:String;tagName:String;tagCaption:String):String;
 var
   tagStrings,searchStrings:TStringList;
   i:integer;
 begin
   result:= aResponseStr;
-  if(alistScope<>'') then
-  begin
-    tagStrings:=parseTagList(aListScope);
-    if(tagStrings<>nil) then
+  try
+    if(aScope<>'') then
     begin
-      aListScope:=RegexReplaceString(aListScope,'<%.*?%>','(.*?)');
-      searchStrings:=RegexSearchString(aResponseStr,aListScope);
-      if(searchStrings=nil) then
+      tagStrings:=parseTagList(aScope);
+      if(tagStrings<>nil) then
       begin
-        raise EUserDefineError.create('列表规则中列表区域设置有误,没找到符合项！');
+        aScope:=RegexReplaceString(aScope,'<%.*?%>','(.*?)');
+        searchStrings:=RegexSearchString(aResponseStr,aScope);
+        if(searchStrings=nil) then
+        begin
+          raise EUserDefineError.create(tagCaption+'有误,没找到符合项！');
+        end;
+        if(searchStrings.Count<>tagStrings.Count) then
+        begin
+          raise EUserDefineError.create(tagCaption+'有误，找到多个符合项！');
+        end;
+        if(searchStrings.Strings[tagStrings.IndexOf(tagName)]='') then
+        begin
+          raise EUserDefineError.create(tagCaption+'有误,没找到值！');
+        end else
+        begin
+          result:=searchStrings.Strings[tagStrings.IndexOf(tagName)];
+        end;
+        tagStrings.Free;
       end;
-      if(searchStrings.Count<>tagStrings.Count) then
-      begin
-        raise EUserDefineError.create('列表规则中列表区域设置有误，找到多个符合项！');
-      end;
-      if(searchStrings.Strings[tagStrings.IndexOf(VARLISTCONTENT)]='') then
-      begin
-        raise EUserDefineError.create('列表规则中列表区域设置有误,没找到列表区域值！');
-      end else
-      begin
-        result:=searchStrings.Strings[tagStrings.IndexOf(VARLISTCONTENT)];
-      end;
-      tagStrings.Free;
-    end;
+    end; 
+  finally
     if(searchStrings<>nil) then
       searchStrings.Free;
+    if(tagStrings<>nil) then
+      tagStrings.Free;
   end;
+
 end;
 
 //给一个ArticleObject的属性赋值
@@ -123,26 +129,33 @@ var
   articleObject:TArticleObject;
 begin
   result:=nil;
-  listPageUrl:=checkConfig(aListConfig,'CatchPlanAutoListPageUrl');
-  tagStrings:=parseTagList(listPageUrl);
-  if(tagStrings<>nil) then
-  begin
-    listPageUrl:=RegexReplaceString(listPageUrl,'<%.*%>','(.*)');
-    searchStrings:=RegexSearchString(aListContent,listPageUrl);
-    if(searchStrings=nil) then
+  try
+    listPageUrl:=checkConfig(aListConfig,'CatchPlanAutoListPageUrl');
+    tagStrings:=parseTagList(listPageUrl);
+    if(tagStrings<>nil) then
     begin
-      raise EUserDefineError.create('列表规则中文章地址设置有误,没找到符合项！');
-    end;
-    for i:=0 to  (searchStrings.Count div tagStrings.Count)-1 do
-    begin
-      articleObject:=TArticleObject.Create;
-      for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
+      listPageUrl:=RegexReplaceString(listPageUrl,'<%.*%>','(.*)');
+      searchStrings:=RegexSearchString(aListContent,listPageUrl);
+      if(searchStrings=nil) then
       begin
-        setArticleObjectProperty(articleObject,tagStrings[j-i*tagStrings.Count],searchStrings.Strings[j]);
+        raise EUserDefineError.create('列表规则中文章地址设置有误,没找到符合项！');
       end;
-      setlength(result,length(result)+1);
-      result[length(result)-1]:=articleObject;
+      for i:=0 to  (searchStrings.Count div tagStrings.Count)-1 do
+      begin
+        articleObject:=TArticleObject.Create;
+        for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
+        begin
+          setArticleObjectProperty(articleObject,tagStrings[j-i*tagStrings.Count],searchStrings.Strings[j]);
+        end;
+        setlength(result,length(result)+1);
+        result[length(result)-1]:=articleObject;
+      end;
     end;
+  finally
+    if(searchStrings<>nil) then
+      searchStrings.Free;
+    if(tagStrings<>nil) then
+      tagStrings.Free;
   end;
 end;
 
@@ -157,7 +170,7 @@ begin
   //searchStrings.
   sResponse:=RequestUrl(aBaseConfig,aUrl);
   listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
-  listContent:=getListScopeContent(sResponse,listScope);
+  listContent:=getScopeContent(sResponse,listScope,VARLISTCONTENT,'列表规则中列表区域设置');
   result:=getArticleList(listContent,aListConfig);
 end;
 
@@ -217,32 +230,39 @@ var
   tagStrings,searchStrings:TStringList;
   i:integer;
 begin
-  tagStrings:=parseTagList(propertyJson);
-  if(tagStrings<>nil) then
-  begin
-    propertyJson:=RegexReplaceString(propertyJson,'<%.*%>','(.*)');
-    searchStrings:=RegexSearchString(aRespones,propertyJson);
-    if(searchStrings=nil) then
+  try
+    tagStrings:=parseTagList(propertyJson);
+    if(tagStrings<>nil) then
     begin
-      raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
-    end;
+      propertyJson:=RegexReplaceString(propertyJson,'<%.*%>','(.*)');
+      searchStrings:=RegexSearchString(aRespones,propertyJson);
+      if(searchStrings=nil) then
+      begin
+        raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
+      end;
 
-    if(searchStrings.Count div tagStrings.Count>1) then
-    begin
-      raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')找到多个符合项！');
-    end;
+      if(searchStrings.Count div tagStrings.Count>1) then
+      begin
+        raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')找到多个符合项！');
+      end;
 
-    if(searchStrings.Count div tagStrings.Count<1) then
-    begin
-      raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
-    end;
+      if(searchStrings.Count div tagStrings.Count<1) then
+      begin
+        raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
+      end;
 
-    for i:=0 to  tagStrings.Count-1 do
-    begin
-      setArticleObjectProperty(aArticleObject,tagStrings[i],searchStrings.Strings[i]);
+      for i:=0 to  tagStrings.Count-1 do
+      begin
+        setArticleObjectProperty(aArticleObject,tagStrings[i],searchStrings.Strings[i]);
+      end;
+      tagStrings.Free;
+      searchStrings.Free;
     end;
-    tagStrings.Free;
-    searchStrings.Free;    
+  finally
+    if(searchStrings<>nil) then
+      searchStrings.Free;
+    if(tagStrings<>nil) then
+      tagStrings.Free;
   end;
 end;
 
@@ -315,29 +335,176 @@ end;
 procedure ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObject);
 begin
 
-end;
-//处理正文分页
-procedure ParseArticlePage(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aPage:TPlanObject);
-var
-  strUrl,strValidString:String;
-  intBeginPage,intEndPage,intStep:integer;
-begin
-  if(aPage.getProperty('CatchPlanSplitContentIsUseLogic','value')='True') then
-  begin
-     strUrl:=checkConfig(aPage,'CatchPlanSplitContentUrl');
-     intBeginPage:=strtoint(checkConfig(aPage,'CatchPlanSplitContentBeginPage'));
-     intEndPage:=strtoint(checkConfig(aPage,'CatchPlanSplitContentEndPage'));
-     intStep:=strtoint(checkConfig(aPage,'CatchPlanSplitContentStep'));
-     strValidString:=aPage.getProperty('CatchPlanSplitContentValidPage','value');
 
+end;
+
+//处理正文分页内容(使用采集项目项目中的采集内容规则)
+procedure ParseOneArticleContentPage(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aCatchItem:TPlanObject;aResponse:String);
+var
+  sResponse:string;
+  contentSyn:String;
+  tagStrings,searchStrings:TStringList;
+begin
+  try
+    sResponse:=aResponse;
+    contentSyn:=checkConfig(aCatchItem,'CatchPlanItemContent');
+    tagStrings:=parseTagList(contentSyn);
+    if(tagStrings<>nil) then
+    begin
+      contentSyn:=RegexReplaceString(contentSyn,'<%.*?%>','(.*?)');
+      searchStrings:=RegexSearchString(sResponse,contentSyn);
+      if(searchStrings=nil) then
+      begin
+        raise EUserDefineError.create('采集项目(正文内容)规则设置有误,没找到符合项！');
+      end;
+      if(searchStrings.Count<>tagStrings.Count) then
+      begin
+        raise EUserDefineError.create('采集项目(正文内容)规则设置有误，找到多个符合项！');
+      end;
+      if(searchStrings.Strings[tagStrings.IndexOf(VARARTICLECONTENT)]='') then
+      begin
+        raise EUserDefineError.create('采集项目(正文内容)规则设置有误,没找到文章内容！');
+      end else
+      begin
+        aArticleObject.content:=aArticleObject.content+VARARTICLECONTENTPAGENUMBER+searchStrings.Strings[tagStrings.IndexOf(VARARTICLECONTENT)];
+      end;
+    end;
+  finally
+    if(tagStrings<>nil) then
+      tagStrings.Free;
+    if(searchStrings<>nil) then
+      searchStrings.Free;
+  end;
+
+end;
+
+
+//用逻辑模式处理正文分页
+procedure ParseArticleContentPageSyntex(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
+var
+  strUrl,strPageUrl,strValidString,sTemp:String;
+  sResponse:String;
+  intBeginPage,intEndPage,intStep:integer;
+  i,tmpPageNumber:integer;
+begin
+  strUrl:=checkConfig(aPage,'CatchPlanSplitContentUrl');
+  intBeginPage:=strtoint(checkConfig(aPage,'CatchPlanSplitContentBeginPage'));
+  strValidString:=aPage.getProperty('CatchPlanSplitContentValidPage','value');
+  //如果终止页没有设置以分页校验码标识结束页面
+  sTemp:=aPage.getProperty('CatchPlanSplitContentEndPage','value');
+  if(sTemp='') then
+    intEndPage:=0
+  else
+    intEndPage:=strtoint(sTemp);
+  if(intEndPage=0) then
+  begin
+    if(strValidString='') then
+      raise EUserDefineError.create('分页结束页没有设置,必须设置分页校验码！');
+  end;
+
+  intStep:=strtoint(checkConfig(aPage,'CatchPlanSplitContentStep'));
+  tmpPageNumber:=intBeginPage;
+  if(intEndPage=0) then
+  begin
+    while (true) do
+    begin
+      strPageUrl:=StringReplace(strUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
+      strPageUrl:=StringReplace(strPageUrl,VARARTICLECONTENTPAGENUMBER,inttostr(tmpPageNumber),[rfReplaceAll]);
+      sResponse:=RequestUrl(aBaseConfig,strPageUrl);
+      if(pos(strValidString,sResponse)<0) then
+      begin
+        break;
+      end;
+      ParseOneArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aCatchItem,sResponse);
+      tmpPageNumber:=tmpPageNumber+intStep;
+    end;
+  end else
+  begin
+    while tmpPageNumber<intEndPage do
+    begin
+      strPageUrl:=StringReplace(strUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
+      strPageUrl:=StringReplace(strPageUrl,VARARTICLECONTENTPAGENUMBER,inttostr(tmpPageNumber),[rfReplaceAll]);
+      sResponse:=RequestUrl(aBaseConfig,strPageUrl);
+      ParseOneArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aCatchItem,sResponse);
+      tmpPageNumber:=tmpPageNumber+intStep;
+    end;
   end;
 end;
 
+//用采集模式处理正文分页
+procedure ParseArticleContentPageCatch(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject;articleSource:String);
+var
+  sTemp,sUrlRule:String;
+  pageNumberContent:String;
+  newPageUrlSyn,newPageUrl,sResponse:String;
+  searchStrings,tagStrings:TStringList;
+  pageIdArray:Array of String;
+  i,j:integer;
+begin
+   sTemp:=aPage.getProperty('CatchPlanSplitContentScope','value');
+   pageNumberContent:=getScopeContent(articleSource,sTemp,VARARTICLECONTENTPAGESCOPE,'正文分页规则中分页区域范围设置');
+   if(pageNumberContent='') then
+     pageNumberContent:=articleSource;
+   try
+     sUrlRule:=checkConfig(aPage,'CatchPlanSplitContentUrlRule');
+     tagStrings:=parseTagList(sUrlRule);
+     if(tagStrings<>nil) then
+     begin
+       sUrlRule:=RegexReplaceString(sUrlRule,'<%.*%>','(.*)');
+       searchStrings:=RegexSearchString(pageNumberContent,sUrlRule);
+       if(searchStrings=nil) then
+       begin
+         raise EUserDefineError.create('正文分页规则中(分页链接规则)设置有误,没找到符合项！');
+       end;
+       for i:=0 to (searchStrings.Count div tagStrings.Count)-1 do
+       begin
+         setLength(pageIdArray,length(pageIdArray)+1);
+         for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
+         begin
+           if(j-i*tagStrings.Count=tagStrings.IndexOf(VARARTICLECONTENTPAGENUMBERID)) then
+           begin
+             pageIdArray[length(pageIdArray)-1]:=searchStrings.Strings[j];
+             continue;
+           end;
+         end;
+       end;
+       newPageUrlSyn:=checkConfig(aPage,'CatchPlanSplitContentNewUrl');
+       for i:=0 to length(pageIdArray)-1 do
+       begin
+         newPageUrl:=StringReplace(newPageUrlSyn,VARARTICLECONTENTPAGENUMBERID,pageIdArray[i],[rfReplaceAll]);
+         sResponse:=RequestUrl(aBaseConfig,newPageUrl);
+         ParseOneArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aCatchItem,sResponse);
+       end;
+     end;
+   finally
+     if(searchStrings<>nil) then
+       searchStrings.Free;
+     if(tagStrings<>nil) then
+       tagStrings.Free;
+   end;
+end;
 
 
-
-
-
+//处理正文分页
+procedure ParseArticleContentPage(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject;articleSource:String);
+var
+  strUrl,strPageUrl,strValidString,sTemp:String;
+  sResponse:String;
+  intBeginPage,intEndPage,intStep:integer;
+  i,tmpPageNumber:integer;
+begin
+  if(aPage.getProperty('CatchPlanSplitContentIsUseLogic','value')='True') then
+  begin
+    //逻辑方式采集正文分页
+    ParseArticleContentPageSyntex(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem);
+  end else begin
+    //采集方式正文分页
+    if(aPage.getProperty('CatchPlanSplitContentIsUseCatch','value')='True') then
+    begin
+      ParseArticleContentPageCatch(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,articleSource);
+    end;
+  end;
+end;
 
 //--------------------------------------------------------------------------------------------
 //公开接口根据列表配置获得文章地址列表
@@ -362,6 +529,7 @@ begin
     end;
   end;
 end;
+
 //根据文章地址填充文章对象属性
 procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
 var
@@ -377,7 +545,8 @@ begin
   ParseCatchItems(aArticleObject,aCatchItem,sResponse);
   //处理限制条件
   ParseLimitItems(aArticleObject,aLimit);
-
+  //处理正文分页
+  ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
   //listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   //listContent:=getListScopeContent(sResponse,listScope);
   //result:=getArticleList(listContent,aListConfig);
