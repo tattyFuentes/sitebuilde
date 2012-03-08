@@ -248,12 +248,59 @@ begin
   frmCatchPlan.ShowModal();
 end;
 
+procedure  replaceTest;
+
+var PerlRegEx1:TPerlRegEx;
+
+begin
+
+PerlRegEx1 := TperlRegEx.Create;
+
+with PerlRegEx1 do begin
+
+  Subject := 'aaaa1111cccc aaa2222ccc aaaa3333cccc '; //设置待匹配的字符串
+
+  RegEx := 'a([^ac]+)c';//设置正则表达式
+
+  study; //学习该表达式
+
+  replaceMent := '《\1》'; {设置被替换成什么，/1为上一个成功匹配后得到的第一小组值（group（1））}
+
+  if Match then
+
+  repeat
+
+          replace; //替换刚才找的的那个Match结果
+
+     ShowMessage('替换后的结果为：'+ subject);//显示替换后的结果
+
+  until not MatchAgain;
+
+end;
+end;
+
+
+
+
+
 procedure TfrmMain.Button5Click(Sender: TObject);
 var
-reg: TPerlRegEx;
-sss:TStringList;
-i:integer;
+  reg: TPerlRegEx;
+  sss:TStringList;
+  i:integer;
+  s:string;
 begin
+
+
+
+
+  s:=readFile('e:\a.txt');
+  //RegexSearchString(s,'var \$tag=''(.*)'';');
+  showmessage(RegexReplaceString('sdfsdfsdfsdf^.adfsdfsddsdf${}[]?','([\^\.\$\{\}\[\]\?]+)','\\\1'));
+  exit;
+
+  //.$ ^ { [ ( | ) * + ? \
+
  for i:=0 to 100000 do
  begin
    sss:=RegexSearchString('<a title="<%article.title%>"<%var%>href="<%article.id%>">','<%(.*)%>');

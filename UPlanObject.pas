@@ -43,6 +43,7 @@ end;
 function TPlanObject.getProperty(name:String;aPropertyName:String):String;
 begin
   result:=GetRowPropertyByName(name,UTF8ENCODE(FProperty),aPropertyName);
+  //result:=RegexReplaceString(result,'([\^\.\$\{\}\[\]\?])','\\\1');
 end;
 
 function TPlanObject.getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;

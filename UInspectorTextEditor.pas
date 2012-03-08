@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, TFlatMemoUnit, ExtCtrls, TFlatPanelUnit,dxInspRw,
-  ComCtrls, ToolWin, Menus,UVariableDefine,uTools;
+  ComCtrls, ToolWin, Menus,UVariableDefine,uTools,uPublic;
 
 type
   TFrmInspectorTextEditor = class(TForm)
@@ -81,8 +81,12 @@ begin
 end;
 
 procedure TFrmInspectorTextEditor.Button1Click(Sender: TObject);
+var
+  sTemp:String;
 begin
-  buttonRow.EditText:=copy(memText.Lines.Text,1,length(memText.Lines.Text)-2);
+  sTemp:=copy(memText.Lines.Text,1,length(memText.Lines.Text)-2);
+  //sTemp:=RegexReplaceString(sTemp,'([\^\.\$\{\}\[\]\?])','\\\1');
+  buttonRow.EditText:=sTemp;
   close;
 end;
 

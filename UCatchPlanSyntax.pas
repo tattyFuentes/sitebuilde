@@ -69,6 +69,7 @@ begin
       tagStrings:=parseTagList(aScope);
       if(tagStrings<>nil) then
       begin
+        aScope:=ReplaceRegexChar(aScope);
         aScope:=RegexReplaceString(aScope,'<%.*?%>','(.*?)');
         searchStrings:=RegexSearchString(aResponseStr,aScope);
         if(searchStrings=nil) then
@@ -120,6 +121,38 @@ begin
     articleObject.downloadFiles:= aValue;
 end;
 
+procedure appendArticleObjectProperty(articleObject:TArticleObject;aName:String;aValue:String);
+begin
+  if(aValue='') then
+    exit;
+  if(aName=VARARTICLEID) then
+    articleObject.id:= aValue
+  else if(aName=VARARTICLETITLE) then
+    articleObject.title:= aValue
+  else if(aName=VARARTICLECONTENT) then
+    articleObject.content:= aValue
+  else if(aName=VARARTICLETHUMB) then
+    articleObject.thumb:= aValue
+  else if(aName=VARARTICLEAUTHOR) then
+    articleObject.author:= aValue
+  else if(aName=VARARTICLECATEGORY) then
+    articleObject.catchPlanId:= aValue
+  else if(aName=VARARTICLETAGS) then
+  begin
+    if articleObject.tags='' then
+      articleObject.tags:= aValue
+    else
+      articleObject.tags:= articleObject.tags+','+aValue;
+  end
+  else if(aName=VARARTICLEEXCERPT) then
+    articleObject.excerpt:= aValue
+  else if(aName=VARARTICLEDOWNLOADFILE) then
+    articleObject.downloadFiles:= aValue;
+end;
+
+
+
+
 //根据列表内容解析文章地址
 function getArticleList(aListContent:String;aListConfig:TPlanObject):TArticleList;
 var
@@ -134,6 +167,7 @@ begin
     tagStrings:=parseTagList(listPageUrl);
     if(tagStrings<>nil) then
     begin
+      listPageUrl:=ReplaceRegexChar(listPageUrl);
       listPageUrl:=RegexReplaceString(listPageUrl,'<%.*%>','(.*)');
       searchStrings:=RegexSearchString(aListContent,listPageUrl);
       if(searchStrings=nil) then
@@ -225,16 +259,19 @@ begin
 end;
 
 
+
+
 procedure ParseOneCatchItems(aArticleObject:TArticleObject;propertyJson:String;propertyNameJson:String;aRespones:String);
 var
   tagStrings,searchStrings:TStringList;
-  i:integer;
+  i,j:integer;
 begin
   try
     tagStrings:=parseTagList(propertyJson);
     searchStrings:=nil;
     if(tagStrings<>nil) then
     begin
+      propertyJson:=ReplaceRegexChar(propertyJson);
       propertyJson:=RegexReplaceString(propertyJson,'<%.*%>','(.*)');
       searchStrings:=RegexSearchString(aRespones,propertyJson);
       if(searchStrings=nil) then
@@ -242,10 +279,14 @@ begin
         //raise EUserDefineError.create(aRespones);
         raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
       end;
-
+      //如果找到多个符合项相加
       if(searchStrings.Count div tagStrings.Count>1) then
       begin
-        raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')找到多个符合项！');
+
+
+
+
+        //raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')找到多个符合项！');
       end;
 
       if(searchStrings.Count div tagStrings.Count<1) then
@@ -253,11 +294,14 @@ begin
         raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
       end;
 
-      for i:=0 to  tagStrings.Count-1 do
-      begin
-        setArticleObjectProperty(aArticleObject,tagStrings[i],searchStrings.Strings[i]);
+
+     for i:=0 to  (searchStrings.Count div tagStrings.Count)-1 do
+     begin
+        for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
+        begin
+          appendArticleObjectProperty(aArticleObject,tagStrings[j-i*tagStrings.Count],searchStrings.Strings[j]);
+        end;
       end;
-      
     end;
   finally
     if(searchStrings<>nil) then
@@ -352,6 +396,7 @@ begin
     tagStrings:=parseTagList(contentSyn);
     if(tagStrings<>nil) then
     begin
+      contentSyn:=ReplaceRegexChar(contentSyn);
       contentSyn:=RegexReplaceString(contentSyn,'<%.*?%>','(.*?)');
       searchStrings:=RegexSearchString(sResponse,contentSyn);
       if(searchStrings=nil) then
@@ -451,6 +496,7 @@ begin
      tagStrings:=parseTagList(sUrlRule);
      if(tagStrings<>nil) then
      begin
+       sUrlRule:=ReplaceRegexChar(sUrlRule);
        sUrlRule:=RegexReplaceString(sUrlRule,'<%.*%>','(.*)');
        searchStrings:=RegexSearchString(pageNumberContent,sUrlRule);
        if(searchStrings=nil) then

@@ -30,7 +30,7 @@ Function GetGUID:string;
 procedure MakeDir(newFolder:String);
 function RegexReplaceString(sourceString:String;findExpression:String;replaceValue:String):String;
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
-
+function ReplaceRegexChar(aSource:String):String;
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -38,6 +38,11 @@ const
 implementation
 
 uses uXML,uLKJSON;
+
+function ReplaceRegexChar(aSource:String):String;
+begin
+  result:=RegexReplaceString(aSource,'([\^\.\$\{\}\[\]\?\(\)])','\\\1');
+end;
 
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
 var

@@ -5,22 +5,22 @@ interface
 const
 //采集规则常量
   VARIABLE='<%var%>';
-  VARLISTPAGENUMBER='<%list.page.number%>';
-  VARLISTCONTENT='<%list.content%>';
-  VARARTICLEID='<%article.id%>';
-  VARARTICLETITLE='<%article.title%>';
-  VARARTICLECONTENT='<%article.content%>';
-  VARARTICLETHUMB='<%article.thumb%>';
-  VARARTICLEAUTHOR='<%article.author%>';
-  VARARTICLECATEGORY='<%article.category%>';
-  VARARTICLETAGS='<%article.tags%>';
-  VARARTICLEEXCERPT='<%article.excerpt%>';
-  VARARTICLEDOWNLOADFILE='<%article.download.file%>';
-  VARARTICLECONTENTPAGENUMBER='<%article.page.number%>';
+  VARLISTPAGENUMBER='<%listpagenumber%>';
+  VARLISTCONTENT='<%listcontent%>';
+  VARARTICLEID='<%articleid%>';
+  VARARTICLETITLE='<%articletitle%>';
+  VARARTICLECONTENT='<%articlecontent%>';
+  VARARTICLETHUMB='<%articlethumb%>';
+  VARARTICLEAUTHOR='<%articleauthor%>';
+  VARARTICLECATEGORY='<%articlecategory%>';
+  VARARTICLETAGS='<%articletags%>';
+  VARARTICLEEXCERPT='<%articleexcerpt%>';
+  VARARTICLEDOWNLOADFILE='<%articledownloadfile%>';
+  VARARTICLECONTENTPAGENUMBER='<%articlepagenumber%>';
   //正文分页区域特征码，便于采集页码
-  VARARTICLECONTENTPAGESCOPE='<%article.page.scope%>';
+  VARARTICLECONTENTPAGESCOPE='<%articlepagescope%>';
   //正文分页特征码
-  VARARTICLECONTENTPAGENUMBERID='<%article.page.id%>';
+  VARARTICLECONTENTPAGENUMBERID='<%articlepageid%>';
   //正文内容分割线（便于区分多页正文）
   VARARTICLECONTENTPAGESPLITTAG='<SITEBUILDE>--------------------------------------------------------------------<SITEBUILDE>';
 implementation
