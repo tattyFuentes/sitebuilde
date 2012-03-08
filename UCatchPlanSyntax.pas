@@ -339,12 +339,12 @@ begin
     begin
       if(isInclude) then
       begin
-        if(pos(aFind,aSource)<0) then
-          raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'name')+')检查不符合！');
+        if(pos(aFind,aSource)<=0) then
+          raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'caption')+')检查不符合！');
       end else
       begin
-        if(pos(aFind,aSource)>=0) then
-          raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'name')+')检查不符合！');
+        if(pos(aFind,aSource)>0) then
+          raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'caption')+')检查不符合！');
       end;
     end;
   end;
@@ -354,7 +354,27 @@ end;
 procedure ParseLimitItems(aArticleObject:TArticleObject;aLimitItem:TPlanObject);
 var
   sTemp:String;
+  sCaption:String;
 begin
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitTitleMin','value');
+  if(sTemp<>'') then
+  begin
+    if(length(aArticleObject.title)<strtoint(sTemp)) then
+    begin
+      raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty('CatchPlanLimitTitleMin','caption')+')检查不符合！');
+    end;
+  end;
+
+  sTemp:=aLimitItem.getProperty('CatchPlanLimitTitleMax','value');
+  if(sTemp<>'') then
+  begin
+    if(length(aArticleObject.title)>strtoint(sTemp)) then
+    begin
+      raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty('CatchPlanLimitTitleMax','caption')+')检查不符合！');
+    end;
+  end;
+
+
   sTemp:=aLimitItem.getProperty('CatchPlanLimitTitleIncludeWords','value');
   ParseOneLimitItem(aArticleObject.title,sTemp,'CatchPlanLimitTitleIncludeWords',true,aLimitItem);
 

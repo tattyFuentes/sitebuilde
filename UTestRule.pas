@@ -69,6 +69,8 @@ begin
       RichEdit2.Lines.Add(list[i].id);
       ParseArticleObject(list[i],mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
       RichEdit2.Lines.Add(list[i].tags);
+      RichEdit2.Lines.Add(list[i].catchPlanId);
+      RichEdit2.Lines.Add(list[i].author);
       RichEdit2.Lines.Add(list[i].content);
       RichEdit1.Lines.Add('½áÊøÎÄÕÂ·ÖÎö');
       break;
