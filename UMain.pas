@@ -384,7 +384,9 @@ var
   //frmTools:TFrmTools;
   frmTools1:TForm1;
 begin
-  frmTools1:=TForm1.Create(self);
-  FrmTools1.ShowModal;
+  //showmessage(inttostr(pos('11','211')));
+  showmessage(Pseudooriginal('我们是中国人姨妈','伪原创.txt'));
+  //frmTools1:=TForm1.Create(self);
+  //FrmTools1.ShowModal;
 end;
 end.

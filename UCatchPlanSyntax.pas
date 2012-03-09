@@ -5,12 +5,12 @@ interface
 uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes,uLkJSON;
 Type TArticleList=Array of TArticleObject;
 
-
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
 implementation
 
+//检查采集项目规则是否配置，如果没有就报错
 function checkConfig(aListConfig:TPlanObject;aPropertyName:String):String;
 var
   rowCaption:String;
@@ -23,6 +23,7 @@ begin
   end;
 end;
 
+//请求一个url内容
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 var
   pageEncode:String;
@@ -56,7 +57,7 @@ begin
   end;
 end;
 
-//获得一个区域的内容
+//根据正则表达式，获得一个区域的内容
 function getScopeContent(aResponseStr:String;aScope:String;tagName:String;tagCaption:String):String;
 var
   tagStrings,searchStrings:TStringList;
@@ -120,7 +121,7 @@ begin
   else if(aName=VARARTICLEDOWNLOADFILE) then
     articleObject.downloadFiles:= aValue;
 end;
-
+//针对采集关键字而写，要采集多个关键字
 procedure appendArticleObjectProperty(articleObject:TArticleObject;aName:String;aValue:String);
 begin
   if(aValue='') then
@@ -279,29 +280,19 @@ begin
         //raise EUserDefineError.create(aRespones);
         raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
       end;
-      //如果找到多个符合项相加
-      if(searchStrings.Count div tagStrings.Count>1) then
-      begin
-
-
-
-
-        //raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')找到多个符合项！');
-      end;
 
       if(searchStrings.Count div tagStrings.Count<1) then
       begin
         raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
       end;
 
-
-     for i:=0 to  (searchStrings.Count div tagStrings.Count)-1 do
-     begin
-        for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
-        begin
-          appendArticleObjectProperty(aArticleObject,tagStrings[j-i*tagStrings.Count],searchStrings.Strings[j]);
-        end;
-      end;
+      for i:=0 to  (searchStrings.Count div tagStrings.Count)-1 do
+      begin
+         for j:=i*tagStrings.Count to (i+1)*tagStrings.Count-1 do
+         begin
+           appendArticleObjectProperty(aArticleObject,tagStrings[j-i*tagStrings.Count],searchStrings.Strings[j]);
+         end;
+       end;
     end;
   finally
     if(searchStrings<>nil) then
@@ -397,8 +388,90 @@ begin
   ParseOneLimitItem(aArticleObject.catchPlanId,sTemp,'CatchPlanLimitCategoryNoIncludeWords',false,aLimitItem);
 end;
 
-procedure ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObject);
+//一个数据整理项
+function ParseOneArrangeItems(aSource:String;aRule:String):String;
+var
+  sTemp,sTemp2:String;
+  intPos,intPos2:integer;
 begin
+  sTemp:=aRule;
+  result:=aSource;
+  if(sTemp='') then
+    exit;
+  intPos:=pos(chr(13)+chr(10),sTemp);
+  while intPos>0 do
+  begin
+    sTemp2:=copy(sTemp,1,intPos-1);
+    intPos2:=pos('=',sTemp2);
+    if(intPos2>0) then
+    begin
+      aSource:=RegexReplaceString(aSource,copy(sTemp2,1,intPos2-1),copy(sTemp2,intPos2+1,length(sTemp2)));
+    end;
+    sTemp:=copy(sTemp,intPos+2,length(sTemp));
+    intPos:=pos(chr(13)+chr(10),sTemp);
+  end;
+  result:=aSource;
+end;
+
+//数据整理项
+procedure ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObject);
+var
+  sTemp:string;
+  sCheatCreate:String;
+begin
+  //标题整理规则
+  sTemp:=aArrangeItem.getProperty('CatchPlanArrangeTitle','value');
+  if(sTemp<>'') then
+  begin
+    aArticleObject.title:=ParseOneArrangeItems(aArticleObject.title,sTemp);
+  end;
+
+  //正文整理规则
+  sTemp:=aArrangeItem.getProperty('CatchPlanArrangeContent','value');
+  if(sTemp<>'') then
+  begin
+    aArticleObject.content:=ParseOneArrangeItems(aArticleObject.content,sTemp);
+  end;
+
+  //摘要整理
+  sTemp:=aArrangeItem.getProperty('CatchPlanArrangeExcerpt','value');
+  if(sTemp<>'') then
+  begin
+    aArticleObject.excerpt:=ParseOneArrangeItems(aArticleObject.excerpt,sTemp);
+  end;
+
+  //文章分类整理
+  sTemp:=aArrangeItem.getProperty('CatchPlanArrangeCategory','value');
+  if(sTemp<>'') then
+  begin
+    aArticleObject.catchPlanId:=ParseOneArrangeItems(aArticleObject.catchPlanId,sTemp);
+  end;
+
+  //文章作者整理
+  sTemp:=aArrangeItem.getProperty('CatchPlanArrangeAuthor','value');
+  if(sTemp<>'') then
+  begin
+    aArticleObject.author:=ParseOneArrangeItems(aArticleObject.author ,sTemp);
+  end;
+
+  //标题正文等伪原创
+  sTemp:=aArrangeItem.getProperty('CatchPlanIsArrangeTitile','value');
+  if(sTemp='True') then
+  begin
+    aArticleObject.title:=Pseudooriginal(aArticleObject.title,'伪原创.txt');
+  end;
+
+  sTemp:=aArrangeItem.getProperty('CatchPlanIsArrangeContent','value');
+  if(sTemp='True') then
+  begin
+    aArticleObject.content:=Pseudooriginal(aArticleObject.content,'伪原创.txt');
+  end;
+
+  sTemp:=aArrangeItem.getProperty('CatchPlanIsArrangeExcerpt','value');
+  if(sTemp='True') then
+  begin
+    aArticleObject.excerpt:=Pseudooriginal(aArticleObject.excerpt,'伪原创.txt');
+  end;
 
 
 end;
@@ -573,7 +646,17 @@ begin
   end;
 end;
 
-//--------------------------------------------------------------------------------------------
+//处理正文内容下载
+procedure ParseContentDownload(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject);
+begin
+  if(aBaseConfig.getProperty('CatchPlanPageEnableDownFile','value')='True') then
+  begin
+    
+  end;
+end;
+
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
 //公开接口根据列表配置获得文章地址列表
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 var
@@ -615,10 +698,9 @@ begin
   //处理正文分页
   ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
   //数据整理
-
-  //listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
-  //listContent:=getListScopeContent(sResponse,listScope);
-  //result:=getArticleList(listContent,aListConfig);
+  ParseArrangeItems(aArticleObject,aArrange);
+  //处理启用正文内容下载
+  ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
 end;
 
 

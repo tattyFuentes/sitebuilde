@@ -7,7 +7,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,CommCtrl,TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,activex,dxExEdtr,
-  TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles,PerlRegEx;
+  TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles,PerlRegEx,StdCtrls;
 type
   TWinControlArray=Array of TControl;
   TInspectorButtonClick =procedure(Sender: TObject;AbsoluteIndex: Integer)of object;
@@ -31,6 +31,8 @@ procedure MakeDir(newFolder:String);
 function RegexReplaceString(sourceString:String;findExpression:String;replaceValue:String):String;
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
 function ReplaceRegexChar(aSource:String):String;
+function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
+
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -38,6 +40,31 @@ const
 implementation
 
 uses uXML,uLKJSON;
+//Î±Ô­´´
+function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
+var
+  sTemp,sTemp2:String;
+  intPos,intPos2:integer;
+begin
+  sTemp:=readfile(aDictionaryFile);
+  result:=aSource;
+  if(sTemp='') then
+    exit;
+  intPos:=pos(chr(13)+chr(10),sTemp);
+  while intPos>0 do
+  begin
+    sTemp2:=copy(sTemp,1,intPos-1);
+    intPos2:=pos('=',sTemp2);
+    if(intPos2>0) then
+    begin
+      aSource:=StringReplace(aSource,copy(sTemp2,1,intPos2-1),copy(sTemp2,intPos2+1,length(sTemp2)),[rfReplaceAll,rfIgnoreCase]);
+    end;
+    sTemp:=copy(sTemp,intPos+2,length(sTemp));
+    intPos:=pos(chr(13)+chr(10),sTemp);
+  end;
+  result:=aSource;
+end;
+
 
 function ReplaceRegexChar(aSource:String):String;
 begin
@@ -579,6 +606,9 @@ var
 begin  
   if(xml='') then
     exit;
+
+
+ 
   GetChildControls(parentControl,controls,'');  
   doc:=CreateXMLDoc;
   doc.LoadXML(xml);
