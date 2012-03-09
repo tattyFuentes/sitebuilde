@@ -1,0 +1,58 @@
+查看连机文档 
+man 加具体命令
+man -k 内容 查找命令概要行中的关键字
+
+查找某个软件是否安装  
+which gcc 或 whereis gcc(有些系统不显示用户没有权限执行的文件)
+rpm -q 软件名称
+
+搜索某个文件
+locate 文件名称（每天晚上建立索引所以不能反映最近的文件变化）
+
+
+查看tcp/ip 连接情况
+netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+
+安装软件
+yum 
+debian系统使用 apt-get install 软件名
+
+sudo命令以其他用户身份运行程序  /etc/sudoers文件配置授权命令和用户
+
+killall -TERM xinetd
+
+ps aux 列表进程信息  ps lax 包括父进程    ps -fp "444 555 666" 查看多个进程信息
+
+top 命令更好的监控进程信息 root用户加 q选项能监控把系统拖垮的进程
+
+/proc目录下记录系统状态各种有意义的信息，用ls-l有的文件看不到
+
+cat 或者 more命令查看/proc目录下的文件
+
+strace -p 进程id  追踪进程的信号和系统调用
+
+renice (-19-20之间的1谦让值越高执行优先级越低) 进程id       设置进程优先级
+
+find /home -size +1M -print0 | xargs -0 ls -l  搜索 /home目录下大小超过1M的文件以 ls 命令的长格式输出（文件名可以包含空白）
+
+mount /dev/hda4 /users 挂接文件系统
+
+unmount -l /users (缓慢卸载当前有使用的文件系统，不加参数 -l不能卸载有活动的文件目录) 
+
+fuser -mv /usr 列表正在使用文件系统上的文件和目录的进程PID  fuser -v filename 查看某个文件进程使用情况 fuser -k filename 杀死使用文件的进程
+
+lsof -F 功能类似 fuser 比fuser更好
+
+rm -i foo* 模糊删除特殊名称文件  rm -- -f 删除名称为-f的文件
+
+mkdir 创建目录 rmdir 删除空目录  rmdir -r 删除非空目录
+
+cp oldfile newfile 拷贝文件 
+
+ln -d oldfile newfile 增加硬链接（源文件删除只是删除引用计数，当引用计数为0时才会完全删除，有防止误删除功能，看文件大小为源文件大小,硬链接不能给目录做，不能跨分区做。软链接则都可以）   ln -s oldfile newfile 增加符号链接（相当于快捷方式，删除源文件相应失效，新文件大小为4K左右）
+
+ls -l 列表文件  ls -ld查看目录
+
+
+
+ 
