@@ -1,7 +1,7 @@
 unit UArticleObject;
 
 interface
-uses uLkJSON;
+uses uLkJSON,SysUtils;
 type
   TArticleObject = class(TObject)
   private
@@ -16,6 +16,7 @@ type
     FTags:String;
     FDownloadFiles:String;
     FContentFiles:String;
+    FCategory:String;
     FUrl:String;
   public
     property title:string read FTitle write FTitle;
@@ -30,10 +31,58 @@ type
     property catchPlanId:String read FCatchPlanId write FCatchPlanId;
     property url:String read FUrl write FUrl;
     property contentFiles:String read FContentFiles write FContentFiles;
+    property category:String read FCategory write FCategory;
+
     procedure AddDownloadFile(aFileUrl:String;aFilePath:String);
     procedure AddContentFile(aFileUrl:String;aFilePath:String);
+    function ToString():String;
+    procedure FromString(aSource:String);
   end;
 implementation
+//解析字符串生成属性
+procedure TArticleObject.FromString(aSource:String);
+var
+  JsonObject:TlkJSONobject;
+begin
+  if aSource='' then
+    exit;
+  JsonObject:=TlkJSON.ParseText(aSource) as TlkJSONobject;
+  title:=JsonObject.Field['title'].Value;
+  content:=JsonObject.Field['content'].Value;
+  createDate:=strtodatetime(JsonObject.Field['createDate'].Value);
+  thumb:=JsonObject.Field['thumb'].Value;
+  author:=JsonObject.Field['author'].Value;
+  excerpt:=JsonObject.Field['excerpt'].Value;
+  tags:=JsonObject.Field['tags'].Value;
+  downloadFiles:=JsonObject.Field['downloadFiles'].Value;
+  catchPlanId:=JsonObject.Field['catchPlanId'].Value;
+  url:=JsonObject.Field['url'].Value;
+  contentFiles:=JsonObject.Field['contentFiles'].Value;
+  category:=JsonObject.Field['category'].Value;
+end;
+
+//将属性列表生成字符串放到数据库
+function TArticleObject.ToString():String;
+var
+  JsonObject:TlkJSONobject;
+begin
+  result:='';
+  JsonObject := TlkJSONobject.Create;
+  JsonObject.Add('title',title);
+  JsonObject.Add('content',content);
+  JsonObject.Add('createDate',DateTimeToStr(createDate));
+  JsonObject.Add('thumb',thumb);
+  JsonObject.Add('author',author);
+  JsonObject.Add('excerpt',excerpt);
+  JsonObject.Add('tags',tags);
+  JsonObject.Add('downloadFiles',downloadFiles);
+  JsonObject.Add('catchPlanId',catchPlanId);
+  JsonObject.Add('url',url);
+  JsonObject.Add('contentFiles',contentFiles);
+  JsonObject.Add('category',category);
+
+  result:=TlkJSON.GenerateText(JsonObject);
+end;
 
 //记录下载文件列表，包括原始http地址和下载后的文件相对地址 json格式
 procedure TArticleObject.AddDownloadFile(aFileUrl:String;aFilePath:String);

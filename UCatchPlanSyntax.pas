@@ -444,7 +444,7 @@ begin
   sTemp:=aArrangeItem.getProperty('CatchPlanArrangeCategory','value');
   if(sTemp<>'') then
   begin
-    aArticleObject.catchPlanId:=ParseOneArrangeItems(aArticleObject.catchPlanId,sTemp);
+    aArticleObject.category:=ParseOneArrangeItems(aArticleObject.catchPlanId,sTemp);
   end;
 
   //文章作者整理
