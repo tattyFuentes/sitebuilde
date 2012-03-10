@@ -39,9 +39,9 @@ object frmTestRule: TfrmTestRule
       Width = 1122
       Height = 335
       Align = alClient
-      Font.Charset = GB2312_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       Lines.Strings = (
@@ -68,7 +68,7 @@ object frmTestRule: TfrmTestRule
       Align = alClient
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       Lines.Strings = (

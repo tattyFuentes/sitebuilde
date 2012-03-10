@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
-  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls;
+  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject;
 
 type
   TfrmMain = class(TForm)
@@ -133,13 +133,13 @@ end;
 
 procedure TfrmMain.InitSystemConfig();
 begin
-  CATCHPLANPROPERTY:=getSystemConfig('CATCHPLANPROPERTY');
-  LISTPROPERTY:=getSystemConfig('LISTPROPERTY');
-  ARTICLEPROPERTY:=getSystemConfig('ARTICLEPROPERTY');
-  LIMITPROPERTY:=getSystemConfig('LIMITPROPERTY');
-  ARRANGEROPERTY:=getSystemConfig('ARRANGEROPERTY');
-  ARTICLESPLITPROPERTY:=getSystemConfig('ARTICLESPLITPROPERTY');
-  CATCHITEMSPROPERTY:=getSystemConfig('CATCHITEMSPROPERTY');
+  GlobeCATCHPLANPROPERTY:=getSystemConfig('CATCHPLANPROPERTY');
+  GlobeLISTPROPERTY:=getSystemConfig('LISTPROPERTY');
+  GlobeARTICLEPROPERTY:=getSystemConfig('ARTICLEPROPERTY');
+  GlobeLIMITPROPERTY:=getSystemConfig('LIMITPROPERTY');
+  GlobeARRANGEROPERTY:=getSystemConfig('ARRANGEROPERTY');
+  GlobeARTICLESPLITPROPERTY:=getSystemConfig('ARTICLESPLITPROPERTY');
+  GlobeCATCHITEMSPROPERTY:=getSystemConfig('CATCHITEMSPROPERTY');
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -291,19 +291,26 @@ var
   s:string;
 begin
 
+   if IsInStr('11112222233333444444','55555'+chr(13)+chr(10)+'4443'+chr(13)+chr(10)) then
+     showmessage('ture');
+   if sss=nil then
+   showmessage('111');
+   showmessage(GetFileUrlBySourceUrl('httP://bababian.com/aa/bbb.jpg','ccc.jpg'));
+   showmessage(GetFileUrlBySourceUrl('httP://bababian.com/aa/bbb.jpg','/ccc.jpg'));
+   showmessage(GetFileUrlBySourceUrl('httP://bababian.com/aa/bbb.jpg','http://aaa.com/ccc.jpg'));
 
 
 
-  s:=readFile('e:\a.txt');
+  //s:=readFile('e:\a.txt');
   //RegexSearchString(s,'var \$tag=''(.*)'';');
-  showmessage(RegexReplaceString('sdfsdfsdfsdf^.adfsdfsddsdf${}[]?','([\^\.\$\{\}\[\]\?]+)','\\\1'));
-  exit;
+  //showmessage(RegexReplaceString('sdfsdfsdfsdf^.adfsdfsddsdf${}[]?','([\^\.\$\{\}\[\]\?]+)','\\\1'));
+  //exit;
 
   //.$ ^ { [ ( | ) * + ? \
 
- for i:=0 to 100000 do
+ //for i:=0 to 100000 do
  begin
-   sss:=RegexSearchString('<a title="<%article.title%>"<%var%>href="<%article.id%>">','<%(.*)%>');
+   sss:=RegexSearchString('<a href="http://aaa.html">dddddd<img src="http://dddd/a.jpg"eeeee','(?:href|src)=(.*)(html|jpg)');
    //sss.Free;
  end;
 
@@ -383,10 +390,18 @@ procedure TfrmMain.Button6Click(Sender: TObject);
 var
   //frmTools:TFrmTools;
   frmTools1:TForm1;
+  a:TArticleObject;
 begin
+  a:=TArticleObject.Create;
+  showmessage('d:\aaa.jpg');
+  a.AddDownloadFile('http://www.bababian.com/a.jpg','d:\\aaa.jpg');
+  a.AddDownloadFile('http://www.bababian.com/a.jpg','d:\\bbb.jpg');
+  a.AddContentFile('http://www.bababian.com/a.jpg','d:\\aaa.jpg');
+  a.AddContentFile('http://www.bababian.com/a.jpg','d:\\bbb.jpg');
   //showmessage(inttostr(pos('11','211')));
   showmessage(Pseudooriginal('我们是中国人姨妈','伪原创.txt'));
   //frmTools1:=TForm1.Create(self);
   //FrmTools1.ShowModal;
 end;
 end.
+

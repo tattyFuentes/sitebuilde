@@ -7,7 +7,11 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,CommCtrl,TFlatCheckBoxUnit,
   TFlatRadioButtonUnit, TFlatEditUnit,dxInspRw,dxInspct,activex,dxExEdtr,
-  TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles,PerlRegEx,StdCtrls;
+  TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,OmniXML,IniFiles,PerlRegEx,StrUtils;
+
+var
+  GlobeCatchPlanSavePath:String;//设置时最后必须是\\
+
 type
   TWinControlArray=Array of TControl;
   TInspectorButtonClick =procedure(Sender: TObject;AbsoluteIndex: Integer)of object;
@@ -32,6 +36,13 @@ function RegexReplaceString(sourceString:String;findExpression:String;replaceVal
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
 function ReplaceRegexChar(aSource:String):String;
 function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
+//获得下载文件的路径（处理相对路径和绝对路径）
+function GetFileUrlBySourceUrl(aSourceUrl:String;aFileUrl:String):String;
+//判断多个换行的字符串是否有一行在原字符串中
+function IsInStr(aSource:String;aFind:String):boolean;
+function GetFileNameFromUrl(aUrl:String):String;
+//在一个文件夹中判断文件是否存在，如果存在给文件一个新名称
+function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
 
 
 const
@@ -40,6 +51,81 @@ const
 implementation
 
 uses uXML,uLKJSON;
+
+function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
+begin
+  result:=aFileName;
+  while fileExists(aFolder+aFileName) do
+  begin
+    aFileName:='(1)'+aFileName;
+  end;
+  result:=aFileName;
+
+end;
+
+function IsInStr(aSource:String;aFind:String):boolean;
+var
+  intPos:integer;
+  sTemp,sTemp2:String;
+begin
+  result:=false;
+  sTemp:=aFind;
+  intPos:=pos(chr(13)+chr(10),sTemp);
+  while intPos>0 do
+  begin
+    sTemp2:=copy(sTemp,1,intPos-1);
+    if(pos(sTemp2,aSource)>0) then
+    begin
+      result:=true;
+      exit;
+    end;
+    sTemp:=copy(sTemp,intPos+2,length(sTemp));
+    intPos:=pos(chr(13)+chr(10),sTemp);
+  end;
+  if(sTemp<>'') then
+    if(pos(sTemp,aSource)>0) then
+      result:=true;
+
+end;
+
+function GetFileNameFromUrl(aUrl:String):String;
+var
+  intpos:integer;
+  strTemp:String;
+begin
+  strTemp:=ReverseString(aUrl);
+  intpos:=pos('/',strTemp);
+  strTemp:=copy(strTemp,1,intpos-1);
+  result:=ReverseString(strTemp);
+end;
+
+function GetFileUrlBySourceUrl(aSourceUrl:String;aFileUrl:String):String;
+var
+  sList:TStringList;
+  sTemp:String;
+begin
+  result:=aFileUrl;
+  //相对路径
+  if(pos('http',lowercase(aFileUrl))<=0) and (pos('https',lowercase(aFileUrl))<=0) then
+  begin
+    //绝对目录只需要host
+    if(aFileUrl[1]='/') then
+    begin
+      sList:=RegexSearchString(lowercase(aSourceUrl),'(http://|https://)(.*)/');
+      if(sList<>nil) and (sList.Count=2) then
+      begin
+        result:=sList.Strings[0]+sList.Strings[1]+aFileUrl;
+      end;
+      if(sList<>nil) then
+        sList.Free;
+    end else
+    begin
+      sTemp:=ReverseString(aSourceUrl);
+      result:=ReverseString(copy(sTemp,pos('/',sTemp),length(sTemp)))+aFileUrl;
+    end;
+  end;
+end;
+
 //伪原创
 function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
 var
@@ -51,14 +137,21 @@ begin
   if(sTemp='') then
     exit;
   intPos:=pos(chr(13)+chr(10),sTemp);
-  while intPos>0 do
+  while true do
   begin
-    sTemp2:=copy(sTemp,1,intPos-1);
+    if(intPos>0) then
+      sTemp2:=copy(sTemp,1,intPos-1)
+    else
+      sTemp2:=sTemp;
+
     intPos2:=pos('=',sTemp2);
     if(intPos2>0) then
     begin
       aSource:=StringReplace(aSource,copy(sTemp2,1,intPos2-1),copy(sTemp2,intPos2+1,length(sTemp2)),[rfReplaceAll,rfIgnoreCase]);
     end;
+
+    if(intPos<=0) then
+      break;
     sTemp:=copy(sTemp,intPos+2,length(sTemp));
     intPos:=pos(chr(13)+chr(10),sTemp);
   end;
@@ -246,10 +339,6 @@ begin
     result:=TdxInspectorTextPickRow;
 end;
 
-procedure InitSystemConfig();
-begin
-  
-end;
 
 
 

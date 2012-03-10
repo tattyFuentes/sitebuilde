@@ -1,7 +1,7 @@
 object FrmTools: TFrmTools
-  Left = 17
-  Top = 34
-  Width = 1292
+  Left = 0
+  Top = 8
+  Width = 1280
   Height = 762
   Caption = #36741#21161#24037#20855
   Color = clBtnFace
@@ -19,7 +19,7 @@ object FrmTools: TFrmTools
   object Splitter1: TSplitter
     Left = 0
     Top = 344
-    Width = 1284
+    Width = 1272
     Height = 1
     Cursor = crVSplit
     Align = alTop
@@ -28,7 +28,7 @@ object FrmTools: TFrmTools
   object Splitter3: TSplitter
     Left = 0
     Top = 526
-    Width = 1284
+    Width = 1272
     Height = 2
     Cursor = crVSplit
     Align = alBottom
@@ -36,14 +36,14 @@ object FrmTools: TFrmTools
   object Panel1: TPanel
     Left = 0
     Top = 44
-    Width = 1284
+    Width = 1272
     Height = 300
     Align = alTop
     TabOrder = 0
     object WebBrowser1: TWebBrowser
       Left = 1
       Top = 1
-      Width = 1282
+      Width = 1270
       Height = 298
       Align = alClient
       TabOrder = 0
@@ -51,7 +51,7 @@ object FrmTools: TFrmTools
       OnBeforeNavigate2 = WebBrowser1BeforeNavigate2
       OnDocumentComplete = WebBrowser1DocumentComplete
       ControlData = {
-        4C00000080840000CD1E00000000000000000000000000000000000000000000
+        4C00000042830000CD1E00000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126208000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -61,7 +61,7 @@ object FrmTools: TFrmTools
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 1284
+    Width = 1272
     Height = 44
     Align = alTop
     TabOrder = 1
@@ -94,7 +94,7 @@ object FrmTools: TFrmTools
   object Panelnodetext: TPanel
     Left = 0
     Top = 345
-    Width = 1284
+    Width = 1272
     Height = 181
     Align = alClient
     TabOrder = 2
@@ -108,7 +108,7 @@ object FrmTools: TFrmTools
     object RichEdit1: TRichEdit
       Left = 289
       Top = 34
-      Width = 994
+      Width = 982
       Height = 146
       Align = alClient
       Font.Charset = GB2312_CHARSET
@@ -123,7 +123,7 @@ object FrmTools: TFrmTools
     object Panelnodetexttoolbar: TPanel
       Left = 1
       Top = 1
-      Width = 1282
+      Width = 1270
       Height = 33
       Align = alTop
       TabOrder = 1
@@ -303,14 +303,14 @@ object FrmTools: TFrmTools
   object Paneluserdefine: TPanel
     Left = 0
     Top = 528
-    Width = 1284
+    Width = 1272
     Height = 200
     Align = alBottom
     TabOrder = 3
     object RichEdit3: TRichEdit
       Left = 1
       Top = 34
-      Width = 1282
+      Width = 1270
       Height = 165
       Align = alClient
       Font.Charset = GB2312_CHARSET
@@ -325,14 +325,14 @@ object FrmTools: TFrmTools
     object Panel8: TPanel
       Left = 1
       Top = 1
-      Width = 1282
+      Width = 1270
       Height = 33
       Align = alTop
       TabOrder = 1
       object Panel9: TPanel
         Left = 1
         Top = 1
-        Width = 1280
+        Width = 1268
         Height = 31
         Align = alTop
         Alignment = taRightJustify

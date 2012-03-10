@@ -1,10 +1,10 @@
 object FrmInspectorTextEditor: TFrmInspectorTextEditor
-  Left = 809
-  Top = 303
+  Left = 152
+  Top = 180
   BorderStyle = bsDialog
   Caption = 'FrmInspectorTextEditor'
   ClientHeight = 434
-  ClientWidth = 485
+  ClientWidth = 760
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
   object Panel1: TPanel
     Left = 0
     Top = 34
-    Width = 485
+    Width = 760
     Height = 343
     Align = alClient
     Caption = 'Panel1'
@@ -27,7 +27,7 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
     object MemText: TRichEdit
       Left = 1
       Top = 1
-      Width = 483
+      Width = 758
       Height = 341
       Align = alClient
       Font.Charset = GB2312_CHARSET
@@ -38,6 +38,7 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
       Lines.Strings = (
         'MemText')
       ParentFont = False
+      ScrollBars = ssBoth
       TabOrder = 0
       WordWrap = False
     end
@@ -45,7 +46,7 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
   object panelbutton: TPanel
     Left = 0
     Top = 0
-    Width = 485
+    Width = 760
     Height = 34
     Align = alTop
     TabOrder = 1
@@ -107,7 +108,7 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
   object Panel2: TPanel
     Left = 0
     Top = 377
-    Width = 485
+    Width = 760
     Height = 57
     Align = alBottom
     BevelOuter = bvNone

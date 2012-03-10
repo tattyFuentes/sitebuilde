@@ -330,11 +330,11 @@ begin
     begin
       if(isInclude) then
       begin
-        if(pos(aFind,aSource)<=0) then
+        if(not IsInStr(aSource,aFind)) then
           raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'caption')+')检查不符合！');
       end else
       begin
-        if(pos(aFind,aSource)>0) then
+        if(IsInStr(aSource,aFind)) then
           raise EUserDefineError.create('文章采集限制项目('+aLimitItem.getProperty(aPropertyName,'caption')+')检查不符合！');
       end;
     end;
@@ -646,12 +646,61 @@ begin
   end;
 end;
 
+
+
+
 //处理正文内容下载
 procedure ParseContentDownload(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject);
+var
+  sHtmlName,sFileExtension,sExpression:String;
+  sDownFileName:String;
+  sList:TStringList;
+  i:integer;
+  sDownUrl:String;
+  sAllowFileUrl,sBlockFileUrl:String;
 begin
+  sList:=nil;
   if(aBaseConfig.getProperty('CatchPlanPageEnableDownFile','value')='True') then
   begin
-    
+    sHtmlName:=aBaseConfig.getProperty('CatchPlanPageHtmlName','value');
+    sFileExtension:=aBaseConfig.getProperty('CatchPlanPageFileExtension','value');
+    if(sHtmlName<>'') and (sFileExtension<>'') then
+    begin
+      sAllowFileUrl:=aBaseConfig.getProperty('CatchPlanPageAllowFileUrl','value');
+      sBlockFileUrl:=aBaseConfig.getProperty('CatchPlanPageBlockFileUrl','value');
+      sHtmlName:=StringReplace(sHtmlName,chr(13)+chr(10),'|',[rfReplaceAll]);
+      sFileExtension:=StringReplace(sFileExtension,chr(13)+chr(10),'|',[rfReplaceAll]);;
+      sExpression:='(?:'+sHtmlName+')=(.*)('+sFileExtension+')';
+      try
+        sList:=RegexSearchString(aArticleObject.content,sExpression);
+        for i:=0 to sList.Count div 2-1 do
+        begin
+          sDownUrl:=sList.Strings[i*2]+sList.Strings[i*2+1];
+          if(sDownUrl[1]='"') or (sDownUrl[1]='''') then
+          begin
+            sDownUrl:=copy(sDownUrl,2,length(sDownUrl));
+            sDownUrl:=GetFileUrlBySourceUrl(aArticleObject.url,sDownUrl);
+            if(sAllowFileUrl<>'') then
+            begin
+              if(not isInstr(sDownUrl,sAllowFileUrl)) then
+                continue;
+            end;
+
+            if(sBlockFileUrl<>'') then
+            begin
+              if(isInstr(sDownUrl,sBlockFileUrl)) then
+                continue;
+            end;
+            sDownFileName:=DownLoadFile(sDownUrl,GlobeCatchPlanSavePath+aArticleObject.id+'\',aArticleObject.url);
+            aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GlobeCatchPlanSavePath)+1,length(sDownFileName)));
+          end;
+        end;
+      finally
+        if(sList<>nil) then
+          sList.Free;
+      end;
+    end;
+
   end;
 end;
 
@@ -690,6 +739,7 @@ begin
   ParseLimitItems(aArticleObject,aLimit);  
   articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
   articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
+  aArticleObject.url:=articleUrl;
   sResponse:=RequestUrl(aBaseConfig,articleUrl);
   //解析采集项目
   ParseCatchItems(aArticleObject,aCatchItem,sResponse);
@@ -699,6 +749,8 @@ begin
   ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
   //数据整理
   ParseArrangeItems(aArticleObject,aArrange);
+  //生成数据库文章对象
+
   //处理启用正文内容下载
   ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
 end;
