@@ -1,6 +1,6 @@
 object frmTestRule: TfrmTestRule
-  Left = 381
-  Top = 214
+  Left = 148
+  Top = 70
   BorderStyle = bsDialog
   Caption = #27979#35797#35268#21017
   ClientHeight = 666
@@ -39,7 +39,7 @@ object frmTestRule: TfrmTestRule
       Width = 1122
       Height = 335
       Align = alClient
-      Font.Charset = ANSI_CHARSET
+      Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
       Font.Name = 'MS Sans Serif'

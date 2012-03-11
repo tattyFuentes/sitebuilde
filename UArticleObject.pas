@@ -32,7 +32,7 @@ type
     property url:String read FUrl write FUrl;
     property contentFiles:String read FContentFiles write FContentFiles;
     property category:String read FCategory write FCategory;
-
+    procedure AddThumb(aFileUrl:String;aFilePath:String);
     procedure AddDownloadFile(aFileUrl:String;aFilePath:String);
     procedure AddContentFile(aFileUrl:String;aFilePath:String);
     function ToString():String;
@@ -117,6 +117,25 @@ begin
   JsonObject.Add('path',aFilePath);
   JsonRoot.Add('file',JsonObject);
   FContentFiles:=TlkJSON.GenerateText(JsonRoot);
+  JsonRoot.Free;
+end;
+
+
+//¼ÇÂ¼ËõÂÔÍ¼
+procedure TArticleObject.AddThumb(aFileUrl:String;aFilePath:String);
+var
+  i:integer;
+  JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
+begin
+  if(thumb<>'') then
+    JsonRoot:=TlkJSON.ParseText(thumb) as TlkJSONobject
+  else
+    JsonRoot := TlkJSONobject.Create;
+  JsonObject := TlkJSONobject.Create;
+  JsonObject.Add('url',aFileUrl);
+  JsonObject.Add('path',aFilePath);
+  JsonRoot.Add('file',JsonObject);
+  thumb:=TlkJSON.GenerateText(JsonRoot);
   JsonRoot.Free;
 end;
 

@@ -2,7 +2,7 @@ unit UCatchPlanSyntax;
 
 interface
 
-uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes,uLkJSON;
+uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes,uLkJSON,UEngine;
 Type TArticleList=Array of TArticleObject;
 
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
@@ -22,6 +22,18 @@ begin
     raise EUserDefineError.create(rowCaption+'为空!');
   end;
 end;
+
+//获得采集规则下载文件保存目录
+function GetFileSavePath(aBaseConfig:TPlanObject):String;
+begin
+  result:=aBaseConfig.getProperty('CatchPlanBaseFileSavePath','value');
+  if(result='') then
+  begin
+    raise EUserDefineError.create('采集规则('+aBaseConfig.getProperty('CatchPlanBaseFileSavePath','caption')+')为空!');
+  end;
+end;
+
+
 
 //请求一个url内容
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
@@ -113,7 +125,7 @@ begin
   else if(aName=VARARTICLEAUTHOR) then
     articleObject.author:= aValue
   else if(aName=VARARTICLECATEGORY) then
-    articleObject.catchPlanId:= aValue
+    articleObject.category:= aValue
   else if(aName=VARARTICLETAGS) then
     articleObject.tags:= aValue
   else if(aName=VARARTICLEEXCERPT) then
@@ -137,7 +149,7 @@ begin
   else if(aName=VARARTICLEAUTHOR) then
     articleObject.author:= aValue
   else if(aName=VARARTICLECATEGORY) then
-    articleObject.catchPlanId:= aValue
+    articleObject.category:= aValue
   else if(aName=VARARTICLETAGS) then
   begin
     if articleObject.tags='' then
@@ -277,7 +289,6 @@ begin
       searchStrings:=RegexSearchString(aRespones,propertyJson);
       if(searchStrings=nil) then
       begin
-        //raise EUserDefineError.create(aRespones);
         raise EUserDefineError.create('文章采集项目规则('+propertyNameJson+')未找到符合项！');
       end;
 
@@ -308,16 +319,22 @@ procedure ParseCatchItems(aArticleObject:TArticleObject;aCatchItem:TPlanObject;a
 var
   JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
   i:integer;
-  objectValue,objectName:String;
+  objectValue,objectName,objectCaption:String;
 begin
   JsonRoot:=TlkJSON.ParseText(UTF8Encode(aCatchItem.ItemProperty)) as TlkJSONobject;
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
   for i:=0 to JsonRoot.Count-1 do
   begin
     JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
-    objectName:=JsonObject.Field['caption'].Value;
+    objectName:=JsonObject.Field['name'].Value;
+    if(objectName='CatchPlanItemDownloadFile') then
+    begin
+      //特殊处理下载文件
+      continue;
+    end;
+    objectCaption:=JsonObject.Field['caption'].Value;
     objectValue:=JsonObject.Field['value'].Value;
-    ParseOneCatchItems(aArticleObject,objectValue,objectName,aRespones);
+    ParseOneCatchItems(aArticleObject,objectValue,objectCaption,aRespones);
   end;
 end;
 
@@ -646,6 +663,98 @@ begin
   end;
 end;
 
+//根据规则下载文件同时更新article对象属性
+procedure ParseOneDownloadFiles(aArticleObject:TArticleObject;aExpress:String;aResponse:String;aBaseConfig:TPlanObject;aType:String);
+var
+  sList,tagStrings:TStringList;
+  i:integer;
+  sDownUrl,sDownFileName:String;
+begin
+  sList:=nil;
+  try
+     tagStrings:=parseTagList(aExpress);
+     if(tagStrings<>nil) then
+     begin
+       sList:=RegexSearchString(aResponse,aExpress);
+       for i:=0 to sList.Count div tagStrings.Count-1 do
+       begin
+         sDownUrl:=sList[i*tagStrings.Count+tagStrings.IndexOf(VARARTICLEDOWNLOADFILE)];
+         sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\'+aType+'\',aArticleObject.url);
+         if(aType='downloadfiles') then
+           aArticleObject.AddDownloadFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)))
+         else if(aType='thumbfiles') then
+           aArticleObject.AddDownloadFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
+       end;
+     end;
+  finally
+    if(sList<>nil) then
+      sList.Free;
+    if(tagStrings<>nil) then
+      tagStrings.Free;
+  end;
+end;
+
+
+//处理文件下载（规则可以多行）
+procedure ParseDownloadFiles(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aResponse:String;aBaseConfig:TPlanObject);
+var
+  sExpression,sTemp:String;
+  intPos:integer;
+begin
+  //sList:=nil;
+  sExpression:=aCatchItem.getProperty('CatchPlanItemDownloadFile','value');
+  if(sExpression='') then
+    exit;
+  intPos:=pos(chr(13)+chr(10),sExpression);
+  while (true) do
+  begin
+    if(intPos>0) then
+    begin
+      sTemp:=copy(sExpression,1,intPos-1);
+      sExpression:=copy(sExpression,intPos+2,length(sExpression));
+      ParseOneDownloadFiles(aArticleObject,sTemp,aResponse,aBaseConfig,'downloadfiles');
+      intPos:=pos(chr(13)+chr(10),sExpression);
+    end else begin
+      if(sExpression<>'') then
+      begin
+        ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'downloadfiles');
+      end;
+      exit;
+    end;
+  end;
+end;
+
+
+
+//处理文章缩略图（规则可以多行）
+procedure ParseThumb(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aResponse:String;aBaseConfig:TPlanObject);
+var
+  sExpression,sTemp:String;
+  intPos:integer;
+begin
+  //sList:=nil;
+  sExpression:=aCatchItem.getProperty('CatchPlanItemThumb','value');
+  if(sExpression='') then
+    exit;
+  intPos:=pos(chr(13)+chr(10),sExpression);
+  while (true) do
+  begin
+    if(intPos>0) then
+    begin
+      sTemp:=copy(sExpression,1,intPos-1);
+      sExpression:=copy(sExpression,intPos+2,length(sExpression));
+      ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'thumbfiles');
+      //ParseOneThumb(aArticleObject,sTemp,aResponse,aBaseConfig);
+      intPos:=pos(chr(13)+chr(10),sExpression);
+    end else begin
+      if(sExpression<>'') then
+      begin
+        ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'thumbfiles');
+      end;
+      exit;
+    end;
+  end;
+end;
 
 
 
@@ -662,12 +771,12 @@ begin
   sList:=nil;
   if(aBaseConfig.getProperty('CatchPlanPageEnableDownFile','value')='True') then
   begin
-    sHtmlName:=aBaseConfig.getProperty('CatchPlanPageHtmlName','value');
-    sFileExtension:=aBaseConfig.getProperty('CatchPlanPageFileExtension','value');
+    sHtmlName:=aArticleConfig.getProperty('CatchPlanPageHtmlName','value');
+    sFileExtension:=aArticleConfig.getProperty('CatchPlanPageFileExtension','value');
     if(sHtmlName<>'') and (sFileExtension<>'') then
     begin
-      sAllowFileUrl:=aBaseConfig.getProperty('CatchPlanPageAllowFileUrl','value');
-      sBlockFileUrl:=aBaseConfig.getProperty('CatchPlanPageBlockFileUrl','value');
+      sAllowFileUrl:=aArticleConfig.getProperty('CatchPlanPageAllowFileUrl','value');
+      sBlockFileUrl:=aArticleConfig.getProperty('CatchPlanPageBlockFileUrl','value');
       sHtmlName:=StringReplace(sHtmlName,chr(13)+chr(10),'|',[rfReplaceAll]);
       sFileExtension:=StringReplace(sFileExtension,chr(13)+chr(10),'|',[rfReplaceAll]);;
       sExpression:='(?:'+sHtmlName+')=(.*)('+sFileExtension+')';
@@ -691,8 +800,8 @@ begin
               if(isInstr(sDownUrl,sBlockFileUrl)) then
                 continue;
             end;
-            sDownFileName:=DownLoadFile(sDownUrl,GlobeCatchPlanSavePath+aArticleObject.id+'\',aArticleObject.url);
-            aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GlobeCatchPlanSavePath)+1,length(sDownFileName)));
+            sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\contentfiles\',aArticleObject.url);
+            aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
           end;
         end;
       finally
@@ -700,7 +809,6 @@ begin
           sList.Free;
       end;
     end;
-
   end;
 end;
 
@@ -750,9 +858,15 @@ begin
   //数据整理
   ParseArrangeItems(aArticleObject,aArrange);
   //生成数据库文章对象
-
+  createArticle(aArticleObject);
   //处理启用正文内容下载
   ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
+  //处理文件下载
+  ParseDownloadFiles(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+  //处理缩略图
+  ParseThumb(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+  //更新所有属性后修改数据库
+  updateArticle(aArticleObject);
 end;
 
 
