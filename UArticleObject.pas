@@ -46,7 +46,7 @@ var
 begin
   if aSource='' then
     exit;
-  JsonObject:=TlkJSON.ParseText(aSource) as TlkJSONobject;
+  JsonObject:=TlkJSON.ParseText(UTF8ENCODE(aSource)) as TlkJSONobject;
   title:=JsonObject.Field['title'].Value;
   content:=JsonObject.Field['content'].Value;
   createDate:=strtodatetime(JsonObject.Field['createDate'].Value);
@@ -81,7 +81,7 @@ begin
   JsonObject.Add('contentFiles',contentFiles);
   JsonObject.Add('category',category);
 
-  result:=TlkJSON.GenerateText(JsonObject);
+  result:=UTF8DECODE(TlkJSON.GenerateText(JsonObject));
 end;
 
 //记录下载文件列表，包括原始http地址和下载后的文件相对地址 json格式

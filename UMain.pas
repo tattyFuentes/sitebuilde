@@ -391,7 +391,14 @@ var
   //frmTools:TFrmTools;
   frmTools1:TForm1;
   a:TArticleObject;
+  s:String;
+  sss:TStringList;
 begin
+  //writeFile('d:\a.txt','sssssssssssssssssssssssssssss');
+  s:=readfile('d:\a.txt');
+  sss:=RegexSearchString(s,'title="Txt格式电子书" href="(.*)">');
+
+
   a:=TArticleObject.Create;
   showmessage('d:\aaa.jpg');
   a.AddDownloadFile('http://www.bababian.com/a.jpg','d:\\aaa.jpg');

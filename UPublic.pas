@@ -21,6 +21,7 @@ function SaveControlsToXml(xml:String;controls:TWinControlArray;listBoxDataHashM
 procedure LoadXmlInitControls(xml:string;parentControl:TWinControl;listBoxDataHashMap:THashedStringList);
 procedure GetChildControls(parentControl:TWinControl;var controlArray:TWinControlArray;NoIncludeControlName:String);
 function readFile(aFileName:string):string;
+procedure writeFile(aFileName:string;aContent:String);
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
 function isFileExist(aFileName:string):boolean;
 function GetFileSize(const FileName: String): LongInt;
@@ -450,7 +451,7 @@ begin
 end;
 
 function readFile(aFileName:string):string;
-var 
+var
   MyFile:TMemoryStream;
   Filebuf: array of pchar; //这里声明的是动态数组
   iLen:Int64;
@@ -467,6 +468,18 @@ Begin
   result:= string(FileBuf);
   FreeAndNil(MyFile);
 end;
+
+procedure writeFile(aFileName:string;aContent:String);
+var
+  F : Textfile;
+Begin
+  if fileExists(aFileName) then DeleteFile(aFileName);
+  AssignFile(F, aFileName);
+  ReWrite(F);
+  Writeln(F, aContent);
+  Closefile(F);
+end;
+
 
 function getStringFromBeginEnd(var aSourceStr:String;aBegin:String;aEnd:string):String;
 var

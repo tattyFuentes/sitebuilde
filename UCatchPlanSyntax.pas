@@ -675,7 +675,10 @@ begin
      tagStrings:=parseTagList(aExpress);
      if(tagStrings<>nil) then
      begin
+       aExpress:=RegexReplaceString(aExpress,'<%.*%>','(.*)');
        sList:=RegexSearchString(aResponse,aExpress);
+       if(sList=nil) then
+         raise EUserDefineError.create('采集项目(下载文件或正文内容下载文件)规则设置有误,没找到下载项！');
        for i:=0 to sList.Count div tagStrings.Count-1 do
        begin
          sDownUrl:=sList[i*tagStrings.Count+tagStrings.IndexOf(VARARTICLEDOWNLOADFILE)];
@@ -849,6 +852,9 @@ begin
   articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
   aArticleObject.url:=articleUrl;
   sResponse:=RequestUrl(aBaseConfig,articleUrl);
+
+  writefile('d:\a.txt',sResponse);
+
   //解析采集项目
   ParseCatchItems(aArticleObject,aCatchItem,sResponse);
   //处理限制条件
