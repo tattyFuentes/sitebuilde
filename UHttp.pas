@@ -36,6 +36,8 @@ begin
   try
     idHttp:=TIdHTTP.Create;
     fileName:=GetFileNameFromUrl(aUrl);
+    if not DirectoryExists(aDestDir) then
+      ForceDirectories(aDestDir);
     fileName:=GetUniqeFileNameOfFolder(aDestDir,fileName);
     fileStream:=TFileStream.Create(aDestDir+fileName,fmcreate);
     idHttp.AuthRetries:=2;

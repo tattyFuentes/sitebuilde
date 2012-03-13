@@ -663,15 +663,89 @@ begin
   end;
 end;
 
+
+
+//根据一个中间页对获得中间页内容
+function getOneDownFilePageContent(aBaseConfig:TPlanObject;aExpress:String;aNewPage:String;aResponse:String):String;
+var
+  sList,tagStrings:TStringList;
+  i:integer;
+  sDownUrl,sDownFileName:String;
+  intPos:integer;
+  sTemp:String;
+begin
+  sList:=nil;
+  try
+     tagStrings:=parseTagList(aExpress);
+     if(tagStrings<>nil) then
+     begin
+       aExpress:=RegexReplaceString(aExpress,'<%.*%>','(.*)');
+       sList:=RegexSearchString(aResponse,aExpress);
+       if(sList=nil) then
+         raise EUserDefineError.create('采集项目(下载文件)规则设置有误,没找到中间页！');
+       sDownUrl:=sList[tagStrings.IndexOf(VARARTICLEDOWNLOADFILEMIDDLEPAGE)];
+       result:=RequestUrl(aBaseConfig,StringReplace(aNewPage,VARARTICLEDOWNLOADFILEMIDDLEPAGE,sDownUrl,[rfReplaceAll]));
+     end;
+  finally
+    if(sList<>nil) then
+      sList.Free;
+    if(tagStrings<>nil) then
+      tagStrings.Free;
+  end;
+end;
+
+//根据规则处理下载中间页，得到最后的文件下载页面源码
+function getDownFilePageContent(aBaseConfig:TPlanObject;var aExpress:String;aResponse:String):String;
+var
+  intPos:Integer;
+  sTemp:String;
+  sArray:Array of string;
+  i:integer;
+begin
+  result:=aResponse;
+  intPos:=pos(VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT,aExpress);
+  if(intPos<=0) then
+    exit;
+  intPos:=pos(VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT,aExpress);
+  while (true) do
+  begin
+    if(intPos>0) then
+    begin
+      sTemp:=copy(aExpress,1,intPos-1);
+      setlength(sArray,length(sArray)+1);
+      sArray[length(sArray)-1]:=sTemp;
+      aExpress:=copy(aExpress,intPos+3,length(aExpress));
+      intPos:=pos(VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT,aExpress);
+    end else begin
+      break;
+    end;
+  end;
+  if(length(sArray) mod 2<>0) then
+  begin
+    raise EUserDefineError.create('采集项目中文件下载设置错误，如果有中间页必须保持成对出现！');
+  end;
+  for i:=0 to length(sArray) div 2-1 do
+  begin
+    aResponse:=getOneDownFilePageContent(aBaseConfig,sArray[i*2],sArray[i*2+1],aResponse);
+  end;
+  result:=aResponse;
+end;
+
+
 //根据规则下载文件同时更新article对象属性
+//采集下载规则有点特殊具体格式为 title="Txt格式电子书" href="<%articledownloadmiddlepage%>">|||http://www.abada.cn<%articledownloadmiddlepage%>|||<%articledownloadfile%>
+//为了解决采集下载地址时有中间页，如果有中间页通过文章页面获得中间页相对地址，"|||"后面为中间页绝对地址|||可以是另一个中间页或者文件下载地址，中间页可以有多个
 procedure ParseOneDownloadFiles(aArticleObject:TArticleObject;aExpress:String;aResponse:String;aBaseConfig:TPlanObject;aType:String);
 var
   sList,tagStrings:TStringList;
   i:integer;
   sDownUrl,sDownFileName:String;
+  intPos:integer;
+  sTemp:String;
 begin
   sList:=nil;
   try
+     aResponse:=getDownFilePageContent(aBaseConfig,aExpress,aResponse);
      tagStrings:=parseTagList(aExpress);
      if(tagStrings<>nil) then
      begin
@@ -852,9 +926,7 @@ begin
   articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
   aArticleObject.url:=articleUrl;
   sResponse:=RequestUrl(aBaseConfig,articleUrl);
-
   writefile('d:\a.txt',sResponse);
-
   //解析采集项目
   ParseCatchItems(aArticleObject,aCatchItem,sResponse);
   //处理限制条件
@@ -874,8 +946,5 @@ begin
   //更新所有属性后修改数据库
   updateArticle(aArticleObject);
 end;
-
-
-
 
 end.

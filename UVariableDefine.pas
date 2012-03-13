@@ -16,6 +16,8 @@ const
   VARARTICLETAGS='<%articletags%>';
   VARARTICLEEXCERPT='<%articleexcerpt%>';
   VARARTICLEDOWNLOADFILE='<%articledownloadfile%>';
+  VARARTICLEDOWNLOADFILEMIDDLEPAGE='<%articledownloadmiddlepage%>';
+  VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT='|||';
   VARARTICLECONTENTPAGENUMBER='<%articlepagenumber%>';
   //正文分页区域特征码，便于采集页码
   VARARTICLECONTENTPAGESCOPE='<%articlepagescope%>';

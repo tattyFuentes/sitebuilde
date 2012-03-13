@@ -220,12 +220,32 @@ begin
 end;
 
 
+function isArticleObjectExists(aTitle:String;aCatchPlanId:String):boolean;
+var
+  sql:string;
+  params:TParams;
+  sqlSet:TSQLDataSet;
+begin
+  result:=false;
+  params:=TParams.Create();
+  addParam(params,'catchplanid',aCatchPlanId,ftString,ptInput);
+  addParam(params,'title',aTitle,ftString,ptInput);
+  sql:='select title from article where catchplanid=:catchplanid and title=:title';
+  sqlSet:=execQuery(sql,params);
+  if not sqlSet.Eof then
+    result:=true;
+end;
+
+
 procedure createArticle(aArticle:TArticleObject);
 var
   sql:string;
   SQLDataSet:TSQLDataSet;
   params:TParams;
 begin
+  if(isArticleObjectExists(aArticle.title,aArticle.catchPlanId)) then
+    raise EUserDefineError.create('文章('+aArticle.title+')已经采集！');
+
   SQLDataSet:=TSQLDataSet.Create(nil);
   SQLDataSet.SQLConnection:=DBConnection;
   SQLDataSet.CommandType:=ctQuery;

@@ -32,6 +32,8 @@ type
     Button1: TButton;
     Button2: TButton;
     btntools: TButton;
+    N2: TMenuItem;
+    N3: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -52,6 +54,8 @@ type
       Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
       var DefaultDraw: Boolean);
     procedure btntoolsClick(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
   private
     { Private declarations }
     procedure insertVariableTag(tag:String;bOnlyOne:boolean);
@@ -195,6 +199,17 @@ var
 begin
   frmTools:=TFrmTools.Create(self);
   frmTools.Show;
+end;
+
+procedure TFrmInspectorTextEditor.N2Click(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEDOWNLOADFILEMIDDLEPAGE,false);
+  
+end;
+
+procedure TFrmInspectorTextEditor.N3Click(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT,false);
 end;
 
 end.

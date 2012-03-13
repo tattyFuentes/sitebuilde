@@ -180,9 +180,17 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
       OnClick = menuarticleexcerptClick
     end
     object menuarticledownloadfile: TMenuItem
-      Caption = #25991#31456#19979#36733#25991#20214#26631#35760
+      Caption = #19979#36733#25991#20214#26631#35760
       ImageIndex = 1
       OnClick = menuarticledownloadfileClick
+    end
+    object N2: TMenuItem
+      Caption = #19979#36733#25991#20214#20013#38388#39029#38754
+      OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = #19979#36733#25991#20214#20013#38388#39029#20998#21106#31526
+      OnClick = N3Click
     end
   end
   object PopupMenu2: TPopupMenu

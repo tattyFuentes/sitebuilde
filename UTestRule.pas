@@ -78,9 +78,17 @@ begin
     RichEdit1.Lines.Add('解析列表结束');
   except
   on e:EUserDefineError do
+  begin
+    RichEdit1.SelAttributes.Color := clred;
     RichEdit1.Lines.Add('逻辑错误:'+e.Message);
+    RichEdit1.SelAttributes.Color := clblack;
+  end;
   on e:Exception do
-    RichEdit1.Lines.Add('系统错误:'+e.Message);
+    begin
+      RichEdit1.SelAttributes.Color := clred;
+      RichEdit1.Lines.Add('系统错误:'+e.Message);
+      RichEdit1.SelAttributes.Color := clblack;
+    end
   end;
 end;
 
