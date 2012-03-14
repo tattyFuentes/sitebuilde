@@ -69,3 +69,6 @@ chkconfig --list 列表所有安装的服务
 
 chkconfig 命令名(/sbin/nginx) on 安装服务
 
+rpm -qa | grep nginx 可以浏览是否安装了 nginx
+
+rpm -ql nginx  浏览nginx 详细信息
