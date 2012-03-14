@@ -13,6 +13,7 @@ procedure deleteCategory(id:integer);
 procedure deletePlan(id:integer);
 function createPlan(parentId:integer;aName:string;contentStream:TMemoryStream):integer;
 procedure createArticle(aArticle:TArticleObject);
+procedure deleteArticle(id:String);
 procedure updateArticle(aArticle:TArticleObject);
 
 procedure SavePictureToDatabase;
@@ -45,7 +46,19 @@ begin
   params:=TParams.Create();
   addParam(params,'id',id,ftInteger,ptInput);
   sql:='delete from plan where id=:id';
-    execUpdate(sql,params);
+  execUpdate(sql,params);
+end;
+
+
+procedure deleteArticle(id:String);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'id',id,ftString,ptInput);
+  sql:='delete from article where id=:id';
+  execUpdate(sql,params);
 end;
 
 

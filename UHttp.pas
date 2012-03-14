@@ -48,13 +48,15 @@ begin
     idHttp.Get(aUrl,fileStream);
     result:=aDestDir+fileName;
   finally
-    idHttp.Disconnect;
     if(fileStream<>nil) then
     begin
       fileStream.Free;
       if(GetFileSize(aDestDir+fileName)<=0) then
         deleteFile(aDestDir+fileName);
-    end;
+    end; 
+    idHttp.disconnect;
+    if(idHttp<>nil) then
+      idHttp.Free;
   end;
 end;
 

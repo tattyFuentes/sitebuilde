@@ -8,6 +8,7 @@ Type TArticleList=Array of TArticleObject;
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
+function GetFileSavePath(aBaseConfig:TPlanObject):String;
 implementation
 
 //检查采集项目规则是否配置，如果没有就报错

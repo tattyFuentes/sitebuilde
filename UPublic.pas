@@ -37,6 +37,7 @@ function RegexReplaceString(sourceString:String;findExpression:String;replaceVal
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
 function ReplaceRegexChar(aSource:String):String;
 function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
+procedure DeleteDir(sDirectory:String);
 //获得下载文件的路径（处理相对路径和绝对路径）
 function GetFileUrlBySourceUrl(aSourceUrl:String;aFileUrl:String):String;
 //判断多个换行的字符串是否有一行在原字符串中
@@ -436,6 +437,7 @@ begin
      Result := SearchRec.Size
   else
      Result := -1;
+  FindClose(SearchRec);
 end;
 
 function isFileExist(aFileName:string):boolean;
@@ -468,6 +470,37 @@ Begin
   result:= string(FileBuf);
   FreeAndNil(MyFile);
 end;
+
+procedure DeleteDir(sDirectory:String);
+var
+  sr:TSearchRec;
+  sPath,sFile:String;
+begin
+  //检查目录名后面是否有'\'
+  if Copy(sDirectory,Length(sDirectory),1)<>'\'then
+    sPath:=sDirectory+'\'
+  else
+    sPath:=sDirectory;
+  //------------------------------------------------------------------
+  if FindFirst(sPath+'*.*',faAnyFile,sr)=0 then
+  begin
+    repeat
+      sFile:=Trim(sr.Name);
+      if sFile='.' then Continue;
+      if sFile='..' then Continue;
+      sFile:=sPath+sr.Name;
+      if(sr.Attr and faDirectory)<>0 then
+        DeleteDir(sFile)
+      else if(sr.Attr and faAnyFile)=sr.Attr then
+        DeleteFile(sFile);//删除文件
+    until FindNext(sr)<>0;
+    FindClose(sr);
+  end;
+  RemoveDir(sPath);
+  //showmessage(inttostr(IOResult));
+end;
+
+
 
 procedure writeFile(aFileName:string;aContent:String);
 var

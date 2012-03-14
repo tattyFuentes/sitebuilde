@@ -6,7 +6,7 @@ uses
   Windows, Messages,dxExEdtr, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, StdCtrls, dxCntner, dxInspct,
   ComCtrls, Controls, ExtCtrls, Classes,SysUtils, Variants, Graphics, Forms,
-  Dialogs,UPlanView,UPlanObject,UHttp,UCatchPlanSyntax,UPublic,PerlRegEx;
+  Dialogs,UPlanView,UPlanObject,UHttp,UCatchPlanSyntax,UPublic,PerlRegEx,UArticleObject,uEngine;
 
 
 type
@@ -58,6 +58,7 @@ procedure TfrmTestRule.TestCatchPlan();
 var
   list:TArticleList;
   i:integer;
+  articleObject:TArticleObject;
 begin
   try
     RichEdit1.Lines.Add('开始解析列表');
@@ -67,7 +68,11 @@ begin
       RichEdit1.Lines.Add('分解文章');
       RichEdit2.Lines.Add(list[i].title);
       RichEdit2.Lines.Add(list[i].id);
-      ParseArticleObject(list[i],mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
+
+      articleObject:= list[i];
+      ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
+
+
       RichEdit2.Lines.Add(list[i].tags);
       RichEdit2.Lines.Add(list[i].catchPlanId);
       RichEdit2.Lines.Add(list[i].author);
@@ -89,6 +94,13 @@ begin
       RichEdit1.Lines.Add('系统错误:'+e.Message);
       RichEdit1.SelAttributes.Color := clblack;
     end
+  end;
+
+  //清理测试环境
+  if(articleObject.id<>'') then
+  begin
+    deleteArticle(articleObject.id);
+    deletedir(GetFileSavePath(mCachePlan)+articleObject.id+'\');
   end;
 end;
 

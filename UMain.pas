@@ -394,11 +394,10 @@ var
   s:String;
   sss:TStringList;
 begin
+  DeleteDir('E:\temp\xiaoshuo\21');
   //writeFile('d:\a.txt','sssssssssssssssssssssssssssss');
   s:=readfile('d:\a.txt');
   sss:=RegexSearchString(s,'title="Txt格式电子书" href="(.*)">');
-
-
   a:=TArticleObject.Create;
   showmessage('d:\aaa.jpg');
   a.AddDownloadFile('http://www.bababian.com/a.jpg','d:\\aaa.jpg');
