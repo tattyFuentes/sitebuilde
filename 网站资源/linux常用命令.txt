@@ -53,6 +53,19 @@ ln -d oldfile newfile Ôö¼ÓÓ²Á´½Ó£¨Ô´ÎÄ¼şÉ¾³ıÖ»ÊÇÉ¾³ıÒıÓÃ¼ÆÊı£¬µ±ÒıÓÃ¼ÆÊıÎª0Ê±²Å»
 
 ls -l ÁĞ±íÎÄ¼ş  ls -ld²é¿´Ä¿Â¼
 
+´´½¨Ä¿Â¼ mkdir /home/david
 
+¸ü¸ÄÄ¿Â¼ÊôÖ÷ chown david:staff /home/david
 
- 
+ĞŞ¸ÄÄ¿Â¼È¨ÏŞ chmod 700 /home/tyler
+
+smbclient -L  ·şÎñÆ÷IP/Ö÷»úÃû            //²é¿´samba·şÎñÆ÷¹²ÏíÄ¿Â¼
+
+smbclient -U ÓÃ»§Ãû   //·şÎñÆ÷IP/¹²ÏíÄ¿Â¼       //ÒÔ·Âftp¿Í»§¶Ë·½Ê½µÇÂ¼·ÃÎÊsamba·şÎñÆ÷ÖĞµÄ¹²ÏíÄ¿Â¼
+
+mount -o username=ÓÃ»§Ãû //·şÎñÆ÷IP/¹²ÏíÄ¿Â¼    /¹ÒÔØµã
+
+chkconfig --list ÁĞ±íËùÓĞ°²×°µÄ·şÎñ
+
+chkconfig ÃüÁîÃû(/sbin/nginx) on °²×°·şÎñ
+
