@@ -23,7 +23,8 @@ uses
   UTestRule in 'UTestRule.pas' {frmTestRule},
   UHttp in 'UHttp.pas',
   UCatchPlanSyntax in 'UCatchPlanSyntax.pas',
-  UArticleObject in 'UArticleObject.pas';
+  UArticleObject in 'UArticleObject.pas',
+  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan};
 
 {$R *.res}
 
@@ -31,5 +32,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmTestRule, frmTestRule);
+  Application.CreateForm(TfrmPublishPlan, frmPublishPlan);
   Application.Run;
 end.

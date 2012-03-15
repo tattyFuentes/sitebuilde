@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 414
-  Top = 205
+  Left = 545
+  Top = 234
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 703
@@ -340,6 +340,14 @@ object frmCatchPlan: TfrmCatchPlan
     end
     object pop_editplan: TMenuItem
       Caption = #32534#36753#26041#26696
+      Visible = False
+    end
+    object N1: TMenuItem
+      Caption = '-'
+    end
+    object pop_execplan: TMenuItem
+      Caption = #25191#34892#26041#26696
+      OnClick = pop_execplanClick
     end
   end
 end

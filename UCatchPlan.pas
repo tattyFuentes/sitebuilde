@@ -10,7 +10,7 @@ uses
   TFlatComboBoxUnit, TFlatMemoUnit, TFlatCheckListBoxUnit, TFlatListBoxUnit,
   TFlatSpeedButtonUnit, TFlatTabControlUnit, Grids, DBGrids,UPublic,IniFiles,OmniXML,UPlanView,
   dxExEdtr, dxInspRw, dxInspct, dxCntner,uLkJSON,uPlanObject,dxflchrt,
-  OleCtrls, SHDocVw,MSHTML,Shellapi,richedit,UTestRule;
+  OleCtrls, SHDocVw,MSHTML,Shellapi,richedit,UTestRule,UArticleObject,UCatchPlanSyntax;
 type
 
   TfrmCatchPlan = class(TForm)
@@ -37,6 +37,8 @@ type
     RichEdit1: TRichEdit;
     btntools: TFlatButton;
     btntestrule: TFlatButton;
+    N1: TMenuItem;
+    pop_execplan: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -67,11 +69,13 @@ type
       Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
       Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
     procedure btntestruleClick(Sender: TObject);
+    procedure pop_execplanClick(Sender: TObject);
 
 
 
   private
     { Private declarations }
+    mCachePlan,mPlanList,mPlanArticle1,mPlanArticle2,mPlanLimit1,mPlanLimit2,mPlanArrange1,mPlanArrange2,mPlanAtriclePage1,mPlanAtriclePage2,mPlanCatchItem1,mPlanCatchItem2:TPlanObject; 
     isChangeing:boolean;
     currentPlanNode:TTreeNode;
     arrayListBoxStoreData:THashedStringList;
@@ -81,11 +85,12 @@ type
     procedure initListBoxData();
     procedure CreateCatchRule();
     procedure InitObjectPropertyAndEvent(aPlanObject:TPlanObject);
-
+    procedure InitPlanObjects();
     procedure ShowHelp(title:string;content:String);
     procedure ControlEvent(Sender: TObject);
     procedure renamePlanName(newName:string);
     procedure DrawRectByPoint(x,y:integer;dc:HDC);
+    procedure ExecCatchPlan(aPlanId:String);
   public
     { Public declarations }
     procedure OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
@@ -238,18 +243,22 @@ begin
       if(node.Parent=nil) then //根基点
       begin
         pop_createplan.Enabled:=false;
+        pop_execplan.Enabled:=false;
         pop_deletegroup.Enabled:=false;
       end else begin
         pop_createplan.Enabled:=true;
-      end;  
+        pop_execplan.Enabled:=false;
+      end;
       pop_deleteplan.Enabled:=false;
       pop_editPlan.Enabled:=false;
+      pop_execplan.Enabled:=false;
     end else begin
       pop_creategroup.Enabled:=false;
       pop_deletegroup.Enabled:=false;
       pop_createplan.Enabled:=false;
       pop_deleteplan.Enabled:=true;
       pop_editPlan.Enabled:=true;
+      pop_execplan.Enabled:=true;
     end;
     node.Selected:=true;
   end;
@@ -583,7 +592,7 @@ procedure TfrmCatchPlan.pop_deleteplanClick(Sender: TObject);
 begin
   //
   if(isGroupNode(checkBoxTreePlanCategory.Selected)) then
-    exit; 
+    exit;
   deletePlan(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
   checkBoxTreePlanCategory.Selected.Delete;
 end;
@@ -665,6 +674,74 @@ begin
   frmTestRule.parseType:=1;
   frmTestRule.planView:=PlanView;
   frmTestRule.ShowModal;
+end;
+
+
+procedure TfrmCatchPlan.InitPlanObjects();
+begin
+  mCachePlan:=planview.GetObjectByType(ptCatchPlan);
+  mPlanList:=planview.GetObjectByType(ptList);
+  mPlanArticle1:=mPlanList.getLinkObjectsByType(ptArticle)[0] as TPlanObject;
+  mPlanArticle2:=mPlanList.getLinkObjectsByType(ptArticle)[1]as TPlanObject;
+  mPlanLimit1:= mPlanArticle1.getLinkObjectsByType(ptLimit)[0]as TPlanObject;
+  mPlanLimit2:= mPlanArticle2.getLinkObjectsByType(ptLimit)[0]as TPlanObject;
+  mPlanArrange1:= mPlanArticle1.getLinkObjectsByType(ptArrange)[0]as TPlanObject;
+  mPlanArrange2:= mPlanArticle2.getLinkObjectsByType(ptArrange)[0]as TPlanObject;
+  mPlanAtriclePage1:= mPlanArticle1.getLinkObjectsByType(ptArticlePage)[0]as TPlanObject;
+  mPlanAtriclePage2:= mPlanArticle2.getLinkObjectsByType(ptArticlePage)[0]as TPlanObject;
+  mPlanCatchItem1:=mPlanArticle1.getLinkObjectsByType(ptCatchItems)[0]as TPlanObject;
+  mPlanCatchItem2:=mPlanArticle2.getLinkObjectsByType(ptCatchItems)[0]as TPlanObject;
+end;
+
+
+procedure TfrmCatchPlan.ExecCatchPlan(aPlanId:String);
+var
+  list:TArticleList;
+  i:integer;
+  articleObject:TArticleObject;
+begin
+  RichEdit1.Clear;
+  InitPlanObjects();
+  try
+    logInfo('开始分析文章列表',RichEdit1,false);
+    list:=ParseArticleList(mCachePlan,mPlanList);
+    logInfo('成功分析文章列表,文章总数为:'+inttostr(length(list)),RichEdit1,false);
+    for i:=0 to length(list)-1 do
+    begin
+      try
+        logInfo('开始分析文章'+inttostr(i),RichEdit1,false);
+        logInfo('标题:'+list[i].title,RichEdit1,false);
+        articleObject:= list[i];
+        articleObject.catchPlanId:=aPlanId;
+        ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
+        RichEdit1.Lines.Add('成功分析文章'+inttostr(i));
+      except
+         on e:EUserDefineError do
+           logInfo('逻辑错误:'+e.Message,RichEdit1,true);
+         on e:Exception do
+           logInfo('系统错误:'+e.Message,RichEdit1,true);
+      end;
+    end;
+    logInfo('采集文章结束',RichEdit1,false);
+  except
+  on e:EUserDefineError do
+  begin
+    logInfo('逻辑错误:'+e.Message,RichEdit1,true);
+  end;
+  on e:Exception do
+    begin
+      logInfo('系统错误:'+e.Message,RichEdit1,true);
+    end
+  end;
+end;
+
+
+
+procedure TfrmCatchPlan.pop_execplanClick(Sender: TObject);
+begin
+  if(isGroupNode(checkBoxTreePlanCategory.Selected)) then
+    exit;
+  ExecCatchPlan(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data);
 end;
 
 end.

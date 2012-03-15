@@ -45,7 +45,7 @@ function IsInStr(aSource:String;aFind:String):boolean;
 function GetFileNameFromUrl(aUrl:String):String;
 //在一个文件夹中判断文件是否存在，如果存在给文件一个新名称
 function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
-
+procedure logInfo(aInfo:String;aMsgWindow:TRichEdit;aIsError:boolean);
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -64,6 +64,20 @@ begin
   result:=aFileName;
 
 end;
+
+procedure logInfo(aInfo:String;aMsgWindow:TRichEdit;aIsError:boolean);
+var
+  tmpColor:TColor;
+begin
+   tmpColor:=aMsgWindow.SelAttributes.Color;
+   if(aIsError) then
+     aMsgWindow.SelAttributes.Color := clred
+   else
+     aMsgWindow.SelAttributes.Color := clgreen;
+   aMsgWindow.Lines.Add(aInfo);
+   aMsgWindow.SelAttributes.Color := tmpColor;
+end;
+
 
 function IsInStr(aSource:String;aFind:String):boolean;
 var
