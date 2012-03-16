@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
-  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject;
+  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle;
 
 type
   TfrmMain = class(TForm)
@@ -58,6 +58,7 @@ type
     procedure N7Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure N15Click(Sender: TObject);
   private
     { Private declarations }
      procedure InitSystemConfig();
@@ -394,6 +395,8 @@ var
   s:String;
   sss:TStringList;
 begin
+  memo1.Lines.Clear;
+  memo1.Lines.Add(TranslateChineseToEnglish(memo2.Lines.Text));
   DeleteDir('E:\temp\xiaoshuo\21');
   //writeFile('d:\a.txt','sssssssssssssssssssssssssssss');
   s:=readfile('d:\a.txt');
@@ -409,5 +412,14 @@ begin
   //frmTools1:=TForm1.Create(self);
   //FrmTools1.ShowModal;
 end;
+procedure TfrmMain.N15Click(Sender: TObject);
+var
+  frmPublishPlan:TfrmPublishPlan;
+begin
+  frmPublishPlan:=TfrmPublishPlan.Create(self);
+  frmPublishPlan.Show();
+
+end;
+
 end.
 

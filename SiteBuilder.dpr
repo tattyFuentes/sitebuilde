@@ -24,14 +24,13 @@ uses
   UHttp in 'UHttp.pas',
   UCatchPlanSyntax in 'UCatchPlanSyntax.pas',
   UArticleObject in 'UArticleObject.pas',
-  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan};
+  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
+  uTranslateGoogle in 'uTranslateGoogle.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmTestRule, frmTestRule);
-  Application.CreateForm(TfrmPublishPlan, frmPublishPlan);
   Application.Run;
 end.
