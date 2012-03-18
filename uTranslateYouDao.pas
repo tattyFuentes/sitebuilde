@@ -53,6 +53,8 @@ begin
     result:=utf8decode(sResult);
   except
   end;
+  if (Jsonroot<>nil) then
+    JsonRoot.Free;
   mps.Free;
 end;
 

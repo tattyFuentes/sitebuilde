@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxExEdtr, Menus, ImgList, StdCtrls, ComCtrls, dxCntner,
   dxInspct, TFlatButtonUnit, ExtCtrls, CheckBoxTreeView, TFlatPanelUnit,
-  ToolWin,uTree,uEngine;
+  ToolWin,uTree,uEngine,uPublic,uLkJSON;
 
 type
   TfrmPublishPlan = class(TForm)
@@ -113,6 +113,7 @@ type
     procedure pop_deletegroupClick(Sender: TObject);
     procedure pop_createplanClick(Sender: TObject);
     procedure pop_deleteplanClick(Sender: TObject);
+    procedure BtnSaveClick(Sender: TObject);
   private
     { Private declarations }
     isChangeing:boolean;
@@ -316,6 +317,67 @@ begin
     exit;
   deletePublishPlan(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data));
   checkBoxTreePlanCategory.Selected.Delete;
+end;
+
+
+function SaveOneControlToJson(parentObject:TlkJSONobject;control:TControl;rowNumber:Integer):TlkJSONobject;
+var
+  i,j:integer;
+  strValue:String;
+begin
+  //if(control is TCheckBox)
+  if(control is TCheckBox) then
+  begin
+    if(control as TCheckBox).Checked then
+      strValue:='1'
+    else
+      strValue:='0'
+  end else if(control is TEdit) then
+    strValue:=(control as TEdit).Text
+  else if(control is TComboBox) then
+    strValue:=(control as TComboBox).Text
+  else if(control is TMemo) then
+    strValue:=(control as TMemo).Lines.Text
+  else
+    exit;
+  result:=TlkJSONobject.Create;
+  result.Add('name',control.name);
+  result.Add('value',strValue);
+  result.Add('classname',control.ClassName);
+  parentObject.Add('row'+inttostr(rowNumber),result);
+end;
+
+
+function SaveControlsToJson(controls:TWinControlArray):String;
+var
+  i:integer;
+  JsonRoot:TlkJSONobject;
+begin
+  JsonRoot := TlkJSONobject.Create;
+  for i:=0 to length(controls)-1 do
+  begin
+    SaveOneControlToJson(JsonRoot,controls[i],i);
+  end;
+  result:= TlkJSON.GenerateText(JsonRoot);
+  JsonRoot.Free;
+end;
+
+
+procedure LoadJsonInitContols()
+
+procedure TfrmPublishPlan.BtnSaveClick(Sender: TObject);
+var
+  controlArray:TWinControlArray;
+  strContent:String;
+begin
+  if(currentPlanNode<>nil) then
+  begin
+    GetChildControls(self,controlArray,'');
+    strContent:=utf8decode(SaveControlsToJson(controlArray));
+    updatePublishPlanContent(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode).Data),strContent);
+    MessageBox(self.Handle,'成功保存方案!','提示信息',MB_OK+MB_ICONINFORMATION);
+    //showmessage('成功保存方案!')
+  end;
 end;
 
 end.

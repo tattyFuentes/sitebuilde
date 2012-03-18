@@ -1,6 +1,6 @@
 object frmPublishPlan: TfrmPublishPlan
-  Left = 187
-  Top = 33
+  Left = 514
+  Top = 373
   Width = 1049
   Height = 737
   Caption = #21457#24067#26041#26696#37197#32622
@@ -98,6 +98,7 @@ object frmPublishPlan: TfrmPublishPlan
       Height = 25
       Caption = #30830#23450
       TabOrder = 0
+      OnClick = BtnSaveClick
     end
     object BtnCancel: TFlatButton
       Left = 708
