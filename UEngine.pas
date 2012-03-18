@@ -8,13 +8,17 @@ uses
 function createCateGory(parentId:integer;name:string;desc:string):integer;
 procedure updateCateGory(id:integer;name:string;desc:string);
 procedure updatePlanName(id:integer;name:string);
+procedure updatePublishPlanName(id:integer;name:String);
+procedure updatePublishPlanContent(id:integer;content:String);
 procedure updatePlanContent(id:integer;contentStream:TMemoryStream);
 procedure deleteCategory(id:integer);
 procedure deletePlan(id:integer);
+procedure deletePublishPlan(id:integer);
 function createPlan(parentId:integer;aName:string;contentStream:TMemoryStream):integer;
 procedure createArticle(aArticle:TArticleObject);
 procedure deleteArticle(id:String);
 procedure updateArticle(aArticle:TArticleObject);
+function createPublishPlan(parentId:integer;aName:string;content:String):integer;
 
 procedure SavePictureToDatabase;
 procedure LoadPictureToDatabase;
@@ -49,6 +53,17 @@ begin
   execUpdate(sql,params);
 end;
 
+
+procedure deletePublishPlan(id:integer);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'id',id,ftInteger,ptInput);
+  sql:='delete from publishplan where id=:id';
+  execUpdate(sql,params);
+end;
 
 procedure deleteArticle(id:String);
 var
@@ -279,6 +294,33 @@ begin
   SQLDataSet.Close;
 end;
 
+
+function createPublishPlan(parentId:integer;aName:string;content:String):integer;
+var
+  sql:string;
+  SQLDataSet:TSQLDataSet;
+  params:TParams;
+begin
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  //SQLDataSet.MaxBlobSize:=10240000;
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='insert into publishplan values(null,:name,'''',:parentid,:content,now())';
+    SQLDataSet.Params[0].Value:=aName;
+    SQLDataSet.Params[1].Value:=parentId;
+    //contentStream.Position:=0;
+    SQLDataSet.Params[2].Value:=content;
+    sqlDataset.Prepared:=true;
+    sqlDataset.ExecSQL(false);
+    close();
+  end;
+  SQLDataSet:=execQuery('select @@identity',nil);
+  result:=strtoint(SQLDataSet.Fields[0].Text);
+  SQLDataSet.Close;
+end;
+
 function createPlan(parentId:integer;aName:string;contentStream:TMemoryStream):integer;
 var
   sql:string;
@@ -330,6 +372,20 @@ begin
   execUpdate(sql,params);
 end;
 
+
+procedure updatePublishPlanName(id:integer;name:String);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'name',name,ftString,ptInput);
+  addParam(params,'id',id,ftInteger,ptInput);
+  sql:='update publishplan set name=:name where id=:id';
+  execUpdate(sql,params);
+end;
+
+
 procedure updateArticle(aArticle:TArticleObject);
 var
   sql:string;
@@ -340,6 +396,19 @@ begin
   addParam(params,'content',aArticle.ToString,ftString,ptInput);
   addParam(params,'id',aArticle.id,ftString,ptInput);
   sql:='update article set title=:title,content=:content where id=:id';
+  execUpdate(sql,params);
+end;
+
+procedure updatePublishPlanContent(id:integer;content:String);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  //addParam(params,'title',aArticle.title,ftString,ptInput);
+  addParam(params,'content',content,ftString,ptInput);
+  addParam(params,'id',id,ftString,ptInput);
+  sql:='update publishplan set content=:content where id=:id';
   execUpdate(sql,params);
 end;
 

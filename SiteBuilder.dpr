@@ -25,7 +25,7 @@ uses
   UCatchPlanSyntax in 'UCatchPlanSyntax.pas',
   UArticleObject in 'UArticleObject.pas',
   uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
-  uTranslateGoogle in 'uTranslateGoogle.pas';
+  uTranslateYouDao in 'uTranslateYouDao.pas';
 
 {$R *.res}
 

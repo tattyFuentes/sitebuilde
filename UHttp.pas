@@ -2,7 +2,7 @@ unit UHttp;
 
 interface
 uses
-Windows,Classes,SysUtils,IdBaseComponent, IdComponent, IdTCPConnection,IdTCPClient,IdHTTP,uPublic;
+Windows,Classes,SysUtils,IdBaseComponent, IdComponent, IdTCPConnection,IdTCPClient,IdHTTP,uPublic,Dialogs;
 
 function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
 //обтьнд╪Ч
@@ -79,7 +79,8 @@ begin
     IdHttp1.Post(aUrl,aPostData,response);
   except
   end;
-  result:=response.DataString;
+  result:=trim(response.DataString);
+  
   IdHttp1.Disconnect;
   IdHttp1.Free;
   response.Free;

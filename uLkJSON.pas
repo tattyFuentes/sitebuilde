@@ -181,7 +181,7 @@ type
 
 ThousandSeparator: Char; 
 
-DecimalSeparator: Char; 
+DecimalSeparator: Char;
 
 CurrencyDecimals: Byte; 
 

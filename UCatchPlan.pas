@@ -23,7 +23,6 @@ type
     N12: TMenuItem;
     pop_createplan: TMenuItem;
     pop_deleteplan: TMenuItem;
-    pop_editplan: TMenuItem;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -65,11 +64,11 @@ type
     procedure dxInspector1Edited(Sender: TObject; Node: TdxInspectorNode;
       Row: TdxInspectorRow);
     procedure btntoolsClick(Sender: TObject);
+    procedure btntestruleClick(Sender: TObject);
+    procedure pop_execplanClick(Sender: TObject);
     procedure checkBoxTreePlanCategoryAdvancedCustomDrawItem(
       Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
       Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
-    procedure btntestruleClick(Sender: TObject);
-    procedure pop_execplanClick(Sender: TObject);
 
 
 
@@ -250,14 +249,14 @@ begin
         pop_execplan.Enabled:=false;
       end;
       pop_deleteplan.Enabled:=false;
-      pop_editPlan.Enabled:=false;
+      //pop_editPlan.Enabled:=false;
       pop_execplan.Enabled:=false;
     end else begin
       pop_creategroup.Enabled:=false;
       pop_deletegroup.Enabled:=false;
       pop_createplan.Enabled:=false;
       pop_deleteplan.Enabled:=true;
-      pop_editPlan.Enabled:=true;
+      //pop_editPlan.Enabled:=true;
       pop_execplan.Enabled:=true;
     end;
     node.Selected:=true;
@@ -653,19 +652,6 @@ begin
   frmTools.Show;
 end;
 
-procedure TfrmCatchPlan.checkBoxTreePlanCategoryAdvancedCustomDrawItem(
-  Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
-  Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
-begin
-  if(node.Selected) then
-  begin
-    checkBoxTreePlanCategory.Canvas.Brush.Style := bsFDiagonal;
-    checkBoxTreePlanCategory.Canvas.Brush.Color := clHighlight;
-    checkBoxTreePlanCategory.Canvas.Font.Color := clHighlightText;
-  end;
-
-end;
-
 procedure TfrmCatchPlan.btntestruleClick(Sender: TObject);
 var
   frmTestRule:TfrmTestRule;
@@ -742,6 +728,18 @@ begin
   if(isGroupNode(checkBoxTreePlanCategory.Selected)) then
     exit;
   ExecCatchPlan(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data);
+end;
+
+procedure TfrmCatchPlan.checkBoxTreePlanCategoryAdvancedCustomDrawItem(
+  Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
+  Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
+begin
+  if(node.Selected) then
+  begin
+    checkBoxTreePlanCategory.Canvas.Brush.Style := bsFDiagonal;
+    checkBoxTreePlanCategory.Canvas.Brush.Color := clHighlight;
+    checkBoxTreePlanCategory.Canvas.Font.Color := clHighlightText;
+  end;
 end;
 
 end.

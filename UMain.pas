@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
-  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle;
+  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON;
 
 type
   TfrmMain = class(TForm)
@@ -394,9 +394,14 @@ var
   a:TArticleObject;
   s:String;
   sss:TStringList;
+  JsonRoot,JsonObject:TlkJSONobject;
+  //JsonHashTable:TlkHashTable;
+  list,childList:TlkJSONList;
+  i:integer;
 begin
   memo1.Lines.Clear;
   memo1.Lines.Add(TranslateChineseToEnglish(memo2.Lines.Text));
+  exit;
   DeleteDir('E:\temp\xiaoshuo\21');
   //writeFile('d:\a.txt','sssssssssssssssssssssssssssss');
   s:=readfile('d:\a.txt');
