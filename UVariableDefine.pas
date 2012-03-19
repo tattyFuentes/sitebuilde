@@ -19,6 +19,7 @@ const
   VARARTICLEDOWNLOADFILEMIDDLEPAGE='<%articledownloadmiddlepage%>';
   VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT='|||';
   VARARTICLECONTENTPAGENUMBER='<%articlepagenumber%>';
+  VARARTICLEURL='<%articleurl%>';
   //正文分页区域特征码，便于采集页码
   VARARTICLECONTENTPAGESCOPE='<%articlepagescope%>';
   //正文分页特征码

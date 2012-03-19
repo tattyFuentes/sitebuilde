@@ -24,6 +24,7 @@ procedure SavePictureToDatabase;
 procedure LoadPictureToDatabase;
 function getSystemConfig(name:String):String;
 function getPlanContentById(id:integer):String;
+function getPublishPlanContentById(id:integer):String;
 function getPlanContentById2(id:integer):TMemoryStream;
 
 implementation
@@ -221,6 +222,28 @@ begin
     end;
   end;
 end;
+
+function getPublishPlanContentById(id:integer):String;
+var
+  SQLDataSet:TSQLDataSet;
+  tmpFileName:String;
+begin  
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='select content from publishplan where id='+inttostr(id);
+    sqlDataset.open();
+    if(not eof) then
+    begin
+      result:=FieldByName('content').Value;
+      close();
+    end;
+  end;
+end;
+
+
 
 function getPlanContentById(id:integer):String;
 var

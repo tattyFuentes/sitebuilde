@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxExEdtr, Menus, ImgList, StdCtrls, ComCtrls, dxCntner,
   dxInspct, TFlatButtonUnit, ExtCtrls, CheckBoxTreeView, TFlatPanelUnit,
-  ToolWin,uTree,uEngine,uPublic,uLkJSON;
+  ToolWin,uTree,uEngine,uPublic,uLkJSON,UVariableDefine;
 
 type
   TfrmPublishPlan = class(TForm)
@@ -16,8 +16,6 @@ type
     Panel3: TPanel;
     Panel4: TPanel;
     BtnSave: TFlatButton;
-    BtnCancel: TFlatButton;
-    BtnApply: TFlatButton;
     btntools: TFlatButton;
     btntestrule: TFlatButton;
     Panel5: TPanel;
@@ -69,7 +67,6 @@ type
     ToolBar3: TToolBar;
     btnarticleid: TToolButton;
     btnvariable: TToolButton;
-    memopostparm: TMemo;
     Label9: TLabel;
     combTransLanguage: TComboBox;
     chkuseftp: TCheckBox;
@@ -99,6 +96,7 @@ type
     Label22: TLabel;
     combproxyserverpassword: TEdit;
     Label23: TLabel;
+    memopostparm: TRichEdit;
     procedure FormShow(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
@@ -114,11 +112,20 @@ type
     procedure pop_createplanClick(Sender: TObject);
     procedure pop_deleteplanClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
+    procedure ToolBar3AdvancedCustomDrawButton(Sender: TToolBar;
+      Button: TToolButton; State: TCustomDrawState;
+      Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
+      var DefaultDraw: Boolean);
+    procedure N4Click(Sender: TObject);
+    procedure menuarticlecontentClick(Sender: TObject);
   private
     { Private declarations }
-    isChangeing:boolean;
-    currentPlanNode:TTreeNode;
+    mIsChangeing:boolean;
+    mCurrentPlanNode:TTreeNode;
+    mPublishPlanInitValue:String;
+    procedure insertVariableTag(tag:String;bOnlyOne:boolean);
     procedure onTreeNodeChanged(node:TTreeNode;nodeName:String);
+    procedure LoadJsonInitContols(aJsonString:String;aParent:TWinControl);
   public
     { Public declarations }
   end;
@@ -132,25 +139,22 @@ implementation
 
 
 procedure TfrmPublishPlan.onTreeNodeChanged(node:TTreeNode;nodeName:String);
+var
+  nodeId:integer;
 begin
   if(not isGroupNode(node)) then
   begin
-    currentPlanNode:=node;
+    mCurrentPlanNode:=node;
     if (node<>nil) then
     begin
-      //PanelView.Enabled:=false;
-      //panelProperty.Enabled:=false;
+      PageControl1.Enabled:=true;
     end
     else begin
-      ////PanelView.Enabled:=true;
-      //panelProperty.Enabled:=true;
-      //renamePlanName(nodeName);
+      PageControl1.Enabled:=false;
     end;
-
   end else
   begin
-    //PanelView.Enabled:=false;
-    //panelProperty.Enabled:=false;
+    PageControl1.Enabled:=false;
   end;
 end;
 
@@ -159,14 +163,19 @@ begin
   checkBoxTreePlanCategory.Items.Clear;
   buildTree(checkBoxTreePlanCategory,'category','publishplan',4,nil);
   checkBoxTreePlanCategory.Items[0].Expanded:=true;
+  mPublishPlanInitValue:=getSystemConfig('PUBLISHINITVALUE');
 end;
 
 procedure TfrmPublishPlan.checkBoxTreePlanCategoryChange(Sender: TObject;
   Node: TTreeNode);
+var
+  strContent:String;
 begin
   if(not IsGroupNode(Node)) then
   begin
-    isChangeing:=true;
+    mIsChangeing:=true;
+    strContent:=getPublishPlanContentById(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(Node).Data));
+    LoadJsonInitContols(utf8encode(strContent),self);
     onTreeNodeChanged(node,node.Text);
   end
   else begin
@@ -296,11 +305,13 @@ begin
   node.ImageIndex:=1;
   node.SelectedIndex:=1;
   parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
+  LoadJsonInitContols(utf8encode(mPublishPlanInitValue),self);
+  // publishPlanInitValue
   //InitNewCatchPlan(PlanView,'新采集方案');
   //PlanView.OnMouseDown:=OnPlanViewMouseDown;
   //contentStream:=TMemoryStream.Create;
   //PlanView.SaveToStream(contentStream);
-  newNodeId:=createPublishPlan(strtoint(parentNodeData),'新发布方案','');
+  newNodeId:=createPublishPlan(strtoint(parentNodeData),'新发布方案',mPublishPlanInitValue);
   contentStream.Free;
   onTreeNodeChanged(node,'新发布方案');
   nodeData.Data:=inttostr(newNodeId);
@@ -337,7 +348,9 @@ begin
   else if(control is TComboBox) then
     strValue:=(control as TComboBox).Text
   else if(control is TMemo) then
-    strValue:=(control as TMemo).Lines.Text
+    strValue:=trim((control as TMemo).Lines.Text)
+  else if (control is TRichEdit) then
+    strValue:=trim((control as TRichEdit).Lines.Text)
   else
     exit;
   result:=TlkJSONobject.Create;
@@ -363,21 +376,113 @@ begin
 end;
 
 
-procedure LoadJsonInitContols()
+procedure TfrmPublishPlan.LoadJsonInitContols(aJsonString:String;aParent:TWinControl);
+var
+  i:integer;
+  controlArray:TWinControlArray;
+  JsonRoot:TlkJSONobject;
+  strName,strValue,strClassName:String;
+  tmpControl:TControl;
+begin
+  JsonRoot:=TlkJSON.ParseText(aJsonString) as TlkJSONobject;
+  GetChildControls(aParent,controlArray,'');
+  for i:=0 to JsonRoot.Count-1 do
+  begin
+    //showmessage((JsonRoot.Field['row27'].value));
+    strName:=JsonRoot.FieldByIndex[i].Field['name'].Value;
+    tmpControl:=FindControlByName(controlArray,strName);
+    if(tmpControl=nil) then
+      continue;
+    strClassName:=JsonRoot.FieldByIndex[i].Field['classname'].Value;
+    if(strClassName='TEdit') then
+    begin
+      (tmpControl as TEdit).Text:=JsonRoot.FieldByIndex[i].Field['value'].Value;
+    end;
+    if(strClassName='TComboBox') then
+    begin
+      (tmpControl as TComboBox).Text:=JsonRoot.FieldByIndex[i].Field['value'].Value;
+    end;
+
+    if(strClassName='TCheckBox') then
+    begin
+      (tmpControl as TCheckBox).Checked :=JsonRoot.FieldByIndex[i].Field['value'].Value='1';
+    end;
+
+    if(strClassName='TMemo') then
+    begin
+      (tmpControl as TMemo).Lines.Clear;
+      (tmpControl as TMemo).Lines.Add(JsonRoot.FieldByIndex[i].Field['value'].Value);
+    end;
+
+    if (strClassName='TRichEdit') then
+    begin
+      (tmpControl as TRichEdit).Lines.Clear;
+      (tmpControl as TRichEdit).Lines.Add(JsonRoot.FieldByIndex[i].Field['value'].Value);
+    end;
+
+  end;
+  JsonRoot.Free;
+end;
 
 procedure TfrmPublishPlan.BtnSaveClick(Sender: TObject);
 var
   controlArray:TWinControlArray;
   strContent:String;
 begin
-  if(currentPlanNode<>nil) then
+  if(mCurrentPlanNode<>nil) then
   begin
     GetChildControls(self,controlArray,'');
     strContent:=utf8decode(SaveControlsToJson(controlArray));
-    updatePublishPlanContent(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(currentPlanNode).Data),strContent);
+    updatePublishPlanContent(strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(mCurrentPlanNode).Data),strContent);
     MessageBox(self.Handle,'成功保存方案!','提示信息',MB_OK+MB_ICONINFORMATION);
     //showmessage('成功保存方案!')
   end;
+end;
+
+procedure TfrmPublishPlan.ToolBar3AdvancedCustomDrawButton(
+  Sender: TToolBar; Button: TToolButton; State: TCustomDrawState;
+  Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
+  var DefaultDraw: Boolean);
+var
+  c:TCanvas;
+begin
+  if   cdsHot   in   State   then
+        begin
+            c:=TControlCanvas.Create;
+            TControlCanvas(c).Control:=Button;
+            //C.Font.Name:= '黑体 ';
+            C.TextOut(100,200,Button.Caption);// 此处由你自己确定文字的位置
+            FreeAndNil(c);
+        end;
+end;
+
+procedure TfrmPublishPlan.insertVariableTag(tag:String;bOnlyOne:boolean);
+var
+  FoundAt:integer;
+begin
+  if(bOnlyOne) then //只允许插入一个标记
+  begin
+    FoundAt := memopostparm.FindText(tag, 0, length(memopostparm.Text), [stMatchCase]);
+    if FoundAt <> -1 then
+    begin
+      MessageBox(self.Handle,'此标记只能插入一次！','警告信息',MB_OK+MB_ICONWARNING);
+      exit;
+    end;
+  end;
+  memopostparm.SelAttributes.Color := clred;
+  memopostparm.SelText:=tag;
+  memopostparm.SelAttributes.Color := clblack;
+end;
+
+
+procedure TfrmPublishPlan.N4Click(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEURL,true);
+end;
+
+procedure TfrmPublishPlan.menuarticlecontentClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLECONTENT,true);
 end;
 
 end.

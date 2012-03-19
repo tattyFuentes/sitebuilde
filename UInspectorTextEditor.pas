@@ -88,9 +88,10 @@ procedure TFrmInspectorTextEditor.Button1Click(Sender: TObject);
 var
   sTemp:String;
 begin
-  sTemp:=copy(memText.Lines.Text,1,length(memText.Lines.Text)-2);
+  //sTemp:=copy(memText.Lines.Text,1,length(memText.Lines.Text)-2);
+  sTemp:=memText.Lines.Text;
   //sTemp:=RegexReplaceString(sTemp,'([\^\.\$\{\}\[\]\?])','\\\1');
-  buttonRow.EditText:=sTemp;
+  buttonRow.EditText:=trim(sTemp);
   close;
 end;
 
@@ -180,7 +181,7 @@ procedure TFrmInspectorTextEditor.ToolBar3AdvancedCustomDrawButton(
   Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
   var DefaultDraw: Boolean);
 var
-    c:TCanvas;  
+    c:TCanvas;
 begin
        if   cdsHot   in   State   then
         begin
