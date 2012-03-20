@@ -1,6 +1,6 @@
 object frmPublishPlan: TfrmPublishPlan
-  Left = 302
-  Top = 190
+  Left = 612
+  Top = 344
   Width = 1049
   Height = 737
   Caption = #21457#24067#26041#26696#37197#32622
@@ -183,109 +183,13 @@ object frmPublishPlan: TfrmPublishPlan
             TabOrder = 0
             Text = 'http://'
           end
-          object FlatPanel1: TFlatPanel
-            Left = 11
-            Top = 72
-            Width = 793
-            Height = 97
-            ParentColor = True
-            TabOrder = 1
-            object Label2: TLabel
-              Left = 8
-              Top = 20
-              Width = 123
-              Height = 13
-              AutoSize = False
-              Caption = #26631#39064#21457#24067#23383#25968#33539#22260':'
-            end
-            object Label3: TLabel
-              Left = 296
-              Top = 20
-              Width = 33
-              Height = 13
-              AutoSize = False
-              Caption = #33267
-            end
-            object Label4: TLabel
-              Left = 481
-              Top = 20
-              Width = 33
-              Height = 13
-              AutoSize = False
-              Caption = #23383
-            end
-            object Label5: TLabel
-              Left = 8
-              Top = 60
-              Width = 123
-              Height = 13
-              AutoSize = False
-              Caption = #27491#25991#21457#24067#23383#25968#33539#22260':'
-            end
-            object Label6: TLabel
-              Left = 296
-              Top = 60
-              Width = 33
-              Height = 13
-              AutoSize = False
-              Caption = #33267
-            end
-            object Label7: TLabel
-              Left = 481
-              Top = 60
-              Width = 33
-              Height = 13
-              AutoSize = False
-              Caption = #23383
-            end
-            object edtTitleMinLength: TEdit
-              Left = 132
-              Top = 15
-              Width = 152
-              Height = 21
-              TabOrder = 0
-              Text = '5'
-            end
-            object edtTitleMaxLength: TEdit
-              Left = 324
-              Top = 15
-              Width = 152
-              Height = 21
-              TabOrder = 1
-              Text = '100'
-            end
-            object edtContentMinLength: TEdit
-              Left = 132
-              Top = 55
-              Width = 152
-              Height = 21
-              TabOrder = 2
-              Text = '50'
-            end
-            object edtContentMaxLength: TEdit
-              Left = 324
-              Top = 55
-              Width = 152
-              Height = 21
-              TabOrder = 3
-              Text = '50000'
-            end
-            object chkAutoCut: TCheckBox
-              Left = 550
-              Top = 38
-              Width = 145
-              Height = 17
-              Caption = #33258#21160#25130#26029
-              TabOrder = 4
-            end
-          end
           object chkUseUBB: TCheckBox
             Left = 12
             Top = 191
             Width = 193
             Height = 33
             Caption = #20351#29992'UBB'#20195#30721#26684#24335
-            TabOrder = 2
+            TabOrder = 1
           end
           object chkSaveNewLine: TCheckBox
             Left = 244
@@ -293,7 +197,7 @@ object frmPublishPlan: TfrmPublishPlan
             Width = 193
             Height = 33
             Caption = #20445#30041#25442#34892#31526
-            TabOrder = 3
+            TabOrder = 2
           end
           object combEncode: TComboBox
             Left = 81
@@ -301,7 +205,7 @@ object frmPublishPlan: TfrmPublishPlan
             Width = 320
             Height = 21
             ItemHeight = 13
-            TabOrder = 4
+            TabOrder = 3
             Text = #19981#20351#29992
             Items.Strings = (
               #19981#20351#29992
@@ -316,7 +220,7 @@ object frmPublishPlan: TfrmPublishPlan
             Width = 321
             Height = 21
             ItemHeight = 13
-            TabOrder = 5
+            TabOrder = 4
             Text = #19981#32763#35793
             Items.Strings = (
               #19981#32763#35793
@@ -331,7 +235,7 @@ object frmPublishPlan: TfrmPublishPlan
             Caption = #25991#31456#20869#23481#20351#29992#19979#36733#25991#20214#30340#21407#22987'HTTP'#22320#22336
             Checked = True
             State = cbChecked
-            TabOrder = 6
+            TabOrder = 5
             OnClick = chkUseFileSourceUrlClick
           end
           object edtNewFileHost: TEdit
@@ -340,8 +244,104 @@ object frmPublishPlan: TfrmPublishPlan
             Width = 518
             Height = 21
             Enabled = False
-            TabOrder = 7
+            TabOrder = 6
             Text = 'http://'
+          end
+          object Panel7: TPanel
+            Left = 13
+            Top = 72
+            Width = 785
+            Height = 90
+            BevelOuter = bvLowered
+            TabOrder = 7
+            object Label2: TLabel
+              Left = 12
+              Top = 20
+              Width = 123
+              Height = 13
+              AutoSize = False
+              Caption = #26631#39064#21457#24067#23383#25968#33539#22260':'
+            end
+            object Label3: TLabel
+              Left = 300
+              Top = 20
+              Width = 33
+              Height = 13
+              AutoSize = False
+              Caption = #33267
+            end
+            object Label4: TLabel
+              Left = 492
+              Top = 20
+              Width = 33
+              Height = 13
+              AutoSize = False
+              Caption = #23383
+            end
+            object Label5: TLabel
+              Left = 12
+              Top = 60
+              Width = 123
+              Height = 13
+              AutoSize = False
+              Caption = #27491#25991#21457#24067#23383#25968#33539#22260':'
+            end
+            object Label6: TLabel
+              Left = 300
+              Top = 60
+              Width = 33
+              Height = 13
+              AutoSize = False
+              Caption = #33267
+            end
+            object Label7: TLabel
+              Left = 492
+              Top = 52
+              Width = 33
+              Height = 13
+              AutoSize = False
+              Caption = #23383
+            end
+            object edtTitleMinLength: TEdit
+              Left = 136
+              Top = 15
+              Width = 152
+              Height = 21
+              TabOrder = 0
+              Text = '5'
+            end
+            object edtTitleMaxLength: TEdit
+              Left = 325
+              Top = 15
+              Width = 152
+              Height = 21
+              TabOrder = 1
+              Text = '100'
+            end
+            object edtContentMinLength: TEdit
+              Left = 136
+              Top = 52
+              Width = 152
+              Height = 21
+              TabOrder = 2
+              Text = '50'
+            end
+            object edtContentMaxLength: TEdit
+              Left = 325
+              Top = 52
+              Width = 152
+              Height = 21
+              TabOrder = 3
+              Text = '50000'
+            end
+            object chkAutoCut: TCheckBox
+              Left = 588
+              Top = 38
+              Width = 145
+              Height = 17
+              Caption = #33258#21160#25130#26029
+              TabOrder = 4
+            end
           end
         end
         object TabSheet2: TTabSheet
