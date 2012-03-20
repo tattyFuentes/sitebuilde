@@ -328,7 +328,7 @@ begin
   begin
     JsonObject:=JsonRoot.FieldByIndex[i] as TlkJSONobject;
     objectName:=JsonObject.Field['name'].Value;
-    if(objectName='CatchPlanItemDownloadFile') then
+    if(objectName='CatchPlanItemDownloadFile') or (objectName='CatchPlanItemThumb') then
     begin
       //特殊处理下载文件
       continue;
@@ -761,7 +761,7 @@ begin
          if(aType='downloadfiles') then
            aArticleObject.AddDownloadFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)))
          else if(aType='thumbfiles') then
-           aArticleObject.AddDownloadFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
+           aArticleObject.AddThumb(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
        end;
      end;
   finally

@@ -1,6 +1,6 @@
 object frmPublishPlan: TfrmPublishPlan
-  Left = 335
-  Top = 170
+  Left = 302
+  Top = 190
   Width = 1049
   Height = 737
   Caption = #21457#24067#26041#26696#37197#32622
@@ -137,9 +137,9 @@ object frmPublishPlan: TfrmPublishPlan
         Top = 1
         Width = 828
         Height = 525
-        ActivePage = TabSheet2
+        ActivePage = TabSheet1
         Align = alClient
-        TabIndex = 1
+        TabIndex = 0
         TabOrder = 0
         object TabSheet1: TTabSheet
           Caption = #22522#26412#35774#32622
@@ -166,6 +166,14 @@ object frmPublishPlan: TfrmPublishPlan
             Height = 13
             AutoSize = False
             Caption = #32763#35793#35821#35328':'
+          end
+          object Label24: TLabel
+            Left = 13
+            Top = 344
+            Width = 124
+            Height = 13
+            AutoSize = False
+            Caption = #26032#25991#20214#26381#21153#22120#22320#22336':'
           end
           object edtPublishUrl: TEdit
             Left = 83
@@ -314,6 +322,26 @@ object frmPublishPlan: TfrmPublishPlan
               #19981#32763#35793
               #33521#25991#36716#20013#25991
               #20013#25991#36716#33521#25991)
+          end
+          object chkUseFileSourceUrl: TCheckBox
+            Left = 12
+            Top = 303
+            Width = 357
+            Height = 33
+            Caption = #25991#31456#20869#23481#20351#29992#19979#36733#25991#20214#30340#21407#22987'HTTP'#22320#22336
+            Checked = True
+            State = cbChecked
+            TabOrder = 6
+            OnClick = chkUseFileSourceUrlClick
+          end
+          object edtNewFileHost: TEdit
+            Left = 134
+            Top = 339
+            Width = 518
+            Height = 21
+            Enabled = False
+            TabOrder = 7
+            Text = 'http://'
           end
         end
         object TabSheet2: TTabSheet
@@ -804,26 +832,32 @@ object frmPublishPlan: TfrmPublishPlan
     object menuarticlethumb: TMenuItem
       Caption = #25991#31456#32553#30053#22270#26631#35760
       ImageIndex = 1
+      OnClick = menuarticlethumbClick
     end
     object menuarticletitle: TMenuItem
       Caption = #25991#31456#26631#39064#26631#35760
       ImageIndex = 1
+      OnClick = menuarticletitleClick
     end
     object menuarticleauthor: TMenuItem
       Caption = #25991#31456#20316#32773#26631#35760
       ImageIndex = 1
+      OnClick = menuarticleauthorClick
     end
     object menuarticlecategory: TMenuItem
       Caption = #25991#31456#20998#31867#26631#35760
       ImageIndex = 1
+      OnClick = menuarticlecategoryClick
     end
     object menuarticletags: TMenuItem
       Caption = #25991#31456#20851#38190#23383#26631#35760
       ImageIndex = 1
+      OnClick = menuarticletagsClick
     end
     object menuarticleexcerpt: TMenuItem
       Caption = #25991#31456#25688#35201#26631#35760
       ImageIndex = 1
+      OnClick = menuarticleexcerptClick
     end
   end
 end

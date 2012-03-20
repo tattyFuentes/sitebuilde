@@ -97,6 +97,9 @@ type
     combproxyserverpassword: TEdit;
     Label23: TLabel;
     memopostparm: TRichEdit;
+    chkUseFileSourceUrl: TCheckBox;
+    edtNewFileHost: TEdit;
+    Label24: TLabel;
     procedure FormShow(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
@@ -118,6 +121,13 @@ type
       var DefaultDraw: Boolean);
     procedure N4Click(Sender: TObject);
     procedure menuarticlecontentClick(Sender: TObject);
+    procedure menuarticlethumbClick(Sender: TObject);
+    procedure menuarticletitleClick(Sender: TObject);
+    procedure menuarticleauthorClick(Sender: TObject);
+    procedure menuarticlecategoryClick(Sender: TObject);
+    procedure menuarticletagsClick(Sender: TObject);
+    procedure menuarticleexcerptClick(Sender: TObject);
+    procedure chkUseFileSourceUrlClick(Sender: TObject);
   private
     { Private declarations }
     mIsChangeing:boolean;
@@ -477,12 +487,56 @@ end;
 
 procedure TfrmPublishPlan.N4Click(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLEURL,true);
+  insertVariableTag(VARARTICLEURL,false);
 end;
 
 procedure TfrmPublishPlan.menuarticlecontentClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLECONTENT,true);
+  insertVariableTag(VARARTICLECONTENT,false);
+end;
+
+procedure TfrmPublishPlan.menuarticlethumbClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLETHUMB,false);
+end;
+
+procedure TfrmPublishPlan.menuarticletitleClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLETITLE,false);
+end;
+
+procedure TfrmPublishPlan.menuarticleauthorClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEAUTHOR,false);
+end;
+
+procedure TfrmPublishPlan.menuarticlecategoryClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLECATEGORY,false);
+end;
+
+procedure TfrmPublishPlan.menuarticletagsClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLETAGS,false);
+end;
+
+procedure TfrmPublishPlan.menuarticleexcerptClick(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLEEXCERPT,false);
+end;
+
+procedure TfrmPublishPlan.chkUseFileSourceUrlClick(Sender: TObject);
+begin
+  if(chkUseFileSourceUrl.Checked) then
+  begin
+    chkUseFileSourceUrl.Checked:=true;
+    edtNewFileHost.Enabled:=false;
+  end
+  else
+  begin
+    chkUseFileSourceUrl.Checked:=false;
+    edtNewFileHost.Enabled:=true;
+  end;
 end;
 
 end.

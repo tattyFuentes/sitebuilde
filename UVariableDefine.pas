@@ -26,6 +26,14 @@ const
   VARARTICLECONTENTPAGENUMBERID='<%articlepageid%>';
   //正文内容分割线（便于区分多页正文）
   VARARTICLECONTENTPAGESPLITTAG='<SITEBUILDE>--------------------------------------------------------------------<SITEBUILDE>';
+
+  //发布用的参数，下载的文件需要特殊处理
+  VARARTICLEDOWNLOADFILEPATHS='<%articledownloadfilepaths%>';
+  VARARTICLEDOWNLOADFILEURLS='<%articledownloadfileurls%>';
+  VARARTICLETHUMBFILEPATHS='<%articlethumbfilepaths%>';
+  VARARTICLETHUMBFILEURLS='<%articlethumbfileurls%>';
+  VARARTICLECONTENTFILEPATHS='<%articlecontentfilepaths%>';
+  VARARTICLECONTENTFILEURLS='<%articlecontentfileurls%>';
 implementation
 
 
