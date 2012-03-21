@@ -392,14 +392,24 @@ var
   //frmTools:TFrmTools;
   frmTools1:TForm1;
   a:TArticleObject;
-  s:String;
+  s,s1:String;
   sss:TStringList;
   JsonRoot,JsonObject:TlkJSONobject;
   //JsonHashTable:TlkHashTable;
   list,childList:TlkJSONList;
   i:integer;
+
 begin
+  s:=utf8encode('ºî·½»ª');
+  showmessage(inttostr(length(s)));
+  for i:=1 to length(s) do
+  begin
+    s1:=s1+'%'+inttohex(ord(s[i]),2);
+  end;
+  showmessage(s1);
   memo1.Lines.Clear;
+  memo1.Lines.Add(s1);
+  exit;
   memo1.Lines.Add(TranslateChineseToEnglish(memo2.Lines.Text));
   exit;
   DeleteDir('E:\temp\xiaoshuo\21');

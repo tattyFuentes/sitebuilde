@@ -3,7 +3,7 @@ unit UPublishPlanSyntax;
 interface
 uses
   UEngine,UArticleObject,UVariableDefine,UPublic,SysUtils,uLkJSON;
-  procedure ParsePublish(aArticleObject:TArticleObject;aPublishPlanId:Integer);
+  procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
 
 implementation
 
@@ -24,7 +24,55 @@ begin
 end;
 
 
-procedure ParsePublish(aArticleObject:TArticleObject;aPublishPlanId:Integer);
+function arrangeArticleObject(aArticleObject:TArticleObject;aPublishContent:String):TArticleObject;
+var
+  intMinTitle,intMaxTitle:integer;
+  intMinContent,intMaxContent:Integer;
+  isAutoCut:Boolean;
+  isUseUBB:boolean;
+  isSaveNewLine:boolean;
+  encodeMethod:string;
+  translateLanguage:String;
+  isUseFileSourceUrl:Boolean;
+  newFileHost:String;
+  //tmArticleObject:TArticleObject;
+begin
+  result:= TArticleObject.Create;
+  result.FromString(aArticleObject.ToString);
+  intMinTitle:=strtoint(getPropertyValue('edtTitleMinLength',aPublishContent));
+  intMaxTitle:=strtoint(getPropertyValue('edtTitleMaxLength',aPublishContent));
+  isAutoCut:=getPropertyValue('chkAutoCut',aPublishContent)='1';
+  if(intMinTitle>length(result.title)) then
+  begin
+    raise EUserDefineError.create('发布文章('+result.title+')标题太短!');
+  end;
+  if(intMinContent>length(result.content)) then
+  begin
+    raise EUserDefineError.create('发布文章('+result.title+')正文太短!');
+  end;
+  if(intMaxTitle<length(result.title)) then
+  begin
+    if(isAutoCut) then
+      result.title:=copy(result.title,1,intMaxTitle)
+    else
+      raise EUserDefineError.create('发布文章('+result.title+')标题太长!');
+  end;
+
+  if(intMaxContent<length(result.Content)) then
+  begin
+    if(isAutoCut) then
+      result.content:=copy(result.content,1,intMaxContent)
+    else
+      raise EUserDefineError.create('发布文章('+result.title+')正文太长!');
+  end;
+  isUseUBB:=getPropertyValue('chkUseUBB',aPublishContent)='1';
+  if(isUseUBB) then
+  begin
+  end;
+end;
+
+
+procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
 var
   strContent:String;
 begin
@@ -33,6 +81,6 @@ begin
   begin
     raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')为空!');
   end;
-  getPropertyValue(strContent);
+  getPropertyValue('edtPublishUrl',strContent);
 end;
 end.

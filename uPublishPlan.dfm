@@ -1,6 +1,6 @@
 object frmPublishPlan: TfrmPublishPlan
-  Left = 612
-  Top = 344
+  Left = 763
+  Top = 349
   Width = 1049
   Height = 737
   Caption = #21457#24067#26041#26696#37197#32622
