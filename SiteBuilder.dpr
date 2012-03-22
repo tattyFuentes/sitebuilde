@@ -26,7 +26,8 @@ uses
   UArticleObject in 'UArticleObject.pas',
   uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
   uTranslateYouDao in 'uTranslateYouDao.pas',
-  UPublishPlanSyntax in 'UPublishPlanSyntax.pas';
+  UPublishPlanSyntax in 'UPublishPlanSyntax.pas',
+  UHtmlToUbb in 'UHtmlToUbb.pas';
 
 {$R *.res}
 

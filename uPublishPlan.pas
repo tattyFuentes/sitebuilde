@@ -100,6 +100,7 @@ type
     edtContentMinLength: TEdit;
     edtContentMaxLength: TEdit;
     chkAutoCut: TCheckBox;
+    chkClearContentSplit: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);

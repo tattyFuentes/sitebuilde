@@ -2,7 +2,7 @@ unit UPublishPlanSyntax;
 
 interface
 uses
-  UEngine,UArticleObject,UVariableDefine,UPublic,SysUtils,uLkJSON;
+  UEngine,UArticleObject,UVariableDefine,UPublic,SysUtils,uLkJSON,UHtmlToUbb;
   procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
 
 implementation
@@ -66,9 +66,12 @@ begin
       raise EUserDefineError.create('发布文章('+result.title+')正文太长!');
   end;
   isUseUBB:=getPropertyValue('chkUseUBB',aPublishContent)='1';
+
   if(isUseUBB) then
   begin
+    result.content:= UBBToHtml(result.content);
   end;
+  
 end;
 
 

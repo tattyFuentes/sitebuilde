@@ -1,6 +1,6 @@
 object frmPublishPlan: TfrmPublishPlan
-  Left = 763
-  Top = 349
+  Left = 377
+  Top = 257
   Width = 1049
   Height = 737
   Caption = #21457#24067#26041#26696#37197#32622
@@ -342,6 +342,17 @@ object frmPublishPlan: TfrmPublishPlan
               Caption = #33258#21160#25130#26029
               TabOrder = 4
             end
+          end
+          object chkClearContentSplit: TCheckBox
+            Left = 12
+            Top = 367
+            Width = 357
+            Height = 33
+            Caption = #28165#38500#27491#25991#20869#23481#30340#20998#39029#31526
+            Checked = True
+            State = cbChecked
+            TabOrder = 8
+            OnClick = chkUseFileSourceUrlClick
           end
         end
         object TabSheet2: TTabSheet

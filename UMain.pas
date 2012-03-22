@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
-  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON;
+  StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON,
+  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex;
 
 type
   TfrmMain = class(TForm)
@@ -42,6 +43,7 @@ type
     Memo2: TMemo;
     Button5: TButton;
     Button6: TButton;
+    mWebBrowser: TWebBrowser;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -80,6 +82,7 @@ begin
   DBPassword:='root';
   DBName:='sitebuilde';
   InitDatabaseConnection(DBHost,DBUser,DBPassword,DBName);
+  mWebBrowser.Navigate('file:///d:/114ubb.mht');
 end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
@@ -145,13 +148,17 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  //mWebBrowser.Stop;
+  //mWebBrowser.Free;
   freeTreeData(checkBoxTreePlanCategory);
+  //mWebBrowser.Quit;
 end;
 
 procedure TfrmMain.Button4Click(Sender: TObject);
 begin
-  showmessage(checkBoxTreePlanCategory.Selected.Text);
-  showmessage(inttostr(checkBoxTreePlanCategory.Selected.ImageIndex));
+  //mWebBrowser.na
+  //mWebBrowser.Navigate();
+  mWebBrowser.Navigate('file:///d:/114ubb.mht');
 end;
 
 procedure TfrmMain.checkBoxTreePlanCategoryMouseDown(Sender: TObject;
@@ -398,8 +405,20 @@ var
   //JsonHashTable:TlkHashTable;
   list,childList:TlkJSONList;
   i:integer;
-
+  htmlDoc:IHTMLDocument3;
+  contentArea:HTMLTextAreaElement;
 begin
+  showmessage(htmlToUBB(memo2.Lines.Text));
+  exit;
+  htmlDoc := mWebBrowser.Document as IHTMLDocument3;
+  contentArea:=htmlDoc.getElementById('content_area') as HTMLTextAreaElement;
+  contentArea.value:= '<a href="sdfsdfsdf">ddddddddddddddd</a>';
+  //showmessage(htmlToUBB('<a href="sdfsdfsdf">ddddddddddddddd</a>'));
+
+   exit;
+  //WebBrowser1.Navigate('file:///d:/114ubb.mht');
+
+
   s:=utf8encode('ºî·½»ª');
   showmessage(inttostr(length(s)));
   for i:=1 to length(s) do
@@ -433,8 +452,17 @@ var
 begin
   frmPublishPlan:=TfrmPublishPlan.Create(self);
   frmPublishPlan.Show();
-
 end;
+
+initialization 
+  OleInitialize(nil);
+finalization
+try
+  OleUninitialize; 
+except 
+end; 
+
+
 
 end.
 

@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 216
-  Top = 247
+  Left = 309
+  Top = 183
   Width = 1280
   Height = 733
   Caption = '9'
@@ -36,8 +36,8 @@ object frmMain: TfrmMain
       0000000000084153445341444153}
   end
   object DBGrid1: TDBGrid
-    Left = 224
-    Top = 416
+    Left = 216
+    Top = 224
     Width = 785
     Height = 193
     DataSource = DataSource1
@@ -58,8 +58,8 @@ object frmMain: TfrmMain
     OnClick = Button1Click
   end
   object Memo1: TMemo
-    Left = 224
-    Top = 152
+    Left = 216
+    Top = 440
     Width = 793
     Height = 225
     Lines.Strings = (
@@ -196,6 +196,19 @@ object frmMain: TfrmMain
     Caption = 'Button6'
     TabOrder = 9
     OnClick = Button6Click
+  end
+  object mWebBrowser: TWebBrowser
+    Left = 1040
+    Top = 360
+    Width = 169
+    Height = 265
+    TabOrder = 10
+    ControlData = {
+      4C00000077110000631B00000000000000000000000000000000000000000000
+      000000004C000000000000000000000001000000E0D057007335CF11AE690800
+      2B2E126202000000000000004C0000000114020000000000C000000000000046
+      8000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000100000000000000000000000000000000000000}
   end
   object MainMenu: TMainMenu
     Left = 480
