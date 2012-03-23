@@ -408,7 +408,8 @@ var
   htmlDoc:IHTMLDocument3;
   contentArea:HTMLTextAreaElement;
 begin
-  showmessage(htmlToUBB(memo2.Lines.Text));
+  showmessage(RegexReplaceString(memo2.Lines.Text,'^[\s]*$',''));
+  //showmessage(htmlToUBB(memo2.Lines.Text));
   exit;
   htmlDoc := mWebBrowser.Document as IHTMLDocument3;
   contentArea:=htmlDoc.getElementById('content_area') as HTMLTextAreaElement;

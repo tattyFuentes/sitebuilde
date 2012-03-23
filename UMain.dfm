@@ -94,9 +94,9 @@ object frmMain: TfrmMain
     OnClick = Button4Click
   end
   object Memo2: TMemo
-    Left = 568
+    Left = 288
     Top = 16
-    Width = 425
+    Width = 817
     Height = 73
     Lines.Strings = (
       '<div class="articleCell SG_j_linedot1">'
@@ -178,6 +178,7 @@ object frmMain: TfrmMain
       #9#9#9#9#9#9#9#9#9
       #9#9#9#9#9#9#9#9#9)
     TabOrder = 7
+    WordWrap = False
   end
   object Button5: TButton
     Left = 880

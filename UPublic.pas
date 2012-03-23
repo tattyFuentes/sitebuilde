@@ -208,7 +208,7 @@ var
 begin
   result:=sourceString;
   reg := TPerlRegEx.Create();
-  reg.Options:=[preSingleLine,preUnGreedy];
+  reg.Options:=[preSingleLine,preUnGreedy,preMultiLine];
   reg.Subject:=sourceString;
   reg.RegEx:=findExpression;
   reg.Replacement:=replaceValue;

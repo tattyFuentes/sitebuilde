@@ -71,7 +71,20 @@ begin
   begin
     result.content:= UBBToHtml(result.content);
   end;
-  
+
+  isSaveNewLine:=getPropertyValue('chkSaveNewLine',aPublishContent)='1';
+  if(not isSaveNewLine) then
+  begin
+    result.content:= RegexReplaceString(result.content,'^[\s]*$','');
+  end;
+  encodeMethod:=getPropertyValue('combEncode',aPublishContent);
+  if(encodeMethod='使用UTF8') then
+
+  else if(encodeMethod='使用UTF8') then
+  else if(encodeMethod='简体(GBK)转繁体(big5)') then
+  else if(encodeMethod='繁体(big5)转简体(GBK)') then
+  else if(encodeMethod='繁体(big5)转UTF8') then
+
 end;
 
 
