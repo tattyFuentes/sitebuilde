@@ -22,6 +22,7 @@ end;
 function getResult(url:string;aText:String;aType:String):string;
 var
   mps:TStringList;
+  postContent:String;
   JsonRoot,JsonObject:TlkJSONobject;
   sResult:string;
   list,childList:TlkJSONList;
@@ -38,7 +39,7 @@ begin
   mps.Values['ue']:='UTF-8';
   mps.Values['xmlversion']:='1.4';
   try
-    Result:=PostData(url,mps);
+    Result:=PostStringList(url,mps,'');
     writefile('d:\a.txt',result);
     JsonRoot:=TlkJSON.ParseText(Result) as TlkJSONobject;
     list:=JsonRoot.Field['translateResult'] as TlkJSONList;
@@ -53,9 +54,10 @@ begin
     result:=utf8decode(sResult);
   except
   end;
+  mps.Free;
   if (Jsonroot<>nil) then
     JsonRoot.Free;
-  mps.Free;
+  //mps.Free;
 end;
 
 function TranslateChineseToEnglish(str:string) : string;

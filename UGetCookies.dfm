@@ -1,9 +1,9 @@
 object FrmGetCookies: TFrmGetCookies
-  Left = 248
-  Top = 104
+  Left = 180
+  Top = 332
   BorderStyle = bsDialog
   Caption = #33719#24471#32593#31449#30331#24405#20449#24687
-  ClientHeight = 765
+  ClientHeight = 688
   ClientWidth = 1105
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -76,13 +76,13 @@ object FrmGetCookies: TFrmGetCookies
     Left = 0
     Top = 485
     Width = 1105
-    Height = 220
+    Height = 132
     Align = alTop
     TabOrder = 2
   end
   object btnsave: TButton
-    Left = 672
-    Top = 720
+    Left = 664
+    Top = 648
     Width = 129
     Height = 33
     Caption = #20445#23384'cookies'
@@ -91,8 +91,8 @@ object FrmGetCookies: TFrmGetCookies
     OnClick = btnsaveClick
   end
   object Button2: TButton
-    Left = 840
-    Top = 720
+    Left = 832
+    Top = 648
     Width = 129
     Height = 33
     Cancel = True

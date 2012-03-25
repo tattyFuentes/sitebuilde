@@ -8,7 +8,8 @@ function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
 //下载文件
 function DownLoadFile(aUrl:string;aDestDir:String;aRefer:String):String;
 
-function PostData(aUrl:String;aPostData:TStringList):String;
+
+function PostStringList(aUrl:String;aMps:TStringList;aCookies:String):String;
 implementation
 //用get方式获得页面内容
 function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
@@ -62,29 +63,33 @@ begin
 end;
 
 
-function PostData(aUrl:String;aPostData:TStringList):String;
+function PostStringList(aUrl:String;aMps:TStringList;aCookies:String):String;
 var
   response:TStringStream;
   IdHttp1:TIdHttp;
+  //mps:TStringList;
 begin
-  //mps:=TStringList.Create;
-  response:=TStringStream.Create('');
-  //mps.Values['name']:=UTF8Encode(catbooklist[i].booklist.Strings[j]);
-  IdHttp1:=TIdHttp.Create(nil);
-  //idHttp.AuthRetries:=2;
-  IdHttp1.HandleRedirects:=true;
-  IdHttp1.Request.Referer:=aUrl;
-  IdHttp1.Request.UserAgent:='Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; InfoPath.2; CIBA; .NET CLR 2.0.50727; AskTbBAV5/5.8.0.12304)';
   try
-    IdHttp1.Post(aUrl,aPostData,response);
-  except
+    //mps:=SplitStringToStringList(aPostContent);
+    response:=TStringStream.Create('');
+    IdHttp1:=TIdHttp.Create(nil);
+    IdHttp1.RedirectMaximum :=2;
+    IdHttp1.HandleRedirects:=true;
+    IdHttp1.Request.Referer:=aUrl;
+    //IdHttp1.Request.
+    IdHttp1.Request.CustomHeaders.Values['Cookie']:=aCookies;
+    IdHttp1.Request.UserAgent:='Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; InfoPath.2; CIBA; .NET CLR 2.0.50727; AskTbBAV5/5.8.0.12304)';
+    IdHttp1.Post(aUrl,aMps,response);
+    result:=trim(response.DataString);
+  finally
+    //mps.Free;
+    IdHttp1.Disconnect;
+    IdHttp1.Free;
+    response.Free;
   end;
-  result:=trim(response.DataString);
-  
-  IdHttp1.Disconnect;
-  IdHttp1.Free;
-  response.Free;
 end;
+
+
 
 
 end.

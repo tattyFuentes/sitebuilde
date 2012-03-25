@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, dxExEdtr, Menus, ImgList, StdCtrls, ComCtrls, dxCntner,
   dxInspct, TFlatButtonUnit, ExtCtrls, CheckBoxTreeView, TFlatPanelUnit,
-  ToolWin,uTree,uEngine,uPublic,uLkJSON,UVariableDefine;
+  ToolWin,uTree,uEngine,uPublic,uLkJSON,UVariableDefine,UGetCookies;
 
 type
   TfrmPublishPlan = class(TForm)
@@ -101,6 +101,15 @@ type
     edtContentMaxLength: TEdit;
     chkAutoCut: TCheckBox;
     chkClearContentSplit: TCheckBox;
+    TabSheet3: TTabSheet;
+    CheckBox1: TCheckBox;
+    Label25: TLabel;
+    edtLoginUrl: TEdit;
+    Label26: TLabel;
+    memCookies: TRichEdit;
+    btnLoginCookies: TButton;
+    Label27: TLabel;
+    edtResponseText: TEdit;
     procedure FormShow(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
@@ -129,6 +138,7 @@ type
     procedure menuarticletagsClick(Sender: TObject);
     procedure menuarticleexcerptClick(Sender: TObject);
     procedure chkUseFileSourceUrlClick(Sender: TObject);
+    procedure btnLoginCookiesClick(Sender: TObject);
   private
     { Private declarations }
     mIsChangeing:boolean;
@@ -171,6 +181,7 @@ end;
 
 procedure TfrmPublishPlan.FormShow(Sender: TObject);
 begin
+  tabsheet1.PageControl.ActivePageIndex:=0;
   checkBoxTreePlanCategory.Items.Clear;
   buildTree(checkBoxTreePlanCategory,'category','publishplan',4,nil);
   checkBoxTreePlanCategory.Items[0].Expanded:=true;
@@ -530,14 +541,26 @@ procedure TfrmPublishPlan.chkUseFileSourceUrlClick(Sender: TObject);
 begin
   if(chkUseFileSourceUrl.Checked) then
   begin
-    chkUseFileSourceUrl.Checked:=true;
-    edtNewFileHost.Enabled:=false;
+   //chkUseFileSourceUrl.Checked:=true;
+   edtNewFileHost.Enabled:=true;
   end
   else
   begin
-    chkUseFileSourceUrl.Checked:=false;
-    edtNewFileHost.Enabled:=true;
+    //chkUseFileSourceUrl.Checked:=false;
+    edtNewFileHost.Enabled:=false;
   end;
+end;
+
+procedure TfrmPublishPlan.btnLoginCookiesClick(Sender: TObject);
+var
+  frmGetCookies:TFrmGetCookies;
+begin
+  frmGetCookies:=TFrmGetCookies.Create(self);
+  //FrmGetCookies.buttonRow:=sender as TdxInspectorButtonRow;
+  FrmGetCookies.edturl.Text:= edtLoginUrl.Text;
+  FrmGetCookies.ShowModal();
+  memcookies.Lines.Add(FrmGetCookies.mCookies);
+  FrmGetCookies.Free;
 end;
 
 end.

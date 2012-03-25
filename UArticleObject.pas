@@ -1,7 +1,7 @@
 unit UArticleObject;
 
 interface
-uses uLkJSON,SysUtils;
+uses uLkJSON,SysUtils,uTranslateYouDao;
 type
   TArticleObject = class(TObject)
   private
@@ -37,6 +37,9 @@ type
     procedure AddContentFile(aFileUrl:String;aFilePath:String);
     function ToString():String;
     procedure FromString(aSource:String);
+    procedure ToUtf8();//将所有属性转换成utf8编码字符串
+    procedure ZhToEn();  //中文翻译成英文
+    procedure EnToZh();  //英文翻译成中文
   end;
 implementation
 //解析字符串生成属性
@@ -59,6 +62,7 @@ begin
   url:=JsonObject.Field['url'].Value;
   contentFiles:=JsonObject.Field['contentFiles'].Value;
   category:=JsonObject.Field['category'].Value;
+  JsonObject.Free;
 end;
 
 //将属性列表生成字符串放到数据库
@@ -82,6 +86,7 @@ begin
   JsonObject.Add('category',category);
 
   result:=UTF8DECODE(TlkJSON.GenerateText(JsonObject));
+  JsonObject.Free;
 end;
 
 //记录下载文件列表，包括原始http地址和下载后的文件相对地址 json格式
@@ -137,6 +142,34 @@ begin
   JsonRoot.Add('file',JsonObject);
   thumb:=TlkJSON.GenerateText(JsonRoot);
   JsonRoot.Free;
+end;
+
+
+procedure TArticleObject.ToUtf8();
+begin
+  title:=utf8encode(title);
+  content:=utf8encode(content);
+  author:=utf8encode(author);
+  excerpt:=utf8encode(excerpt);
+  tags:=utf8encode(tags);
+end;
+
+procedure TArticleObject.ZhToEn();
+begin
+  title:=TranslateChineseToEnglish(title);
+  content:=TranslateChineseToEnglish(content);
+  author:=TranslateChineseToEnglish(author);
+  excerpt:=TranslateChineseToEnglish(excerpt);
+  tags:=TranslateChineseToEnglish(tags);
+end;
+
+procedure TArticleObject.EnToZh();
+begin
+  title:=TranslateEnglishToChinese(title);
+  content:=TranslateEnglishToChinese(content);
+  author:=TranslateEnglishToChinese(author);
+  excerpt:=TranslateEnglishToChinese(excerpt);
+  tags:=TranslateEnglishToChinese(tags);
 end;
 
 end.

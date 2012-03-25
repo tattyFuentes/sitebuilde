@@ -72,7 +72,7 @@ var
   frmMain: TfrmMain;
 
 implementation
-uses UCatchPlan,UTest;
+uses UCatchPlan,UTest,UPublishPlanSyntax;
 {$R *.dfm}
 
 procedure TfrmMain.FormCreate(Sender: TObject);
@@ -82,7 +82,7 @@ begin
   DBPassword:='root';
   DBName:='sitebuilde';
   InitDatabaseConnection(DBHost,DBUser,DBPassword,DBName);
-  mWebBrowser.Navigate('file:///d:/114ubb.mht');
+  //mWebBrowser.Navigate('file:///d:/114ubb.mht');
 end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
@@ -158,7 +158,7 @@ procedure TfrmMain.Button4Click(Sender: TObject);
 begin
   //mWebBrowser.na
   //mWebBrowser.Navigate();
-  mWebBrowser.Navigate('file:///d:/114ubb.mht');
+  //mWebBrowser.Navigate('file:///D:/114ubb.mht');
 end;
 
 procedure TfrmMain.checkBoxTreePlanCategoryMouseDown(Sender: TObject;
@@ -298,7 +298,7 @@ var
   i:integer;
   s:string;
 begin
-
+   publishArticle(getArticleById(9),7);
    if IsInStr('11112222233333444444','55555'+chr(13)+chr(10)+'4443'+chr(13)+chr(10)) then
      showmessage('ture');
    if sss=nil then

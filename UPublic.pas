@@ -37,6 +37,7 @@ function RegexReplaceString(sourceString:String;findExpression:String;replaceVal
 function RegexSearchString(sourceString:String;findExpression:String):TStringList;
 function ReplaceRegexChar(aSource:String):String;
 function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
+function SplitStringToStringList(aSource:String):TStringList;
 procedure DeleteDir(sDirectory:String);
 //获得下载文件的路径（处理相对路径和绝对路径）
 function GetFileUrlBySourceUrl(aSourceUrl:String;aFileUrl:String):String;
@@ -140,6 +141,40 @@ begin
       result:=ReverseString(copy(sTemp,pos('/',sTemp),length(sTemp)))+aFileUrl;
     end;
   end;
+end;
+
+
+//split字符串 （chr(13)+chr(10)分割行，一行用=分割名字和值）
+function SplitStringToStringList(aSource:String):TStringList;
+var
+  sTemp,sTemp2:String;
+  intPos,intPos2:integer;
+begin
+  sTemp:=aSource;
+  result:=TStringList.Create;
+  if(sTemp='') then
+    exit;
+  intPos:=pos(chr(13)+chr(10),sTemp);
+  while true do
+  begin
+    if(intPos>0) then
+      sTemp2:=copy(sTemp,1,intPos-1)
+    else
+      sTemp2:=sTemp;
+
+    intPos2:=pos('=',sTemp2);
+    if(intPos2>0) then
+    begin
+      result.Values[trim(copy(sTemp2,1,intPos2-1))]:=trim(copy(sTemp2,intPos2+1,length(sTemp2)));
+      //aSource:=StringReplace(aSource,copy(sTemp2,1,intPos2-1),copy(sTemp2,intPos2+1,length(sTemp2)),[rfReplaceAll,rfIgnoreCase]);
+    end;
+
+    if(intPos<=0) then
+      break;
+    sTemp:=copy(sTemp,intPos+2,length(sTemp));
+    intPos:=pos(chr(13)+chr(10),sTemp);
+  end;
+  //result:=aSource;
 end;
 
 //伪原创

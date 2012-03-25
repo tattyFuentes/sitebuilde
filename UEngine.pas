@@ -24,10 +24,35 @@ procedure SavePictureToDatabase;
 procedure LoadPictureToDatabase;
 function getSystemConfig(name:String):String;
 function getPlanContentById(id:integer):String;
+function getArticleById(id:integer):TArticleObject;
 function getPublishPlanContentById(id:integer):String;
 function getPlanContentById2(id:integer):TMemoryStream;
 
 implementation
+
+
+function getArticleById(id:integer):TArticleObject;
+var
+  SQLDataSet:TSQLDataSet;
+  tmpFileName:String;
+begin
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='select * from article where id='+inttostr(id);
+    sqlDataset.open();
+    if(not eof) then
+    begin
+      result:=TArticleObject.Create;
+      result.id:=FieldByName('id').Value;
+      result.FromString(FieldByName('content').Value);
+      close();
+    end;
+  end;
+end;
+
 
 function getSystemConfig(name:String):String;
 var
@@ -227,7 +252,7 @@ function getPublishPlanContentById(id:integer):String;
 var
   SQLDataSet:TSQLDataSet;
   tmpFileName:String;
-begin  
+begin
   SQLDataSet:=TSQLDataSet.Create(nil);
   SQLDataSet.SQLConnection:=DBConnection;
   SQLDataSet.CommandType:=ctQuery;

@@ -38,7 +38,7 @@ begin
   mps.Values['ue']:='UTF-8';
   mps.Values['xmlversion']:='1.4';
   try
-    Result:=PostData(url,mps);
+    Result:=PostStringList(url,mps,'');
     writefile('d:\a.txt',result);
     JsonRoot:=TlkJSON.ParseText(Result) as TlkJSONobject;
     list:=JsonRoot.Field['translateResult'] as TlkJSONList;

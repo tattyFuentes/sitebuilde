@@ -24,15 +24,16 @@ uses
   UHttp in 'UHttp.pas',
   UCatchPlanSyntax in 'UCatchPlanSyntax.pas',
   UArticleObject in 'UArticleObject.pas',
-  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
   uTranslateYouDao in 'uTranslateYouDao.pas',
   UPublishPlanSyntax in 'UPublishPlanSyntax.pas',
-  UHtmlToUbb in 'UHtmlToUbb.pas';
+  UHtmlToUbb in 'UHtmlToUbb.pas',
+  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmPublishPlan, frmPublishPlan);
   Application.Run;
 end.

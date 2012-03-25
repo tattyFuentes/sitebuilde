@@ -28,6 +28,8 @@ type
   public
     { Public declarations }
     buttonRow:TdxInspectorButtonRow;
+    mCookies:String;
+
   end;
 
 var
@@ -53,6 +55,7 @@ var
   htmlDoc : IHTMLDocument2;
 begin
   htmlDoc := WebBrowser1.Document as IHTMLDocument2;
+  memcookies.Lines.Clear;
   memcookies.Lines.add(htmlDoc.cookie);
 end;
 
@@ -71,7 +74,9 @@ end;
 
 procedure TFrmGetCookies.btnsaveClick(Sender: TObject);
 begin
-  buttonRow.EditText:=memCookies.Lines.Text;
+  if(buttonRow<>nil) then
+    buttonRow.EditText:=memCookies.Lines.Text;
+  mCookies:=memCookies.Lines.Text;
   close;
 end;
 
