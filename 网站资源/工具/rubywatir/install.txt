@@ -1,0 +1,11 @@
+首先安装 rubyinstaller-1.9.3-p125.exe
+gem update --system
+解压缩 DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe 到c:\devkit
+C:\DevKit>ruby dk.rb init
+C:\DevKit>ruby dk.rb install
+C:\DevKit>gem install rdiscount --platform=ruby
+gem install watir
+Gem uninstall windows-pr
+Gem install windows-pr
+regsvr32 "C:\Ruby193\lib\ruby\gems\1.9.1\gems\rautomation-0.6.3\ext\AutoItX\AutoItX3.dll"
+脚本语言必须是utf-8编码
