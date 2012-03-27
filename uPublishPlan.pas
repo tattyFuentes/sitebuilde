@@ -103,11 +103,8 @@ type
     chkClearContentSplit: TCheckBox;
     TabSheet3: TTabSheet;
     CheckBox1: TCheckBox;
-    Label25: TLabel;
-    edtLoginUrl: TEdit;
     Label26: TLabel;
-    memCookies: TRichEdit;
-    btnLoginCookies: TButton;
+    memRubyScript: TRichEdit;
     Label27: TLabel;
     edtResponseText: TEdit;
     procedure FormShow(Sender: TObject);
@@ -138,7 +135,6 @@ type
     procedure menuarticletagsClick(Sender: TObject);
     procedure menuarticleexcerptClick(Sender: TObject);
     procedure chkUseFileSourceUrlClick(Sender: TObject);
-    procedure btnLoginCookiesClick(Sender: TObject);
   private
     { Private declarations }
     mIsChangeing:boolean;
@@ -549,18 +545,6 @@ begin
     //chkUseFileSourceUrl.Checked:=false;
     edtNewFileHost.Enabled:=false;
   end;
-end;
-
-procedure TfrmPublishPlan.btnLoginCookiesClick(Sender: TObject);
-var
-  frmGetCookies:TFrmGetCookies;
-begin
-  frmGetCookies:=TFrmGetCookies.Create(self);
-  //FrmGetCookies.buttonRow:=sender as TdxInspectorButtonRow;
-  FrmGetCookies.edturl.Text:= edtLoginUrl.Text;
-  FrmGetCookies.ShowModal();
-  memcookies.Lines.Add(FrmGetCookies.mCookies);
-  FrmGetCookies.Free;
 end;
 
 end.

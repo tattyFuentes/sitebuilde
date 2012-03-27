@@ -408,6 +408,8 @@ var
   htmlDoc:IHTMLDocument3;
   contentArea:HTMLTextAreaElement;
 begin
+  writefile('d:\a.rb',utf8encode('我们是中国人'));
+  exit;
   showmessage(RegexReplaceString(memo2.Lines.Text,'^[\s]*$',''));
   //showmessage(htmlToUBB(memo2.Lines.Text));
   exit;
@@ -415,7 +417,6 @@ begin
   contentArea:=htmlDoc.getElementById('content_area') as HTMLTextAreaElement;
   contentArea.value:= '<a href="sdfsdfsdf">ddddddddddddddd</a>';
   //showmessage(htmlToUBB('<a href="sdfsdfsdf">ddddddddddddddd</a>'));
-
    exit;
   //WebBrowser1.Navigate('file:///d:/114ubb.mht');
 
