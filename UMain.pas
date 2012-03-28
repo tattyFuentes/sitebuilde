@@ -298,7 +298,8 @@ var
   i:integer;
   s:string;
 begin
-   publishArticle(getArticleById(9),7);
+   publishArticle(getArticleById(9),5);
+   exit;
    if IsInStr('11112222233333444444','55555'+chr(13)+chr(10)+'4443'+chr(13)+chr(10)) then
      showmessage('ture');
    if sss=nil then
@@ -408,6 +409,7 @@ var
   htmlDoc:IHTMLDocument3;
   contentArea:HTMLTextAreaElement;
 begin
+  execCommand(pchar('ruby rubyscript\bababian.rb "'+utf8encode('hel中国日文lo'+chr(13)+chr(10)+'a\"aaa\""')+' "中国日文"'),true);
   writefile('d:\a.rb',utf8encode('我们是中国人'));
   exit;
   showmessage(RegexReplaceString(memo2.Lines.Text,'^[\s]*$',''));

@@ -177,30 +177,24 @@ begin
   //else if(encodeMethod='繁体(big5)转UTF8') then
 end;
 
-
-procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
+//用直接post方式发布文章
+procedure basePublishArticle(aArticleObject:TArticleObject;aPublishPlanId:integer;aStrPublisRule:string);
 var
-  strPublisRule:String;
   strPublishUrl:String;
   strPublishParam:String;
   arrangedArticleObject:TArticleObject;
   strResponse,strCookies:String;
   strResponseSucc:String;
 begin
-  strPublisRule:=getPublishPlanContentById(aPublishPlanId);
-  if(strPublisRule='') then
-  begin
-    raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')为空!');
-  end;
-  strPublishUrl:=getPropertyValue('edtPublishUrl',strPublisRule);
+  strPublishUrl:=getPropertyValue('edtPublishUrl',aStrPublisRule);
   if(strPublishUrl='') then
     raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')发布网址为空!');
   //发布前处理
-  arrangedArticleObject:=arrangeArticleObject(aArticleObject,strPublisRule);
-  strPublishParam:=getPropertyValue('memopostparm',strPublisRule);
-  strCookies:=getPropertyValue('memCookies',strPublisRule);
+  arrangedArticleObject:=arrangeArticleObject(aArticleObject,aStrPublisRule);
+  strPublishParam:=getPropertyValue('memopostparm',aStrPublisRule);
+  //strCookies:=getPropertyValue('memCookies',aStrPublisRule);
   strResponse:=PostArticle(strPublishUrl,strPublishParam,arrangedArticleObject,strCookies);
-  strResponseSucc:=getPropertyValue('edtResponseText',strPublisRule);
+  strResponseSucc:=getPropertyValue('edtResponseText',aStrPublisRule);
   if(strResponseSucc<>'') then
   begin
     if(pos(strResponseSucc,strResponse)<=0) then
@@ -208,5 +202,53 @@ begin
       raise EUserDefineError.create('发布文章('+aArticleObject.title+')校验返回值失败，服务器返回值为('+strResponse+')');
     end;
   end;
+end;
+
+//用ie模拟的方式通过脚本发布文章
+procedure webPublishArticle(aArticleObject:TArticleObject;aPublishPlanId:integer;aStrPublisRule:string);
+var
+  mps:TStringList;
+  strWebPostParam:String;
+  rubyCommand:String;
+  strProperty:String;
+  i:integer;
+begin
+  rubyCommand:=getPropertyValue('edtScriptName',aStrPublisRule);
+  if(rubyCommand='') then
+    raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')WEB模拟发布脚本没有设置!');
+  if(not fileExists(rubyCommand)) then
+    raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')WEB模拟发布脚本设置有误未找到脚本!');
+
+  strWebPostParam:=getPropertyValue('memowebpostparm',aStrPublisRule);
+  if(strWebPostParam='') then
+    raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')WEB模拟发布参数没有设置!');
+
+  rubyCommand:='ruby '+rubyCommand;
+  mps:=SplitStringToStringList(strWebPostParam);
+  for i:=0 to mps.Count-1 do
+  begin
+    strProperty:=GetArticlePropertyByTag(mps.Values[mps.Names[i]],aArticleObject);
+    if(strProperty='-1') then
+      strProperty:=mps.Values[mps.Names[i]];
+    rubyCommand:=rubyCommand+' "'+StringReplace(strProperty,'"','\"',[rfReplaceAll])+'"';
+  end;
+  execcommand(pchar(rubyCommand),false);
+end;
+
+procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
+var
+  strPublisRule:String;
+  isWebPost:boolean;
+begin
+  strPublisRule:=getPublishPlanContentById(aPublishPlanId);
+  if(strPublisRule='') then
+  begin
+    raise EUserDefineError.create('发布规则('+inttostr(aPublishPlanId)+')为空!');
+  end;
+  isWebPost:=getPropertyValue('chkEnableWebPost',strPublisRule)='1';
+  if (isWebPost) then
+    webPublishArticle(aArticleObject,aPublishPlanId,strPublisRule)
+  else
+    basePublishArticle(aArticleObject,aPublishPlanId,strPublisRule);
 end;
 end.

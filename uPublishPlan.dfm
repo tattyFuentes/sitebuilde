@@ -1,6 +1,6 @@
 object frmPublishPlan: TfrmPublishPlan
-  Left = 225
-  Top = 121
+  Left = 201
+  Top = 199
   Width = 1049
   Height = 737
   Caption = #21457#24067#26041#26696#37197#32622
@@ -137,75 +137,59 @@ object frmPublishPlan: TfrmPublishPlan
         Top = 1
         Width = 828
         Height = 525
-        ActivePage = TabSheet3
+        ActivePage = TabSheet1
         Align = alClient
-        TabIndex = 3
+        TabIndex = 0
         TabOrder = 0
         object TabSheet1: TTabSheet
           Caption = #22522#26412#35774#32622
-          object Label1: TLabel
-            Left = 11
-            Top = 29
-            Width = 81
-            Height = 13
-            AutoSize = False
-            Caption = #21457#24067#32593#22336':'
-          end
           object Label8: TLabel
-            Left = 13
-            Top = 236
+            Left = 15
+            Top = 179
             Width = 81
             Height = 13
             AutoSize = False
             Caption = #32534#30721#36716#25442':'
           end
           object Label9: TLabel
-            Left = 14
-            Top = 267
+            Left = 16
+            Top = 210
             Width = 66
             Height = 13
             AutoSize = False
             Caption = #32763#35793#35821#35328':'
           end
           object Label24: TLabel
-            Left = 13
-            Top = 344
+            Left = 15
+            Top = 287
             Width = 180
             Height = 13
             AutoSize = False
             Caption = #26032#25991#20214#26381#21153#22120#22320#22336'('#26368#21518#24102'/):'
           end
-          object edtPublishUrl: TEdit
-            Left = 83
-            Top = 25
-            Width = 721
-            Height = 21
-            TabOrder = 0
-            Text = 'http://'
-          end
           object chkUseUBB: TCheckBox
-            Left = 12
-            Top = 191
+            Left = 14
+            Top = 134
             Width = 193
             Height = 33
             Caption = #20351#29992'UBB'#20195#30721#26684#24335
-            TabOrder = 1
+            TabOrder = 0
           end
           object chkSaveNewLine: TCheckBox
-            Left = 244
-            Top = 191
+            Left = 246
+            Top = 134
             Width = 193
             Height = 33
             Caption = #20445#30041#25442#34892#31526
-            TabOrder = 2
+            TabOrder = 1
           end
           object combEncode: TComboBox
-            Left = 81
-            Top = 232
+            Left = 83
+            Top = 175
             Width = 320
             Height = 21
             ItemHeight = 13
-            TabOrder = 3
+            TabOrder = 2
             Text = #19981#20351#29992
             Items.Strings = (
               #19981#20351#29992
@@ -215,12 +199,12 @@ object frmPublishPlan: TfrmPublishPlan
               #32321#20307'(big5)'#36716'UTF8')
           end
           object combTransLanguage: TComboBox
-            Left = 80
-            Top = 263
+            Left = 82
+            Top = 206
             Width = 321
             Height = 21
             ItemHeight = 13
-            TabOrder = 4
+            TabOrder = 3
             Text = #19981#32763#35793
             Items.Strings = (
               #19981#32763#35793
@@ -228,30 +212,30 @@ object frmPublishPlan: TfrmPublishPlan
               #20013#25991#36716#33521#25991)
           end
           object chkUseFileSourceUrl: TCheckBox
-            Left = 12
-            Top = 303
+            Left = 14
+            Top = 246
             Width = 357
             Height = 33
             Caption = #25991#31456#20869#23481#20351#29992#26032#30340#26381#21153#22120#22320#22336#20195#26367#21407#22987'HTTP'#25991#20214#22320#22336
-            TabOrder = 5
+            TabOrder = 4
             OnClick = chkUseFileSourceUrlClick
           end
           object edtNewFileHost: TEdit
-            Left = 193
-            Top = 340
+            Left = 195
+            Top = 283
             Width = 518
             Height = 21
             Enabled = False
-            TabOrder = 6
+            TabOrder = 5
             Text = 'http://'
           end
           object Panel7: TPanel
             Left = 13
-            Top = 72
+            Top = 18
             Width = 785
             Height = 90
             BevelOuter = bvLowered
-            TabOrder = 7
+            TabOrder = 6
             object Label2: TLabel
               Left = 12
               Top = 20
@@ -342,20 +326,36 @@ object frmPublishPlan: TfrmPublishPlan
             end
           end
           object chkClearContentSplit: TCheckBox
-            Left = 12
-            Top = 367
+            Left = 14
+            Top = 310
             Width = 357
             Height = 33
             Caption = #28165#38500#27491#25991#20869#23481#30340#20998#39029#31526
             Checked = True
             State = cbChecked
-            TabOrder = 8
+            TabOrder = 7
             OnClick = chkUseFileSourceUrlClick
           end
         end
         object TabSheet2: TTabSheet
-          Caption = #21442#25968#35774#32622
+          Caption = #22522#26412#21457#24067
           ImageIndex = 1
+          object Label1: TLabel
+            Left = 8
+            Top = 430
+            Width = 65
+            Height = 13
+            AutoSize = False
+            Caption = #21457#24067#32593#22336':'
+          end
+          object Label25: TLabel
+            Left = 8
+            Top = 462
+            Width = 65
+            Height = 13
+            AutoSize = False
+            Caption = #21457#24067#32467#26524':'
+          end
           object Panel6: TPanel
             Left = 0
             Top = 0
@@ -364,7 +364,7 @@ object frmPublishPlan: TfrmPublishPlan
             Align = alTop
             BevelOuter = bvNone
             TabOrder = 0
-            object ToolBar3: TToolBar
+            object ToolBarBasePost: TToolBar
               Left = 0
               Top = 16
               Width = 820
@@ -383,7 +383,7 @@ object frmPublishPlan: TfrmPublishPlan
               ParentFont = False
               ShowCaptions = True
               TabOrder = 0
-              OnAdvancedCustomDrawButton = ToolBar3AdvancedCustomDrawButton
+              OnAdvancedCustomDrawButton = ToolBarBasePostAdvancedCustomDrawButton
               object btnarticleid: TToolButton
                 Left = 0
                 Top = 0
@@ -407,11 +407,10 @@ object frmPublishPlan: TfrmPublishPlan
             end
           end
           object memopostparm: TRichEdit
-            Left = 0
-            Top = 42
-            Width = 820
-            Height = 455
-            Align = alClient
+            Left = 5
+            Top = 46
+            Width = 804
+            Height = 371
             Font.Charset = GB2312_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -420,6 +419,107 @@ object frmPublishPlan: TfrmPublishPlan
             ParentFont = False
             ScrollBars = ssBoth
             TabOrder = 1
+            WordWrap = False
+          end
+          object edtPublishUrl: TEdit
+            Left = 69
+            Top = 426
+            Width = 742
+            Height = 21
+            TabOrder = 2
+            Text = 'http://'
+          end
+          object edtResponseText: TEdit
+            Left = 71
+            Top = 458
+            Width = 742
+            Height = 21
+            TabOrder = 3
+          end
+        end
+        object TabSheet3: TTabSheet
+          Caption = #27169#25311'WEB'#21457#24067
+          ImageIndex = 3
+          object Label27: TLabel
+            Left = 4
+            Top = 447
+            Width = 153
+            Height = 13
+            AutoSize = False
+            Caption = #27169#25311#21457#24067#33050#26412':'
+          end
+          object chkEnableWebPost: TCheckBox
+            Left = 7
+            Top = 13
+            Width = 201
+            Height = 17
+            Caption = #21551#29992#27169#25311'WEB'#21457#24067
+            TabOrder = 0
+          end
+          object edtScriptName: TEdit
+            Left = 4
+            Top = 468
+            Width = 806
+            Height = 21
+            TabOrder = 1
+            Text = 'rubyscript\baidublog.rb'
+          end
+          object ToolBarWebPost: TToolBar
+            Left = 6
+            Top = 36
+            Width = 820
+            Height = 26
+            Align = alNone
+            ButtonHeight = 21
+            ButtonWidth = 98
+            Caption = 'ToolBarWebPost'
+            EdgeBorders = []
+            Flat = True
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlue
+            Font.Height = -13
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            ShowCaptions = True
+            TabOrder = 2
+            OnAdvancedCustomDrawButton = ToolBarBasePostAdvancedCustomDrawButton
+            object ToolButton1: TToolButton
+              Left = 0
+              Top = 0
+              Hint = #25554#20837#25991#31456#30340#23646#24615#26631#35760#36319#35201#21457#24067#30340#21442#25968#21517#23545#24212#65288#20013#38388#20197#31561#21495#38388#38548#65289
+              Caption = #25554#20837#25991#31456#26631#35760
+              DropdownMenu = PopupMenu2
+              ImageIndex = 1
+              ParentShowHint = False
+              PopupMenu = PopupMenu2
+              ShowHint = True
+              Style = tbsDropDown
+            end
+            object ToolButton2: TToolButton
+              Left = 111
+              Top = 0
+              Hint = #25991#31456#20013#30340#33258#23450#20041#37319#38598#39033#30446#20197'USERDEFINE'#24320#22836
+              Caption = #25554#20837#33258#23450#20041#26631#35760
+              ImageIndex = 2
+              ParentShowHint = False
+              ShowHint = True
+              OnClick = ToolButton2Click
+            end
+          end
+          object memowebpostparm: TRichEdit
+            Left = 5
+            Top = 64
+            Width = 804
+            Height = 376
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            ScrollBars = ssBoth
+            TabOrder = 3
             WordWrap = False
           end
         end
@@ -622,56 +722,6 @@ object frmPublishPlan: TfrmPublishPlan
               Height = 21
               TabOrder = 3
             end
-          end
-        end
-        object TabSheet3: TTabSheet
-          Caption = #27169#25311'WEB'#21457#24067
-          ImageIndex = 3
-          object Label26: TLabel
-            Left = 16
-            Top = 56
-            Width = 153
-            Height = 13
-            AutoSize = False
-            Caption = 'Ruby'#33050#26412':'
-          end
-          object Label27: TLabel
-            Left = 13
-            Top = 442
-            Width = 153
-            Height = 13
-            AutoSize = False
-            Caption = #21457#24067#25104#21151#36820#22238#20540':'
-          end
-          object CheckBox1: TCheckBox
-            Left = 16
-            Top = 24
-            Width = 201
-            Height = 17
-            Caption = #21551#29992#27169#25311'WEB'#21457#24067
-            TabOrder = 0
-          end
-          object memRubyScript: TRichEdit
-            Left = 16
-            Top = 75
-            Width = 785
-            Height = 358
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-            ScrollBars = ssBoth
-            TabOrder = 1
-            WordWrap = False
-          end
-          object edtResponseText: TEdit
-            Left = 13
-            Top = 463
-            Width = 788
-            Height = 21
-            TabOrder = 2
           end
         end
       end

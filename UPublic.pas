@@ -47,6 +47,7 @@ function GetFileNameFromUrl(aUrl:String):String;
 //在一个文件夹中判断文件是否存在，如果存在给文件一个新名称
 function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
 procedure logInfo(aInfo:String;aMsgWindow:TRichEdit;aIsError:boolean);
+procedure execCommand(aCommand:pchar;isClose:boolean);
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -54,6 +55,37 @@ const
 implementation
 
 uses uXML,uLKJSON;
+
+
+procedure execCommand(aCommand:pchar;isClose:boolean);
+var
+  StartupInfo:TStartupInfo;
+  ProcessInfo:TProcessInformation;
+  ExitCode: longword;
+begin
+  //   初始化工作
+  FillChar(StartupInfo,Sizeof(StartupInfo),#0);
+  StartupInfo.cb   :=   Sizeof(StartupInfo);
+  StartupInfo.dwFlags   :=   STARTF_USESHOWWINDOW;
+  CreateProcess(nil,
+                  aCommand,                                                   //   运行计算器
+                  nil,
+                  nil,
+                  false,
+                  CREATE_NEW_CONSOLE   or
+                  NORMAL_PRIORITY_CLASS,
+                  nil,
+                  nil,
+                  StartupInfo,
+                  ProcessInfo);
+  WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
+  if(isClose) then
+  begin
+    GetExitCodeProcess(ProcessInfo.hProcess, ExitCode);  // Optional
+    CloseHandle(ProcessInfo.hThread);
+    CloseHandle(ProcessInfo.hProcess);
+  end;
+end;
 
 function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
 begin

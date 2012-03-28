@@ -36,8 +36,6 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet4: TTabSheet;
-    Label1: TLabel;
-    edtPublishUrl: TEdit;
     chkUseUBB: TCheckBox;
     chkSaveNewLine: TCheckBox;
     Label8: TLabel;
@@ -52,7 +50,7 @@ type
     menuarticleexcerpt: TMenuItem;
     N4: TMenuItem;
     Panel6: TPanel;
-    ToolBar3: TToolBar;
+    ToolBarBasePost: TToolBar;
     btnarticleid: TToolButton;
     btnvariable: TToolButton;
     Label9: TLabel;
@@ -102,11 +100,17 @@ type
     chkAutoCut: TCheckBox;
     chkClearContentSplit: TCheckBox;
     TabSheet3: TTabSheet;
-    CheckBox1: TCheckBox;
-    Label26: TLabel;
-    memRubyScript: TRichEdit;
+    chkEnableWebPost: TCheckBox;
     Label27: TLabel;
+    edtScriptName: TEdit;
+    Label1: TLabel;
+    edtPublishUrl: TEdit;
+    ToolBarWebPost: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    memowebpostparm: TRichEdit;
     edtResponseText: TEdit;
+    Label25: TLabel;
     procedure FormShow(Sender: TObject);
     procedure checkBoxTreePlanCategoryChange(Sender: TObject;
       Node: TTreeNode);
@@ -122,7 +126,7 @@ type
     procedure pop_createplanClick(Sender: TObject);
     procedure pop_deleteplanClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
-    procedure ToolBar3AdvancedCustomDrawButton(Sender: TToolBar;
+    procedure ToolBarBasePostAdvancedCustomDrawButton(Sender: TToolBar;
       Button: TToolButton; State: TCustomDrawState;
       Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
       var DefaultDraw: Boolean);
@@ -135,12 +139,13 @@ type
     procedure menuarticletagsClick(Sender: TObject);
     procedure menuarticleexcerptClick(Sender: TObject);
     procedure chkUseFileSourceUrlClick(Sender: TObject);
+    procedure ToolButton2Click(Sender: TObject);
   private
     { Private declarations }
     mIsChangeing:boolean;
     mCurrentPlanNode:TTreeNode;
     mPublishPlanInitValue:String;
-    procedure insertVariableTag(tag:String;bOnlyOne:boolean);
+    procedure insertVariableTag(tag:String;bOnlyOne:boolean;toolBarName:String);
     procedure onTreeNodeChanged(node:TTreeNode;nodeName:String);
     procedure LoadJsonInitContols(aJsonString:String;aParent:TWinControl);
   public
@@ -457,7 +462,7 @@ begin
   end;
 end;
 
-procedure TfrmPublishPlan.ToolBar3AdvancedCustomDrawButton(
+procedure TfrmPublishPlan.ToolBarBasePostAdvancedCustomDrawButton(
   Sender: TToolBar; Button: TToolButton; State: TCustomDrawState;
   Stage: TCustomDrawStage; var Flags: TTBCustomDrawFlags;
   var DefaultDraw: Boolean);
@@ -474,63 +479,69 @@ begin
         end;
 end;
 
-procedure TfrmPublishPlan.insertVariableTag(tag:String;bOnlyOne:boolean);
+procedure TfrmPublishPlan.insertVariableTag(tag:String;bOnlyOne:boolean;toolBarName:String);
 var
   FoundAt:integer;
+  tmpRichEdit:TRichEdit;
 begin
+  if(toolBarName='ToolBarWebPost') then
+    tmpRichEdit:=memowebpostparm
+  else
+    tmpRichEdit:=memopostparm;
+
   if(bOnlyOne) then //只允许插入一个标记
   begin
-    FoundAt := memopostparm.FindText(tag, 0, length(memopostparm.Text), [stMatchCase]);
+    FoundAt := tmpRichEdit.FindText(tag, 0, length(tmpRichEdit.Text), [stMatchCase]);
     if FoundAt <> -1 then
     begin
       MessageBox(self.Handle,'此标记只能插入一次！','警告信息',MB_OK+MB_ICONWARNING);
       exit;
     end;
   end;
-  memopostparm.SelAttributes.Color := clred;
-  memopostparm.SelText:=tag;
-  memopostparm.SelAttributes.Color := clblack;
+  tmpRichEdit.SelAttributes.Color := clred;
+  tmpRichEdit.SelText:=tag;
+  tmpRichEdit.SelAttributes.Color := clblack;
 end;
 
 
 procedure TfrmPublishPlan.N4Click(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLEURL,false);
+  insertVariableTag(VARARTICLEURL,false,PopupMenu2.PopupComponent.Name)
 end;
 
 procedure TfrmPublishPlan.menuarticlecontentClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLECONTENT,false);
+  insertVariableTag(VARARTICLECONTENT,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.menuarticlethumbClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLETHUMB,false);
+  insertVariableTag(VARARTICLETHUMB,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.menuarticletitleClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLETITLE,false);
+  insertVariableTag(VARARTICLETITLE,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.menuarticleauthorClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLEAUTHOR,false);
+  insertVariableTag(VARARTICLEAUTHOR,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.menuarticlecategoryClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLECATEGORY,false);
+  insertVariableTag(VARARTICLECATEGORY,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.menuarticletagsClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLETAGS,false);
+  insertVariableTag(VARARTICLETAGS,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.menuarticleexcerptClick(Sender: TObject);
 begin
-  insertVariableTag(VARARTICLEEXCERPT,false);
+  insertVariableTag(VARARTICLEEXCERPT,false,PopupMenu2.PopupComponent.Name);
 end;
 
 procedure TfrmPublishPlan.chkUseFileSourceUrlClick(Sender: TObject);
@@ -545,6 +556,11 @@ begin
     //chkUseFileSourceUrl.Checked:=false;
     edtNewFileHost.Enabled:=false;
   end;
+end;
+
+procedure TfrmPublishPlan.ToolButton2Click(Sender: TObject);
+begin
+  //showmessage(PopupMenu2.PopupComponent.Name);
 end;
 
 end.
