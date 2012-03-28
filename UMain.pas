@@ -455,7 +455,7 @@ var
   frmPublishPlan:TfrmPublishPlan;
 begin
   frmPublishPlan:=TfrmPublishPlan.Create(self);
-  frmPublishPlan.Show();
+  frmPublishPlan.ShowModal();
 end;
 
 initialization 
