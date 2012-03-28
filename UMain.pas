@@ -298,7 +298,7 @@ var
   i:integer;
   s:string;
 begin
-   publishArticle(getArticleById(9),5);
+   showmessage(publishArticle(getArticleById(9),5));
    exit;
    if IsInStr('11112222233333444444','55555'+chr(13)+chr(10)+'4443'+chr(13)+chr(10)) then
      showmessage('ture');

@@ -48,13 +48,133 @@ function GetFileNameFromUrl(aUrl:String):String;
 function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
 procedure logInfo(aInfo:String;aMsgWindow:TRichEdit;aIsError:boolean);
 procedure execCommand(aCommand:pchar;isClose:boolean);
-
+function RunDOS(CommandLine:String; var ExitCode: DWORD): string;
 const
   TVS_CHECKBOXES22 = $00000100;
 
 implementation
 
 uses uXML,uLKJSON;
+
+
+
+
+
+procedure CheckResult(b: Boolean);
+
+begin
+
+  if not b then
+
+    raise Exception.Create(SysErrorMessage(GetLastError));
+
+end;
+
+function RunDOS(CommandLine:String; var ExitCode: DWORD): string;
+
+var
+
+  HRead, HWrite: THandle;
+
+  StartInfo: TStartupInfo;
+
+  ProceInfo: TProcessInformation;
+
+  b: Boolean;
+
+  sa: TSecurityAttributes;
+
+  inS: THandleStream;
+
+  sRet: TStrings;
+
+begin
+
+  Result := '';
+
+  FillChar(sa, sizeof(sa), 0);
+
+  //设置允许继承，否则在NT和2000下无法取得输出结果
+
+  sa.nLength := sizeof(sa);
+
+  sa.bInheritHandle := True;
+
+  sa.lpSecurityDescriptor := nil;
+
+  b := CreatePipe(HRead, HWrite, @sa, 0);
+
+  CheckResult(b);
+
+  FillChar(StartInfo, SizeOf(StartInfo), 0);
+
+  StartInfo.cb := SizeOf(StartInfo);
+
+  StartInfo.wShowWindow := SW_HIDE;
+
+      //使用指定的句柄作为标准输入输出的文件句柄,使用指定的显示方式
+
+  StartInfo.dwFlags := STARTF_USESTDHANDLES + STARTF_USESHOWWINDOW;
+
+  StartInfo.hStdError := HWrite;
+
+  StartInfo.hStdInput := GetStdHandle(STD_INPUT_HANDLE); //HRead;
+
+  StartInfo.hStdOutput := HWrite;
+
+  b := CreateProcess(nil, //lpApplicationName:   PChar
+
+    PChar(CommandLine), //lpCommandLine:   PChar
+
+    nil, //lpProcessAttributes:   PSecurityAttributes
+
+    nil, //lpThreadAttributes:   PSecurityAttributes
+
+    True, //bInheritHandles:   BOOL
+
+    CREATE_NEW_CONSOLE,
+
+    nil,
+
+    nil,
+
+    StartInfo,
+
+    ProceInfo);
+
+  CheckResult(b);
+
+  WaitForSingleObject(ProceInfo.hProcess, INFINITE);
+
+  GetExitCodeProcess(ProceInfo.hProcess, ExitCode);
+
+  inS := THandleStream.Create(HRead);
+
+  if inS.Size > 0 then
+
+  begin
+
+    sRet := TStringList.Create;
+
+    sRet.LoadFromStream(inS);
+
+    Result := sRet.Text;
+
+    sRet.Free;
+
+  end;
+
+  inS.Free;
+
+  CloseHandle(HRead);
+
+  CloseHandle(HWrite);
+
+end;
+
+
+
+
 
 
 procedure execCommand(aCommand:pchar;isClose:boolean);

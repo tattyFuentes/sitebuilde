@@ -2,8 +2,8 @@ unit UPublishPlanSyntax;
 
 interface
 uses
-  UEngine,UArticleObject,UVariableDefine,UPublic,SysUtils,uLkJSON,UHtmlToUbb,Classes,UHttp;
-  procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
+  UEngine,UArticleObject,UVariableDefine,UPublic,SysUtils,uLkJSON,UHtmlToUbb,Classes,UHttp,Dialogs;
+  function publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer):String;
 implementation
 
 function GetArticlePropertyByTag(aTag:String;aArticleObject:TArticleObject):String;
@@ -178,7 +178,7 @@ begin
 end;
 
 //用直接post方式发布文章
-procedure basePublishArticle(aArticleObject:TArticleObject;aPublishPlanId:integer;aStrPublisRule:string);
+function basePublishArticle(aArticleObject:TArticleObject;aPublishPlanId:integer;aStrPublisRule:string):String;
 var
   strPublishUrl:String;
   strPublishParam:String;
@@ -202,16 +202,18 @@ begin
       raise EUserDefineError.create('发布文章('+aArticleObject.title+')校验返回值失败，服务器返回值为('+strResponse+')');
     end;
   end;
+  result:=strResponse;
 end;
 
 //用ie模拟的方式通过脚本发布文章
-procedure webPublishArticle(aArticleObject:TArticleObject;aPublishPlanId:integer;aStrPublisRule:string);
+function webPublishArticle(aArticleObject:TArticleObject;aPublishPlanId:integer;aStrPublisRule:string):String;
 var
   mps:TStringList;
   strWebPostParam:String;
   rubyCommand:String;
   strProperty:String;
   i:integer;
+  exitCode:cardinal;
 begin
   rubyCommand:=getPropertyValue('edtScriptName',aStrPublisRule);
   if(rubyCommand='') then
@@ -232,14 +234,17 @@ begin
       strProperty:=mps.Values[mps.Names[i]];
     rubyCommand:=rubyCommand+' "'+StringReplace(strProperty,'"','\"',[rfReplaceAll])+'"';
   end;
-  execcommand(pchar(rubyCommand),false);
+  //execcommand(pchar(rubyCommand),false);
+  //RunDOS(
+  result:=utf8decode(RunDOS(rubyCommand,exitCode));
 end;
 
-procedure publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer);
+function publishArticle(aArticleObject:TArticleObject;aPublishPlanId:Integer):String;
 var
   strPublisRule:String;
   isWebPost:boolean;
 begin
+  result:='';
   strPublisRule:=getPublishPlanContentById(aPublishPlanId);
   if(strPublisRule='') then
   begin
@@ -247,8 +252,8 @@ begin
   end;
   isWebPost:=getPropertyValue('chkEnableWebPost',strPublisRule)='1';
   if (isWebPost) then
-    webPublishArticle(aArticleObject,aPublishPlanId,strPublisRule)
+    result:=webPublishArticle(aArticleObject,aPublishPlanId,strPublisRule)
   else
-    basePublishArticle(aArticleObject,aPublishPlanId,strPublisRule);
+    result:=basePublishArticle(aArticleObject,aPublishPlanId,strPublisRule);
 end;
 end.
