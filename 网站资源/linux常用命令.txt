@@ -9,7 +9,6 @@ rpm -q 软件名称
 搜索某个文件
 locate 文件名称（每天晚上建立索引所以不能反映最近的文件变化）
 
-
 查看tcp/ip 连接情况
 netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
 
@@ -35,7 +34,15 @@ renice (-19-20之间的1谦让值越高执行优先级越低) 进程id       设置进程优先级
 
 find /home -size +1M -print0 | xargs -0 ls -l  搜索 /home目录下大小超过1M的文件以 ls 命令的长格式输出（文件名可以包含空白）
 
+find /home -name squid  搜索 /home目录下 squid文件
+
 mount /dev/hda4 /users 挂接文件系统
+
+mount -o username=用户名 //服务器IP/共享目录    /挂载点
+
+mount -o remount -w /  重新挂载目录以可读写方式（需要root口令）
+
+修改 /etc/fstab文件可以自动挂载系统（修改错误，用livecd启动，然后/mnt/disc目录下找原先硬盘，重新以读写方式挂载，修改fstab文件）
 
 unmount -l /users (缓慢卸载当前有使用的文件系统，不加参数 -l不能卸载有活动的文件目录) 
 
@@ -63,12 +70,38 @@ smbclient -L  服务器IP/主机名            //查看samba服务器共享目录
 
 smbclient -U 用户名   //服务器IP/共享目录       //以仿ftp客户端方式登录访问samba服务器中的共享目录
 
-mount -o username=用户名 //服务器IP/共享目录    /挂载点
-
 chkconfig --list 列表所有安装的服务
 
 chkconfig 命令名(/sbin/nginx) on 安装服务
 
-rpm -qa | grep nginx 可以浏览是否安装了 nginx
+fdisk -l 查看分区和磁盘情况  fdisk /dev/sda 可以管理磁盘分区（创建分区需要重新启动系统才能生效，重新启动后安装文件系统）
 
-rpm -ql nginx  浏览nginx 详细信息
+df -lk 查看文件系统使用情况
+
+ulimit -a 查看所有系统设置
+
+设置所有用户能打开的文件总数 vi /etc/security/limits.conf, 增加一行 * - nofile 45000(不能大于file-max cat /proc/sys/fs/file-max   该值可以由命令 echo 65535 > /proc/sys/fs/file-max修改)
+
+uname -a 查看linux 内核版本、
+
+mke2fs -j /dev/sda4  在分区sda4上创建ext3文件系统
+
+yum groupinstall 'GNOME Desktop Environment' -y 安装修复 GNOME桌面
+
+修改 /etc/inittab 可以设置启动到命令行模式还是windows模式
+
+修改 /etc/security/limits.conf 在最后加上 ulimit -n 45000可以设置同时socket连接数量
+
+修改 /etc/profile 的最后面添加ulimit -n 5000也可以达到限制 socket连接数量
+
+查看进程能打开的最大连接数 cat /proc/28952/limits |grep "Max open files" 
+
+cat /etc/redhat-release 查看centos 版本
+
+passwd 修改root密码
+
+system-config-network命令配置网络
+
+free -m 以M查看内存使用情况  -buffers/cache 为实在用掉的内存 +buffers/cache 为真正可以用的内存
+
+iostat -x  -d -k 1 10
