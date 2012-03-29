@@ -12,21 +12,30 @@ function DownLoadFile(aUrl:string;aDestDir:String;aRefer:String):String;
 function PostStringList(aUrl:String;aMps:TStringList;aCookies:String):String;
 implementation
 //用get方式获得页面内容
+
+//EIdConnClosedGracefully"tools "--> "debugger   options "的标签Language   exceptions,点击add   输入: 
+//eidconnclosedgracefully   然后点击按钮 "ok "就可以了! 
+
+
 function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
 var
   idHttp:TIdHTTP;
   stream:TStringStream;
 begin
-  idHttp:=TIdHTTP.Create;
-  if aIsZip then
-    idHttp.Request.AcceptEncoding:='gzip';
-  idHttp.AuthRetries:=2;
-  idHttp.HandleRedirects:=true;
-  idHttp.Request.UserAgent:='Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; InfoPath.2; CIBA; .NET CLR 2.0.50727; AskTbBAV5/5.8.0.12304)';
-  result:=idhttp.Get(aUrl);
-  if aEncode='UTF8' then
-    result:=UTF8Decode(result);
-  idHttp.Disconnect;
+  //try
+    idHttp:=TIdHTTP.Create;
+    if aIsZip then
+      idHttp.Request.AcceptEncoding:='gzip';
+    idHttp.RedirectMaximum:=2;
+    idHttp.HandleRedirects:=true;
+    idHttp.Request.UserAgent:='Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; InfoPath.2; CIBA; .NET CLR 2.0.50727; AskTbBAV5/5.8.0.12304)';
+    result:=idhttp.Get(aUrl);
+    if aEncode='UTF8' then
+      result:=UTF8Decode(result);
+    idHttp.Disconnect;
+  //except
+  
+  //end;
 end;
 
 function DownLoadFile(aUrl:string;aDestDir:String;aRefer:String):String;
@@ -42,7 +51,7 @@ begin
       ForceDirectories(aDestDir);
     fileName:=GetUniqeFileNameOfFolder(aDestDir,fileName);
     fileStream:=TFileStream.Create(aDestDir+fileName,fmcreate);
-    idHttp.AuthRetries:=2;
+    idHttp.RedirectMaximum:=2;
     idHttp.HandleRedirects:=true;
     idHttp.Request.Referer:=aRefer;
     //idHttp.

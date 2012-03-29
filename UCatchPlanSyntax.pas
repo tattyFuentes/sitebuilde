@@ -335,7 +335,10 @@ begin
     end;
     objectCaption:=JsonObject.Field['caption'].Value;
     objectValue:=JsonObject.Field['value'].Value;
-    ParseOneCatchItems(aArticleObject,objectValue,objectCaption,aRespones);
+    try
+      ParseOneCatchItems(aArticleObject,objectValue,objectCaption,aRespones);
+    except
+    end;
   end;
 end;
 
