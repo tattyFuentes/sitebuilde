@@ -408,7 +408,15 @@ var
   i:integer;
   htmlDoc:IHTMLDocument3;
   contentArea:HTMLTextAreaElement;
+
+
 begin
+  s:=readfile('d:\b.txt');
+  sss:=RegexSearchString(s,'<h2>爱情故事<\/h2>(.*)<\/ul>');
+  writefile('d:\c.txt',sss.Strings[0]);
+  RegexSearchString(sss[0],'a href=''(.*)''');
+
+  exit;
   execCommand(pchar('ruby rubyscript\bababian.rb "'+utf8encode('hel中国日文lo'+chr(13)+chr(10)+'a\"aaa\""')+' "中国日文"'),true);
   writefile('d:\a.rb',utf8encode('我们是中国人'));
   exit;

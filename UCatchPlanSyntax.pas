@@ -4,10 +4,12 @@ interface
 
 uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes,uLkJSON,UEngine;
 Type TArticleList=Array of TArticleObject;
+const ERRORSPLIT='----------------------------------------------------------------'+chr(13)+chr(10);
 
 function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
-procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
+//返回执行结果如果成功返回1 ，如果出现错误返回 错误消息
+function ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject):String;
 function GetFileSavePath(aBaseConfig:TPlanObject):String;
 implementation
 
@@ -84,7 +86,7 @@ begin
       if(tagStrings<>nil) then
       begin
         aScope:=ReplaceRegexChar(aScope);
-        aScope:=RegexReplaceString(aScope,'<%.*?%>','(.*?)');
+        aScope:=RegexReplaceString(aScope,'<%.+?%>','(.+?)');
         searchStrings:=RegexSearchString(aResponseStr,aScope);
         if(searchStrings=nil) then
         begin
@@ -102,7 +104,7 @@ begin
           result:=searchStrings.Strings[tagStrings.IndexOf(tagName)];
         end;
       end;
-    end; 
+    end;
   finally
     if(searchStrings<>nil) then
       searchStrings.Free;
@@ -217,8 +219,10 @@ var
 begin
   //searchStrings.
   sResponse:=RequestUrl(aBaseConfig,aUrl);
+  writefile('d:\b.txt',sResponse);
   listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   listContent:=getScopeContent(sResponse,listScope,VARLISTCONTENT,'列表规则中列表区域设置');
+  writefile('d:\a.txt',listContent);
   result:=getArticleList(listContent,aListConfig);
 end;
 
@@ -315,13 +319,14 @@ begin
 end;
 
 
-//根据采集项目解析文章页属性
-procedure ParseCatchItems(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aRespones:String);
+//根据采集项目解析文章页属性,采集时可能某个item没有不影响其他的采集
+function ParseCatchItems(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aRespones:String):String;
 var
   JsonRoot,JsonObject,JsonRowObject:TlkJSONobject;
   i:integer;
   objectValue,objectName,objectCaption:String;
 begin
+  result:='1';
   JsonRoot:=TlkJSON.ParseText(UTF8Encode(aCatchItem.ItemProperty)) as TlkJSONobject;
   JsonRoot:=(JsonRoot.Field['rows'] as TlkJSONobject);
   for i:=0 to JsonRoot.Count-1 do
@@ -338,6 +343,13 @@ begin
     try
       ParseOneCatchItems(aArticleObject,objectValue,objectCaption,aRespones);
     except
+      on e:Exception do
+      begin
+        if result='1' then
+          result:=e.Message
+        else
+          result:=result+ERRORSPLIT+e.Message;
+      end
     end;
   end;
 end;
@@ -434,12 +446,13 @@ begin
   result:=aSource;
 end;
 
-//数据整理项
-procedure ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObject);
+//数据整理项,其中一项出现错误继续执行并返回错误消息
+function ParseArrangeItems(aArticleObject:TArticleObject;aArrangeItem:TPlanObject):String;
 var
   sTemp:string;
   sCheatCreate:String;
 begin
+  result:='1';
   //标题整理规则
   sTemp:=aArrangeItem.getProperty('CatchPlanArrangeTitle','value');
   if(sTemp<>'') then
@@ -511,7 +524,7 @@ begin
     if(tagStrings<>nil) then
     begin
       contentSyn:=ReplaceRegexChar(contentSyn);
-      contentSyn:=RegexReplaceString(contentSyn,'<%.*?%>','(.*?)');
+      contentSyn:=RegexReplaceString(contentSyn,'<%.+%>','(.+)');
       searchStrings:=RegexSearchString(sResponse,contentSyn);
       if(searchStrings=nil) then
       begin
@@ -777,11 +790,12 @@ end;
 
 
 //处理文件下载（规则可以多行）
-procedure ParseDownloadFiles(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aResponse:String;aBaseConfig:TPlanObject);
+function ParseDownloadFiles(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aResponse:String;aBaseConfig:TPlanObject):String;
 var
   sExpression,sTemp:String;
   intPos:integer;
 begin
+  result:='1';
   //sList:=nil;
   sExpression:=aCatchItem.getProperty('CatchPlanItemDownloadFile','value');
   if(sExpression='') then
@@ -798,7 +812,17 @@ begin
     end else begin
       if(sExpression<>'') then
       begin
-        ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'downloadfiles');
+        try
+          ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'downloadfiles');
+        except
+        on e:Exception do
+          begin
+            if result='1' then
+              result:=e.Message
+            else
+              result:=result+ERRORSPLIT+e.Message;
+            end
+          end;
       end;
       exit;
     end;
@@ -808,11 +832,12 @@ end;
 
 
 //处理文章缩略图（规则可以多行）
-procedure ParseThumb(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aResponse:String;aBaseConfig:TPlanObject);
+function ParseThumb(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aResponse:String;aBaseConfig:TPlanObject):String;
 var
   sExpression,sTemp:String;
   intPos:integer;
 begin
+  result:='1';
   //sList:=nil;
   sExpression:=aCatchItem.getProperty('CatchPlanItemThumb','value');
   if(sExpression='') then
@@ -830,7 +855,17 @@ begin
     end else begin
       if(sExpression<>'') then
       begin
-        ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'thumbfiles');
+        try
+          ParseOneDownloadFiles(aArticleObject,sExpression,aResponse,aBaseConfig,'thumbfiles');
+        except
+          on e:Exception do
+          begin
+            if result='1' then
+              result:=e.Message
+            else
+              result:=result+ERRORSPLIT+e.Message;
+          end;
+        end;
       end;
       exit;
     end;
@@ -839,8 +874,8 @@ end;
 
 
 
-//处理正文内容下载
-procedure ParseContentDownload(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject);
+//处理正文内容下载,处理多个文件如果有错误继续下载，但是错误消息通过函数返回
+function ParseContentDownload(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject):String;
 var
   sHtmlName,sFileExtension,sExpression:String;
   sDownFileName:String;
@@ -849,6 +884,7 @@ var
   sDownUrl:String;
   sAllowFileUrl,sBlockFileUrl:String;
 begin
+  result:='1';
   sList:=nil;
   if(aBaseConfig.getProperty('CatchPlanPageEnableDownFile','value')='True') then
   begin
@@ -865,24 +901,34 @@ begin
         sList:=RegexSearchString(aArticleObject.content,sExpression);
         for i:=0 to sList.Count div 2-1 do
         begin
-          sDownUrl:=sList.Strings[i*2]+sList.Strings[i*2+1];
-          if(sDownUrl[1]='"') or (sDownUrl[1]='''') then
-          begin
-            sDownUrl:=copy(sDownUrl,2,length(sDownUrl));
-            sDownUrl:=GetFileUrlBySourceUrl(aArticleObject.url,sDownUrl);
-            if(sAllowFileUrl<>'') then
+          try
+            sDownUrl:=sList.Strings[i*2]+sList.Strings[i*2+1];
+            if(sDownUrl[1]='"') or (sDownUrl[1]='''') then
             begin
-              if(not isInstr(sDownUrl,sAllowFileUrl)) then
-                continue;
-            end;
+              sDownUrl:=copy(sDownUrl,2,length(sDownUrl));
+              sDownUrl:=GetFileUrlBySourceUrl(aArticleObject.url,sDownUrl);
+              if(sAllowFileUrl<>'') then
+              begin
+                if(not isInstr(sDownUrl,sAllowFileUrl)) then
+                  continue;
+              end;
 
-            if(sBlockFileUrl<>'') then
-            begin
-              if(isInstr(sDownUrl,sBlockFileUrl)) then
-                continue;
+              if(sBlockFileUrl<>'') then
+              begin
+                if(isInstr(sDownUrl,sBlockFileUrl)) then
+                  continue;
+              end;
+              sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\contentfiles\',aArticleObject.url);
+              aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
             end;
-            sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\contentfiles\',aArticleObject.url);
-            aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
+          except
+            on e:Exception do
+            begin
+             if result='1' then
+               result:=e.Message
+             else
+               result:=result+ERRORSPLIT+e.Message;
+            end
           end;
         end;
       finally
@@ -919,34 +965,59 @@ begin
 end;
 
 //根据文章地址填充文章对象属性
-procedure ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject);
+function ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject):String;
 var
   articleUrl:String;
   sResponse:String;
+  sError:String;
 begin
+  result:='1';
   //处理限制条件前后都要限制，前面校验标题后者校验内容等项目
   ParseLimitItems(aArticleObject,aLimit);  
   articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
   articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
   aArticleObject.url:=articleUrl;
   sResponse:=RequestUrl(aBaseConfig,articleUrl);
-  writefile('d:\a.txt',sResponse);
-  //解析采集项目
-  ParseCatchItems(aArticleObject,aCatchItem,sResponse);
-  //处理限制条件
+  //writefile('d:\a.txt',sResponse);
+  //解析采集项目，出现错误不退出继续执行并返回错误结果
+  sError:=ParseCatchItems(aArticleObject,aCatchItem,sResponse);
+  if(sError<>'1') then
+    result:=sError;
+  //处理限制条件 ,出现错误直接退出表示一项不符合就不采集
   ParseLimitItems(aArticleObject,aLimit);
   //处理正文分页
   ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
-  //数据整理
+  //数据整理，出现错误直接退出
   ParseArrangeItems(aArticleObject,aArrange);
   //生成数据库文章对象
   createArticle(aArticleObject);
-  //处理启用正文内容下载
-  ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
+  //处理启用正文内容下载，出现错误不退出继续执行并返回错误结果
+  sError:=ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
+  if(sError<>'1') then
+  begin
+    if(result='1') then
+      result:=sError
+    else
+      result:=result+ERRORSPLIT+sError;
+  end;
   //处理文件下载
-  ParseDownloadFiles(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+  sError:=ParseDownloadFiles(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+  if(sError<>'1') then
+  begin
+    if(result='1') then
+      result:=sError
+    else
+      result:=result+ERRORSPLIT+sError;
+  end;
   //处理缩略图
-  ParseThumb(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+  sError:=ParseThumb(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+  if(sError<>'1') then
+  begin
+    if(result='1') then
+      result:=sError
+    else
+      result:=result+ERRORSPLIT+sError;
+  end;
   //更新所有属性后修改数据库
   updateArticle(aArticleObject);
 end;

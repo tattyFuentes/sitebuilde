@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 190
-  Top = 114
+  Left = 189
+  Top = 112
   Width = 1280
   Height = 733
   Caption = '9'
@@ -193,7 +193,7 @@ object frmMain: TfrmMain
     Left = 1048
     Top = 168
     Width = 121
-    Height = 33
+    Height = 41
     Caption = 'Button6'
     TabOrder = 9
     OnClick = Button6Click
