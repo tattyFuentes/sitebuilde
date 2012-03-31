@@ -26,6 +26,7 @@ type
     { Public declarations }
     parseType:integer;   //分析类型1为列表分析，2为文章分析
     planView: TPlanView; //规则
+    catchPlanId:integer;
   end;
 var
   frmTestRule: TfrmTestRule;
@@ -70,6 +71,9 @@ begin
       RichEdit2.Lines.Add(list[i].id);
 
       articleObject:= list[i];
+      if(catchPlanId<0) then
+        catchPlanId:=0;
+      articleObject.catchPlanId:=inttostr(catchPlanId);
       ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
 
 

@@ -657,6 +657,7 @@ var
   frmTestRule:TfrmTestRule;
 begin
   frmTestRule:=TfrmTestRule.Create(self);
+  frmTestRule.catchPlanId:=strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data);
   frmTestRule.parseType:=1;
   frmTestRule.planView:=PlanView;
   frmTestRule.ShowModal;
