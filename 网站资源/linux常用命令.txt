@@ -1,3 +1,29 @@
+统计tcp连接数 netstat -n |awk '/^tcp/ {++S[$NF]} END {for (a in S) print a,S[a]}'
+
+scp rsync 备份工具
+
+yum install sysstat 可以用很多命令查看系统状况
+
+iostat -d -x -k 1 10  代表连续查看10次磁盘状态 每次间隔 1秒
+
+iostat -x -k 2 间隔两秒时刻查看状态
+
+free -m 以M查看内存使用情况  -buffers/cache 为实在用掉的内存 +buffers/cache 为真正可以用的内存
+
+du -sh /root 查看 root 目录的大小
+
+du /usr/install -cks * | sort -rn | head -n 10  找出系统中占用空间最多的10个文件和目录
+
+top 命令更好的监控进程信息 出来结果后 按shift+M 可以查看消耗内存最大的进程, 按 o 可以选择字段排序
+
+ps -A | sort -r  -k 4 列表所有进程并按照第四列进程名称降序排列
+
+lsb_release -a  查看当前linux 发型版本
+
+last 命令查看登录者的登录记录
+
+lastlog 显示系统所有用户最后登录时间
+
 查看连机文档 
 man 加具体命令
 man -k 内容 查找命令概要行中的关键字
@@ -7,10 +33,15 @@ which gcc 或 whereis gcc(有些系统不显示用户没有权限执行的文件)
 rpm -q 软件名称
 
 搜索某个文件
+
 locate 文件名称（每天晚上建立索引所以不能反映最近的文件变化）
 
 查看tcp/ip 连接情况
 netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+
+lsof -i:22可以查看某个端口被哪个程序占用
+
+tail -f /var/log/secure可以查看日志文件的动态内容，如果有新内容可以立即刷新
 
 安装软件
 yum 
@@ -22,7 +53,9 @@ killall -TERM xinetd
 
 ps aux 列表进程信息  ps lax 包括父进程    ps -fp "444 555 666" 查看多个进程信息
 
-top 命令更好的监控进程信息 root用户加 q选项能监控把系统拖垮的进程
+lsmod 查看所有载入的模块
+
+lspci 查看pci设置包括（显卡网卡等信息）
 
 /proc目录下记录系统状态各种有意义的信息，用ls-l有的文件看不到
 
@@ -102,6 +135,5 @@ passwd 修改root密码
 
 system-config-network命令配置网络
 
-free -m 以M查看内存使用情况  -buffers/cache 为实在用掉的内存 +buffers/cache 为真正可以用的内存
 
-iostat -x  -d -k 1 10
+
