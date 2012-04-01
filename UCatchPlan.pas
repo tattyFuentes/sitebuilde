@@ -700,7 +700,7 @@ begin
         logInfo('标题:'+list[i].title,RichEdit1,false);
         articleObject:= list[i];
         articleObject.catchPlanId:=aPlanId;
-        ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
+        ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanAtriclePage1,mPlanCatchItem1);
         RichEdit1.Lines.Add('成功分析文章'+inttostr(i));
       except
          on e:EUserDefineError do

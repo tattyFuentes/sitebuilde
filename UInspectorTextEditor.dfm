@@ -192,6 +192,18 @@ object FrmInspectorTextEditor: TFrmInspectorTextEditor
       Caption = #19979#36733#25991#20214#20013#38388#39029#20998#21106#31526
       OnClick = N3Click
     end
+    object N4: TMenuItem
+      Caption = #27491#25991#20998#39029#26631#35760
+      OnClick = N4Click
+    end
+    object N5: TMenuItem
+      Caption = #27491#25991#20998#39029#22320#22336#26631#24535
+      OnClick = N5Click
+    end
+    object N6: TMenuItem
+      Caption = #27491#25991#20998#39029#37319#38598#21306#22495
+      OnClick = N6Click
+    end
   end
   object PopupMenu2: TPopupMenu
     Left = 384

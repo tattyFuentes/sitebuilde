@@ -583,7 +583,11 @@ begin
     begin
       strPageUrl:=StringReplace(strUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
       strPageUrl:=StringReplace(strPageUrl,VARARTICLECONTENTPAGENUMBER,inttostr(tmpPageNumber),[rfReplaceAll]);
-      sResponse:=RequestUrl(aBaseConfig,strPageUrl);
+      try
+        sResponse:=RequestUrl(aBaseConfig,strPageUrl);
+      except
+        exit;
+      end;
       if(pos(strValidString,sResponse)<0) then
       begin
         break;
@@ -886,7 +890,7 @@ var
 begin
   result:='1';
   sList:=nil;
-  if(aBaseConfig.getProperty('CatchPlanPageEnableDownFile','value')='True') then
+  if(aArticleConfig.getProperty('CatchPlanPageEnableDownFile','value')='True') then
   begin
     sHtmlName:=aArticleConfig.getProperty('CatchPlanPageHtmlName','value');
     sFileExtension:=aArticleConfig.getProperty('CatchPlanPageFileExtension','value');

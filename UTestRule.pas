@@ -74,7 +74,7 @@ begin
       if(catchPlanId<0) then
         catchPlanId:=0;
       articleObject.catchPlanId:=inttostr(catchPlanId);
-      ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanArrange1,mPlanCatchItem1);
+      ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanAtriclePage1,mPlanCatchItem1);
 
 
       RichEdit2.Lines.Add(list[i].tags);

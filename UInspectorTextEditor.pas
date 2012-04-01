@@ -34,6 +34,9 @@ type
     btntools: TButton;
     N2: TMenuItem;
     N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -56,6 +59,9 @@ type
     procedure btntoolsClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure N5Click(Sender: TObject);
+    procedure N6Click(Sender: TObject);
   private
     { Private declarations }
     procedure insertVariableTag(tag:String;bOnlyOne:boolean);
@@ -211,6 +217,21 @@ end;
 procedure TFrmInspectorTextEditor.N3Click(Sender: TObject);
 begin
   insertVariableTag(VARARTICLEDOWNLOADFILEMIDDLEPAGESPLIT,false);
+end;
+
+procedure TFrmInspectorTextEditor.N4Click(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLECONTENTPAGENUMBER,false);
+end;
+
+procedure TFrmInspectorTextEditor.N5Click(Sender: TObject);
+begin
+  insertVariableTag(VARARTICLECONTENTPAGENUMBERID,false);
+end;
+
+procedure TFrmInspectorTextEditor.N6Click(Sender: TObject);
+begin
+   insertVariableTag(VARARTICLECONTENTPAGESCOPE,false);
 end;
 
 end.
