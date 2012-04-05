@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %} 
+{% if changetitle %}
+网络书吧|txt全本小说免费下载|{{ book.category.name }}-最新全本小说txt-{{ book.name }} 
+{% else %}
+{{ config.site_title|escape }} -- {{ book.name }} 
+{% endif %}
+
+{% endblock %}
+{% block content %}
+<DIV class="frame" id="txt99"><DIV class="main_down"><DIV id="path">您现在的位置：<A href="/">网络读书吧</A> → <A href="/">电子书下载</A> → <A href="/books/{{ book.category.cid }}">{{ book.category.name }}</A> → {{ book.name }}</DIV><DIV style="CLEAR: both"></DIV><DIV class="pageMainArea"><DIV id="downInfoArea"><H1>{{ book.name }}</H1>
+<DIV class="downInfoRowR">
+<script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 300x250, 创建于 09-9-11 */
+google_ad_slot = "8043522691";
+google_ad_width = 300;
+google_ad_height = 250;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</DIV>
+
+
+
+<DIV class="downInfoRowL"><LI><B>运行环境：</B>电脑/手机/mp3/mp4/pda/psp </LI><LI><B>小说语言：</B>{{ book.language }} </LI><LI><B>小说类型：</B>{{ book.kindof }} </LI><LI><B>授权方式：</B>{{ book.privacy }} <A href="http://www.txt99.com/txt/girl/Soft_050_1.htm"></A> </LI><LI><B>小说大小：</B>{{ book.size }} </LI><LI><B>推荐星级：</B><IMG src="{{ theme.dir }}/image/4star.gif" /> </LI><LI><B>更新时间：</B>
+{{ book.last_modify_date|date:"Y-m-d" }}
+
+</LI><LI><B>联系方式：</B>{{ book.author }} </LI>
+<LI><B>封面图片：</B><U><I>本小说暂无封面</I></U> </LI>
+<LI><B>推荐信息：</B><a href="/newbooks/page/1">txt小说下载</a></LI>
+<LI><B>快捷下载：</B><A href="#fast_down"><STRONG style="COLOR: #6fc10a"><U>不看简介直接去下载</U></STRONG></A> </LI></DIV></DIV><DIV style="CLEAR: both"></DIV></DIV><DIV class="pageMainArea"><DIV class="mainstory" id="intro_top">
+
+
+<!--DIV class="story" id="introtop" style="PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 1px; PADDING-TOP: 1px"><SCRIPT language="javascript" src="/js/show/middle.js"> </SCRIPT><IFRAME marginWidth="0" marginHeight="0" src="/js/show/html_7.htm" frameBorder="0" width="612" scrolling="no" height="60" allowTransparency></IFRAME></DIV-->
+
+
+
+</DIV><DIV class="mainstory"><H2><SPAN class="boxhead col-icon1">txt小说简介</SPAN></H2><DIV class="story"><DIV id="mainSoftIntro"><SPAN class="7824"></SPAN>　{{ book.description }}</DIV></DIV></DIV><DIV class="mainstory"><H2><SPAN class="boxhead col-icon7">txt小说下载地址</SPAN><SPAN class="headLinks"><SPAN id="textIntro"><A name="fast_down">下载后解压缩就得到txt小说文件啦^_^ </A></SPAN></SPAN></H2><DIV class="story"><DIV id="downAddress"><UL>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 468x15, 创建于 09-9-11 */
+google_ad_slot = "3534566395";
+google_ad_width = 468;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+
+<A href="/down/{{ book.bid }}" target="_blank"><IMG alt="点击此处立即下载" src="{{ theme.dir }}/image/download.gif" border="0" /></A> 
+
+</UL></DIV><DIV></DIV></DIV></DIV><DIV class="mainstory"><H2><SPAN class="boxhead  col-icon10">下载说明</SPAN><SPAN class="headLinks"><SPAN id="downreadme"> </SPAN></SPAN></H2><DIV class="story" style="PADDING-RIGHT: 3px; PADDING-LEFT: 3px; PADDING-BOTTOM: 3px; PADDING-TOP: 3px">☆ 为了达到最快的下载速度，推荐使用<A href="http://www.baidu.com/baidu?tn=515120_pg&word=迅雷" target="_blank">迅雷</A>或<A href="http://www.baidu.com/baidu?tn=515120_pg&word=网际快车" target="_blank">网际快车</A>下载本站txt小说。 <BR />☆ 请一定升级到最新版<A href="http://www.baidu.com/baidu?tn=515120_pg&word=WinRAR3.70" target="_blank">WinRAR3.70</A>才能正常解压本站提供的txt电子书! <BR />☆ 如果您发现下载链接错误，请点击<A onclick="window.open('/txt/error.asp?softid=7824','error','width=200,height=100,resizable=no,scrollbars=no,status=no,toolbar=no,menubar=no,location=no')" href="javascript:"><FONT color="#ff0072">报告错误</FONT></A>谢谢！ <BR />☆ 站内提供的所有txt小说均是由网上搜集，若侵犯了你的版权利益，<A href="mailto:58469741@qq.com"><FONT color="#ff0000">敬请来信</FONT></A>通知我们!<BR /></DIV></DIV></DIV>
+</DIV>
+
+<DIV class="sideBar">
+<DIV class="sideBox istxt99"><H2><A href="/books/{{ book.category.cid }}/page/1">{{ book.category.name }}</A>热门小说</H2></DIV>
+<DIV class="sideArticle">
+{% for book in hotbooks %}
+<LI>·<A title="{{ book.name }}" href="/book/{{ book.bid }}" target="_blank">{{ book.name }}</A> </LI>
+{% endfor %}
+</DIV>
+
+
+<div>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 下载页广告336x280, 创建于 09-12-5 */
+google_ad_slot = "5394058925";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+<!– google_ad_section_start –>
+移民美国、移民加拿大成为了时尚。http://www.welltrend.com.cn/为了帮助有需要的朋友，特准备推出移民美国资料站。提供以下类别服务： 1． 美国亲属移民 (IR1、F1、F2A、F2B、F3、F4) 2． 美国公民配偶移民 (CR1) 3． 美国公民长期居住中国，申请中国配偶移民 (CR1) 4． 美国未婚夫妻签证 (K1) 5． 美国杰出人才职业移民，包括跨国公司管理人员调派美国转绿卡申请 (EB-1) 6． 美国职业移民(您有雇主帮您申请劳工证书 (E3) 7． 美国投资移民 (EB-5) 8． 其他非移民签证 (B1/B2, H1, L1,F1)
+<!– google_ad_section_end –>
+</DIV>
+
+
+</DIV></DIV></DIV> </DIV>
+ {% endblock %}
+ {% block friendlinks %}
+ {% endblock %}
+ {% block footer %}
+ {% endblock %}

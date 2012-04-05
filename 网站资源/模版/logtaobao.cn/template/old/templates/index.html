@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="frame" id="txt99">
+    <div class="main">
+      <div id="zenith">
+        <div class="tLeft">
+    <script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 468x15, 创建于 09-9-11 */
+google_ad_slot = "3534566395";
+google_ad_width = 468;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+        </div>
+        <div class="tRight">本站共有电子书数<font color="red"><b>{{ totalbook }}</b></font>部,今日新加txt电子书<font color="red"><b>6</b></font>部。</div>
+      </div>
+      <div id="rate">
+        <div id="mores"></div>
+        <dl id="tab" class="tab">
+          <dt id="TabTitle" class="tabOn">- <a href="/newbooks/page/1">最新txt小说</a> -</dt>
+          <dd id="Tabs" style="display:">		  
+		  {% for book in newbooks %}
+			<li>·[<a href="/books/{{ book.category.cid }}/page/1">{{ book.category.name }}</a>]<a href="/book/{{ book.bid }}" target="_blank" title="{{ book.name }}">{{ book.name }}</a><span class="globalDate"{{ book.last_modify_date }}</span></li>
+		  {% endfor %}		  
+          </dd>
+        </dl>
+      </div>
+    </div>
+
+	 <div class="sideBar">
+      <div class="sideBox istxt99">
+        <h2><a href="http://www.webshuba.com">本日txt全本小说下载排行</a></h2>
+       
+        <div class="sideArticle">		
+		{% for hotbook in hotbooks %}	  
+		<li><span>{{ forloop.counter }}</span><a href="http://www.webshuba.com/book/{{ hotbook.bid }}" target="_blank" title="{{ hotbook.name }}">
+		{{ hotbook.name|truncatewords:"1" }}</a></li>
+    	{% endfor %}	
+        </div>
+      </div>             
+      <span style="clear:both;"></span> </div>
+
+   
+  
+  
+  <div class="frame" id="txt99">
+    <div class="main">
+      
+	  
+	  
+		
+	  {% for pageitem in pageitems %}	  
+	  <div class="isLove iList">
+        
+		<div class="iLeft">
+          <h2><span><a href="/books/{{ pageitem.leftitem.cat.cid }}/page/1" title="{{ pageitem.leftitem.cat.name }}下载" target="_blank">更多</a></span><a href="/books/{{ pageitem.leftitem.cat.cid }}/page/1">{{ pageitem.leftitem.cat.name }}</a></h2>
+          <div class="iArticle2">
+		  {% for book in pageitem.leftitem.books %}
+		  <li>·<a href="/book/{{ book.bid }}" target="_blank" title="{{ book.name }}">{{ book.name }}</a></li>
+		 {% endfor %}	
+        </div>
+      </div>
+
+       {% if pageitem.rightitem %}
+		<div class="iRight">
+          <h2><span><a href="/books/{{ pageitem.rightitem.cat.cid }}/page/1" title="{{ pageitem.rightitem.cat.name }}下载" target="_blank">更多</a></span><a href="/books/{{ pageitem.rightitem.cat.cid }}/page/1">{{ pageitem.rightitem.cat.name }}</a></h2>
+          <div class="iArticle2">
+		  {% for book in pageitem.rightitem.books %}
+		  <li>·<a href="/book/{{ book.bid }}" target="_blank" title="{{ book.name }}">{{ book.name }}</a></li>
+		 {% endfor %}	
+          </div>
+        </div>
+	    {% endif %}
+
+      </div>
+
+  {% endfor %}
+
+    </div>
+    <div class="sideBar">
+      <div id="focus">
+        <div>
+          <script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 336x280, 创建于 09-9-11 */
+google_ad_slot = "5725150095";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+        </div>
+      </div>
+
+     
+
+
+    </div>
+  </div>
+    </div>
+  {% endblock %}

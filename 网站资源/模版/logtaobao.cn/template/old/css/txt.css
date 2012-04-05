@@ -1,0 +1,204 @@
+BODY {
+	BACKGROUND: url(bg/background.gif) #fff repeat-x left top
+}
+#txt99 {
+	BACKGROUND: url(WebsiteBg.gif) #f8faf5 repeat-y 634px 50%
+}
+#masthead {
+	BACKGROUND: #fff
+}
+.main H1 {
+	COLOR: #ff3300
+}
+.main H1 A:link {
+	COLOR: #ff3300
+}
+.main H1 A:visited {
+	COLOR: #ff3300
+}
+#articleInfo {
+	BORDER-TOP: #acd4e1 3px solid
+}
+#articleInfo2 {
+	BORDER-TOP: #acd4e1 3px solid
+}
+#articleInfo A {
+	COLOR: #888
+}
+.subBox {
+	BACKGROUND: url(loveSubBox.gif) repeat-x 50% top
+}
+#catalog .listbg A:link {
+	COLOR: #008606
+}
+#catalog .listbg A:visited {
+	COLOR: #008606
+}
+#catalog .listbg2 A:link {
+	COLOR: #008606
+}
+#catalog .listbg2 A:visited {
+	COLOR: #008606
+}
+#catalog .listbg A:link FONT {
+	COLOR: #008606
+}
+#catalog .listbg A:visited FONT {
+	COLOR: #008606
+}
+#catalog .listbg2 A:link FONT {
+	COLOR: #008606
+}
+#catalog .listbg2 A:visited FONT {
+	COLOR: #008606
+}
+#catalog .S_headline1 {
+	PADDING-RIGHT: 6px; PADDING-LEFT: 6px; FONT-SIZE: 16px; PADDING-BOTTOM: 0px; COLOR: #009900; PADDING-TOP: 0px
+}
+#catalog .S_headline2 {
+	PADDING-RIGHT: 6px; PADDING-LEFT: 6px; FONT-SIZE: 16px; PADDING-BOTTOM: 0px; COLOR: #cc0000; PADDING-TOP: 0px
+}
+DIV.pageMainArea {
+	CLEAR: both; MARGIN: auto; WIDTH: 629px
+}
+#downInfoArea {
+	CLEAR: both; BORDER-RIGHT: #e1e6d8 3px double; BORDER-TOP: #e1e6d8 3px double; MARGIN-TOP: 3px; FLOAT: left; OVERFLOW: hidden; BORDER-LEFT: #e1e6d8 3px double; WIDTH: 623px; COLOR: #000; BORDER-BOTTOM: #e1e6d8 3px double
+}
+#downInfoArea P {
+	DISPLAY: block; MARGIN: 0px
+}
+#downInfoArea H1 {
+	DISPLAY: block; FONT-WEIGHT: bold; FONT-SIZE: 14px; BACKGROUND: #e7e7e5; MARGIN: 1px 1px 0px; COLOR: #1fabd3; LINE-HEIGHT: 26px; HEIGHT: 26px; TEXT-ALIGN: center
+}
+#downInfoArea .downInfoRowR {
+	DISPLAY: block; BACKGROUND: #fff; FLOAT: left; MARGIN: 3px 3px 0px; LINE-HEIGHT: 2px; TEXT-ALIGN: center
+}
+#downInfoArea .downInfoRowL {
+	PADDING-RIGHT: 0px; DISPLAY: inline; PADDING-LEFT: 6px; FONT-SIZE: 12px; BACKGROUND: #f5f6f4; FLOAT: left; PADDING-BOTTOM: 1px; WIDTH: 308px; LINE-HEIGHT: 23px; PADDING-TOP: 1px
+}
+* HTML #downInfoArea .downInfoRowL {
+	LINE-HEIGHT: 21px
+}
+* HTML #downInfoArea .downInfoRowL LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; PADDING-TOP: 1px
+}
+* HTML #downInfoArea .downInfoRowL IMG {
+	MARGIN: 0px 0px 1px
+}
+#downInfoArea .downInfoRowL IMG {
+	VERTICAL-ALIGN: middle; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+DIV#mainSoftIntro {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 0px; MARGIN: 3px 0px; PADDING-TOP: 3px
+}
+DIV#mainDownAddress {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 0px; MARGIN: 3px 0px; PADDING-TOP: 3px
+}
+#downAddress {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 12px; WIDTH: 619px; PADDING-TOP: 8px
+}
+#downAddress UL LI {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; FLOAT: left; WIDTH: 203px; LINE-HEIGHT: 19px
+}
+#downAddress UL LI A {
+	PADDING-LEFT: 20px; BACKGROUND: url(soft_down.png) no-repeat left center; COLOR: #0070a1
+}
+#downAddress UL LI.xunlei A {
+	COLOR: #1a53ff
+}
+#downAddress UL LI.xunlei A:hover {
+	COLOR: #009df2
+}
+#downAddress LI.mobile A {
+	COLOR: #3366ff
+}
+#downAddress UL LI.mobile A:hover {
+	COLOR: #ff0033
+}
+SPAN#textIntro A {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #666; TEXT-DECORATION: none
+}
+SPAN#textIntro A:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #0033ff; TEXT-DECORATION: underline
+}
+.mainstory {
+	CLEAR: both; BORDER-RIGHT: #e1e6d8 3px double; PADDING-RIGHT: 0px; BORDER-TOP: #e1e6d8 3px double; PADDING-LEFT: 0px; BACKGROUND: #fff; PADDING-BOTTOM: 0px; MARGIN: 3px 0px 0px; OVERFLOW: hidden; BORDER-LEFT: #e1e6d8 3px double; PADDING-TOP: 0px; BORDER-BOTTOM: #e1e6d8 3px double
+}
+.mainstory H2 SPAN.boxhead {
+	CLEAR: both; BORDER-RIGHT: #e1e6d8 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #e1e6d8 1px solid; PADDING-LEFT: 0px; FONT-SIZE: 12px; BACKGROUND: url(icons/col-ico1.gif) #fff no-repeat 3px center; PADDING-BOTTOM: 0px; MARGIN: 3px 0px 0px 8px; BORDER-LEFT: #e1e6d8 1px solid; WIDTH: 120px; COLOR: #1fabd3; TEXT-INDENT: 25px; LINE-HEIGHT: 20px; PADDING-TOP: 1px; BORDER-BOTTOM: #ffffff 1px solid; POSITION: absolute; HEIGHT: 20px
+}
+.mainstory H2 {
+	CLEAR: both; BORDER-RIGHT: #fff 0px solid; PADDING-RIGHT: 0px; BORDER-TOP: #fff 0px solid; PADDING-LEFT: 0px; FONT-WEIGHT: bold; BACKGROUND: #f7f7f5; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-LEFT: #fff 0px solid; PADDING-TOP: 0px; BORDER-BOTTOM: #fff 0px solid; HEIGHT: 26px
+}
+.mainstory .story {
+	BACKGROUND: #fff; MARGIN: 2px
+}
+.mainstory .headLinks {
+	FLOAT: right; MARGIN: 4px 9px 0px 3px
+}
+.mainstory .headLinks INPUT {
+	FONT-WEIGHT: normal; MARGIN: 0px; HEIGHT: 20px
+}
+.mainstory H2 SPAN.col-icon1 {
+	BACKGROUND: url(icons/col-ico1.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon2 {
+	BACKGROUND: url(icons/col-ico2.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon3 {
+	BACKGROUND: url(icons/col-ico3.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon5 {
+	BACKGROUND: url(icons/col-ico5.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon6 {
+	BACKGROUND: url(icons/col-ico6.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon7 {
+	BACKGROUND: url(icons/col-ico7.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon8 {
+	BACKGROUND: url(icons/col-ico8.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon9 {
+	BACKGROUND: url(icons/col-ico9.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon10 {
+	BACKGROUND: url(icons/col-ico10.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon11 {
+	BACKGROUND: url(icons/col-ico11.gif) #fff no-repeat 3px center
+}
+.mainstory H2 SPAN.col-icon12 {
+	BACKGROUND: url(icons/col-ico12.gif) #fff no-repeat 3px center
+}
+#mainSoftIntro {
+	FONT-SIZE: 14px; COLOR: #191919; LINE-HEIGHT: 180%; FONT-FAMILY: "ËÎÌו"
+}
+#mainSoftIntro P.PlugInfo {
+	FONT-SIZE: 12px; COLOR: red; TEXT-INDENT: 20px
+}
+#mainSoftIntro P.PlugInfo A {
+	FONT-SIZE: 12px; COLOR: red
+}
+#mainSoftIntro A {
+	FONT-SIZE: 100%; COLOR: #008606; LINE-HEIGHT: 180%; FONT-FAMILY: "ËÎÌו"
+}
+P.downExplain {
+	MARGIN: 1px
+}
+.newDate {
+	FONT-SIZE: 10px; COLOR: #ff0033
+}
+.oldDate {
+	FONT-SIZE: 10px; COLOR: #999
+}
+.S_headline1 {
+	COLOR: #009900
+}
+.S_headline2 {
+	COLOR: #cc0000
+}
+.mainGreen {
+	COLOR: #000000
+}

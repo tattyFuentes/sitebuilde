@@ -1,0 +1,24 @@
+-----------------------------------------------------------------------------------
+CREDITS
+-----------------------------------------------------------------------------------
+MyphpMoney uses phplib's code to handle database abstraction layer, sessions and templates.
+It saved us a lot of time and made a lot of things sooooo simple ;-))
+
+What can we say ?
+Thanks to the PHPLIB TEAM !
+
+http://phplib.sourceforge.net
+
+-----------------------------------------------------------------------------------
+PHPLIB VERSION FILE
+-----------------------------------------------------------------------------------
+
+* template.inc		v 1.15		2004/07/23 20:36:29 	layne_weathers
+* session.inc		v 1.20 		2006/02/23 10:23:56	richardarcher
+* session4.inc		v 1.4		2003/10/27 20:41:30	layne_weathers
+* page.inc		v 1.4 		2002/03/18 18:07:02 	layne_weathers
+* page4.inc		v 1.1		2002/10/04 14:13:27	joestewart
+* db_mysql.inc		v 1.13 		2005/02/19 15:20:18 	layne_weathers
+* ct_sql.inc		v 1.6 		2005/02/19 15:19:35 	layne_weathers
+
+CVS : http://phplib.cvs.sourceforge.net/phplib/

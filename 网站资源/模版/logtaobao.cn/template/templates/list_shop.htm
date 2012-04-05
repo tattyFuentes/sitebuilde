@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={dede:global.cfg_soft_lang/}" />
+<title>{dede:field.title/}_{dede:global.cfg_webname/}</title>
+<meta name="keywords" content="{dede:field name='keywords'/}" />
+<meta name="description" content="{dede:field name='description' function='html2text(@me)'/}" />
+<link href="{dede:global.cfg_templeturl/}/style/art.css" rel="stylesheet" type="text/css" />
+<link href="{dede:global.cfg_templeturl/}/style/other.css" rel="stylesheet" type="text/css" />
+<link type="text/css" rel="stylesheet" href="{dede:global.cfg_templeturl/}/style/style.css" />
+<script type="text/javascript" src="{dede:global.cfg_templeturl/}/images/js/eladies.js"></script> 
+<script>
+function setTab(name,cursel,n){
+for(i=1;i<=n;i++){
+var menu=document.getElementById(name+i);
+var con=document.getElementById("con_"+name+"_"+i);
+menu.className=i==cursel?"hover":"";
+con.style.display=i==cursel?"block":"none";
+}
+}
+</script>
+</head>
+<body>
+<!--页面头部开始-->
+{dede:include filename="headnew.htm"/}
+<!--页面头部结束-->
+<div class="wrapper">
+<div class="channel-nav w960 center clear">
+<ul>
+{dede:channel  currentstyle="<li class='thisclass'><a href='~typelink~'><span>~typename~</span></a> </li>"}
+          <li><a href='[field:typeurl/]'><span>[field:typename/]</span></a></li>{/dede:channel}
+</ul>
+<span class="back">
+<a href="/">返回首页</a>
+</span>
+</div>
+<div id="detailbox">
+<div class="detail_con">
+<div id="position">您所在的位置：  {dede:field name='position'/}  </div>
+
+{dede:list pagesize='12' noflag='c'}
+<div class="imgnewslist">
+[field:array runphp='yes']@me = (empty(@me['litpic']) ? "" : "<a href='{@me['arcurl']}' class='img' target='_blank'><img src='{@me['litpic']}' width='130'; height='140' /></a>"); [/field:array]
+<div class="news">
+<h3>
+<span></span>
+</span><a target="_blank" href="[field:arcurl/]" class="title"><b>[field:title/]</b></a></h3>
+<h6></h6><p>
+[field:description/]...</p>
+<p class="time">
+<a href="[field:arcurl/]" class="but_ck" target="_blank">查看商品</a>日期:[field:pubdate function="GetDateTimeMK(@me)"/] | 点击:[field:click/] | 价格:<font color="#ff0000" size=4>[field:trueprice/]元</font>
+</p></div><div class="clear"></div></div>
+{/dede:list}
+
+
+                  
+<div id="pagediv" class="page"> 
+
+<ul class="pagelist">
+             {dede:pagelist listitem="index,end,pre,next,pageno" listsize="5"/}
+</ul>
+ </div>
+</div>
+<div class="sidebar">
+<div class="ad1">
+<!--广告位-->
+</div>
+<div class="ad2">
+<!--广告位-->
+</div>
+<h6>同类商品热销榜</h6>
+<div class="borbox">
+<ul class="list top10">
+{dede:arclist titlelen=32 row=10 orderby='hot'}
+<li><a href="[field:arcurl/]" title="[field:title/]" target=_blank>[field:title/]</a></li>
+{/dede:arclist}
+
+</ul>
+</div>
+                <div class="bormenu">
+                    <span id="two1" onmouseover="setTab('two',1,2)" class="hover" style="margin-right: 6px;">
+                        热门店铺Top10</span> <span id="two2" onmouseover="setTab('two',2,2)">热门商品Top10</span></div>
+<div class="borbox">
+<ul class="list top10" id="con_two_1">
+{dede:arclist typeid='65' titlelen=32 row=10 orderby='rand' }
+<li><a href="[field:arcurl/]" title="[field:title/]" target=_blank>[field:title/]</a></li>
+{/dede:arclist}
+
+</ul>
+<ul class="list top10" id="con_two_2" style="display: none;">
+{dede:arclist typeid='4,5,6,11,12,13' titlelen=32 row=10 orderby='hot' }
+<li><a href="[field:arcurl/]" title="[field:title/]" target=_blank>[field:title/]</a></li>
+{/dede:arclist}
+
+</ul>
+
+<div class="ad3">
+<!--广告位-->
+</div>
+</div>
+<h6>推荐商品</h6>
+<div class="borbox">
+<ul class="list top10">
+{dede:arclist titlelen=32 row=10 flag='c'}
+<li><a href="[field:arcurl/]" title="[field:title/]" target=_blank>[field:title/]</a></li>
+{/dede:arclist}
+                            
+</ul></div>
+<!--<h6>热门标签</h6>
+<div class="borbox">
+<ul class="list">
+<a href='/tags.php?/%D7%D4%D6%C6%C3%E6%C4%A4'>自制面膜</a>&nbsp;<a href='/tags.php?/%D7%D4%D6%C6%D0%B6%D7%B1%D3%CD'>自制卸妆油</a>&nbsp;<a href='/tags.php?/%D7%D4%D6%C6%B1%A3%CA%AA%BB%AF%D7%B1%CB%AE'>自制保湿化妆水</a>&nbsp;<a href='/tags.php?/%C5%AE%C8%CB'>女人</a>&nbsp;                          
+</ul></div>-->
+</div></div>
+<div class="clear">
+</div>
+</div>
+
+</div>
+ 
+{dede:include filename="afoot.htm"/}
+</div>
+
+</body>
+</html>

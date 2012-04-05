@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %} {{ config.site_title|escape }} -- {{ book.name }} {% endblock %}
+{% block content %}
+<DIV class="frame" id="txt99" style="BACKGROUND: #fff"><DIV id="Frame"><TABLE cellSpacing="0" cellPadding="0" width="100%" align="center" border="0"><TBODY><TR><TD vAlign="top" width="270"><TABLE cellSpacing="1" cellPadding="2" width="99%" border="0"><TBODY><TR><TD bgColor="#f0f9ff" colSpan="4"><IMG height="67" alt="" src="{{ theme.dir }}/image/notice.gif" width="270" align="top" /></TD></TR><TR><TD class="" bgColor="#f0f9ff" colSpan="4"><B>找到您需要的<A href="http://www.txt99.com/txt/"><FONT color="#008606">TXT小说</FONT></A>啦！？本站所有txt小说高速免费下载，小说大多是完结版的，记得下次再来哦!</B></TD></TR><TR><TD width="6"></TD><TD borderColor="#ff9900" width="126" bgColor="#358acd">文件大小：<FONT color="#ff0000">{{ book.size }}</FONT></TD><TD borderColor="#ff9900" width="126" bgColor="#358acd">下载次数：<FONT color="#ff0000">{{ book.downcount }}</FONT></TD><TD width="6"></TD></TR><TR><TD></TD><TD borderColor="#ff9900" bgColor="#ebf1e3" colSpan="2">更新时间：<FONT color="#0000ff">{{ book.last_modify_date|date:"Y-m-d H:i:s" }}</FONT><BR/><a href="/">更多小说下载</a><BR/>点击下面链接进行下载：<BR/></TD><TD></TD></TR>
+
+<TR><TD></TD><TD align="center" bgColor="#ebf1e3" colSpan="2">
+<div>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 下载页广告336x280, 创建于 09-12-5 */
+google_ad_slot = "5394058925";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+</TD>
+
+
+<TD></TD></TR>
+
+<TR><TD></TD><TD align="left" bgColor="#f4f8f9" colSpan="2">
+
+<div style="float:left">
+ 
+
+</div>
+
+<div style="float:left;align:left">
+<BR/>
+<BR/>
+<BR/>
+快速下载地址:<BR/>
+<IMG src="{{ theme.dir }}/image/soft_down.gif" border="0" />
+
+{% if httpurl %}
+<A href="{{ book.downurl }}" target="_blank">
+{% else %}
+<A href="{{ config.down_server_1 }}{{ book.downurl }}" target="_blank">
+{% endif %}
+txt小说下载地址1</A><BR /><IMG src="{{ theme.dir }}/image/soft_down.gif" border="0" />
+
+{% if httpurl %}
+<A href="{{ book.downurl }}" target="_blank">
+{% else %}
+<A href="{{ config.down_server_1 }}{{ book.downurl }}" target="_blank">
+{% endif %}
+txt小说下载地址2</a>
+</TD>
+</div>
+</TD><TD></TD></TR>
+
+
+<TR><TD></TD><TD borderColor="#ff9900" bgColor="#ebf1e3" colSpan="2"></TD><TD></TD></TR>
+<TR><TD></TD>
+<TD align="center" bgColor="#ebf1e3" colSpan="2"></TD><TD></TD></TR>
+</TBODY></TABLE></TD>
+
+
+<TD width="6" bgColor="#f6f5f5">&nbsp;</TD>
+<TD vAlign="top" bgColor="#f4f8f9"><DIV>
+
+
+<DIV>
+<strong>{{ book.name }}</strong><br/>
+<strong>作者：{{ book.author }}</strong>
+<br/>
+<br/>
+{{ book.description }}
+<br/>
+<br/>
+<!– google_ad_section_start –>
+IXWebHosting(http://www.IXWebHosting.com)是一家获得好评的虚拟主机供给商，是一家很有潜力的公司，在竞争激烈的主机市场，IXWebHosting现在每个月新增加5000个主机用户，无论是Linux用户还是 Windows用户，都找能够到合适的主机方案。任何的IXWebHosting方案都包括网站统计和原始日志文档访问，免费搜索引擎提交服务连同包含有 专业的网站设计软件，在线文档管理Webshell，邮件访问和电子购物车系统。 
+IXWebHosting虚拟主机的主要特点是，单独IP多，性价比最高。比如其基本主机方案，提供500G的超大空间，竟然提供8个免费IP地址，2个免费域名，一年付的购买价格竟然只要人民币700左右。 
+<!– google_ad_section_end –>
+
+</DIV>
+<DIV class="sideBar">
+<div class="sideBox istxt99">
+        <h2><a href="/books/{{ category.cid }}/page/1">{{ book.category.name }}</a>---------热门小说</h2>
+<DIV class="sideArticle">
+{% for hotbook in hotbooks %}
+<LI>·<A title="{{ hotbook.name }}" href="/book/{{ hotbook.bid }}">{{ hotbook.name }}</A> </LI>
+{% endfor %}
+
+</DIV><SPAN style="CLEAR: both"></SPAN>
+
+</DIV></DIV>
+
+</TD></TR></TBODY></TABLE></DIV></DIV>
+ {% endblock %}
+ {% block friendlinks %}
+ {% endblock %}
+ {% block footer %}
+ {% endblock %}

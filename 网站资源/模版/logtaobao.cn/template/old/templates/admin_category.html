@@ -1,0 +1,147 @@
+{% extends theme.adminbase %}
+
+
+{% block content %}
+<script type="text/javascript">
+function doCheck(ischecked) {
+	$('input.mch').each(function(i){	
+		this.checked = ischecked;
+	});
+}
+function getChecked() {
+	var ids = '';
+	$('input.mch').each(function(i){
+		if (this.checked) {
+			ids += this.value + ',';
+		}
+	});
+	if (ids != '') {
+		ids = ids.substr(0, ids.length-1);
+	}
+	return ids;
+}
+
+function confirmDel() {
+	var ids = getChecked();
+	if (ids.length == '') {
+		alert('请选择要删除的记录。');
+		return false;
+	}
+	if (!confirm('真的要删除选中的记录吗？')) {
+		return false;
+	}
+	return true;
+}
+</script>
+<div class="frame" id="txt99">
+    <div class="main">
+      <div class="pub_subMenu"">
+    <div class="addNewCat">
+      <input onclick="Picobox.showDOMBox('创建新分类','#addNewCat',{width:390,height:158});" type="submit" value="创建新分类" class="button" />
+    </div>
+  </div>
+<!--title end-->   
+  <form method="post" action="/admin/category?op=delete" onsubmit="return confirmDel();" name="sortForm">
+  <div id="pub_main">
+  <div class="th1px"><div class="th1px_l"><div class="th1px_r"></div></div></div>
+    <table cellpadding="0" cellspacing="0" class="pub_list01 pri_blogPostList">
+      <tr>
+        <th style="width:30px;" class="tdCenter"><input type="checkbox" onclick="doCheck(this.checked)"/></th>
+        <th style="width:40px;" class="tdCenter">序号</th>
+        <th>分类名称</th>
+        <th style="width:50px;" class="tdCenter">小说数</th>
+
+        <th style="width:90px;" class="tdCenter">操作</th>
+		</tr>
+		{% for category in categorys %}
+      	<tr>
+        <td class="tdCenter"><input type="checkbox" name="cid" class="mch" value="{{ category.cid }}"/>
+		<input type="hidden" name="hiddencid" value="{{ category.cid }}"/>
+		</td>
+        <td class="tdCenter"><input type="text" value="{{ category.orders }}" name="orders" style="width:20px;"/></td>
+        <td><a href="#">{{ category.name }}</a></td>
+        <td class="tdCenter">{{ category.bookcount }}</td>
+        <td class="tdCenter"><a href="#" onclick="$('#editcat_id').val('{{ category.cid }}');$('#editcat_name').html('{{ category.name }}');Picobox.showDOMBox('修改分类','#editCat',{width:390,height:138});">[修改]</a></td>
+        </tr>
+		{% endfor %}
+          </table>
+	<div class="th1pxb"><div class="th1px_l"><div class="th1px_r"></div></div></div>
+    <div class="pub_listFoot">
+     <div class="pri_blogPostAction">
+      <input type="button" class="button" value="改变排序" onclick='document.sortForm.action="/admin/category?op=saveSort";document.sortForm.submit();'/>
+	  <input type="submit" name="button" class="button" value="删除" 
+	  onclick='document.sortForm.action="/admin/category?op=delete";document.sortForm.submit();'/>
+      </div>
+    </div>
+  </div>
+  </form>
+  <br/>
+  
+
+  <DIV class=channelContext>
+  <SPAN class=pager>
+  <SPAN class="total">共{{ max_page }}页</SPAN> 
+  <A class=first href="/admin/category/page/1">第一页</A>
+  {% if show_prev %}
+    <A class=prev href="/admin/category/page/{{ prev }}">上一页</A> 
+  {% endif %}
+{% for page in page_list %}
+{% ifequal page currpage %}
+<SPAN class=current>{{ page }}</SPAN>
+{% else %}
+<A class=page href="/admin/category/page/{{ page }}">{{ page }}</A>
+{% endifequal %}
+{% endfor %}
+{% if show_next %}
+<A class=next href="/admin/category/page/{{ next }}">下一页</A>
+{% endif %}
+<A class=last href="/admin/category/page/{{ max_page }}">最后一页</A>
+  </SPAN></DIV>
+<!--main end-->
+</div>
+
+
+  
+
+
+<div id="addNewCat" style="display:none">
+	<form method="post" action="/admin/category?op=add">
+		<table border="0" cellpadding="0" cellspacing="0" width="350px" class="popup_edit" >
+		  <tr>
+		    <th class="height30">新分类名称：</th>
+		    <td><input name="name" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <td colspan="2"><div class="button">
+		<input type="submit" value="保存修改" /><input type="button" onclick="parent.Picobox.hide()" value="取消" />
+		</div></td>
+		  </tr>
+		</table>
+	</form>
+</div>
+
+<div id="editCat" style="display:none">
+	<form method="post" action="/admin/category?op=saveCat">
+		<input id="editcat_id" name="catid" type="hidden"/>
+		<table border="0" cellpadding="0" cellspacing="0" width="350px" class="popup_edit" >
+		  <tr>
+		    <th class="height30">原分类名称：</th>
+		    <td id="editcat_name"></td>
+		  </tr>		
+		  <tr>
+		    <th class="height30">新分类名称：</th>
+		    <td><input name="catname" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <td colspan="2"><div class="button">
+		<input type="submit" value="保存修改" /><input type="button" onclick="parent.Picobox.hide()" value="取消" />
+		</div></td>
+		  </tr>
+		</table>
+	</form>
+</div>
+    
+  
+    <span style="clear:both;"></span> 
+  </div>
+  {% endblock %}

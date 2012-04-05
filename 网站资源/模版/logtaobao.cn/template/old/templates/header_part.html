@@ -1,0 +1,42 @@
+﻿<DIV id=header-top>
+<DIV class=header-top-left>
+<P align=left><STRONG>txt全本小说下载-网络读书吧</STRONG> - 
+本站提供各类免费<STRONG>txt全本小说下载</STRONG>，及时更新大量全本免费txt电子书下载，欢迎各位朋友经常光顾^_^！</P></DIV>
+<DIV class=header-top-right>
+
+<IMG alt=网络读书吧 
+src="{{ theme.dir }}/image/bookmark.gif" border=0> <A 
+href="javascript:window.external.addFavorite('http://www.webshuba.com','网络读书吧');">加入收藏</A> 
+┆ <IMG alt=网络读书吧 src="{{ theme.dir }}/image/home.gif" border=0><A 
+onclick="this.style.behavior='url(#default#homepage)';this.setHomePage('http://www.webshuba.com');" 
+href="http://www.webshuba.com/#">设为首页</A> </DIV></DIV>
+<DIV id=menu>
+<DIV id=h1>
+<UL>
+  <LI class=menu_txt></LI>
+  <LI><A title=首页 
+  href="http://www.webshuba.com">首页</A> </LI>
+  {% for cat in cats %}
+  <LI class=menu_txt></LI>
+  <LI><A title={{ cat.name }} 
+  href="/books/{{ cat.cid }}/page/1">{{ cat.name }}</A> </LI>
+  {% endfor %}
+  </UL></DIV>
+</DIV>
+<DIV id=googlebaner>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 728x90, 创建于 09-9-10 */
+google_ad_slot = "7964416125";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+<div  id="search">
+<DIV id="search"> <FORM name="searchform" action="/search/" method="get"><INPUT id="Keyword" onfocus="this.select();" maxLength="50" size="16" name="word" value="" /> <INPUT class="searchbut" type="submit" name="Submit" value="搜索" /></FORM> <SPAN class="reg"><A href="/newbooks/page/1">最新小说下载</A></SPAN></DIV>
+
+</div>

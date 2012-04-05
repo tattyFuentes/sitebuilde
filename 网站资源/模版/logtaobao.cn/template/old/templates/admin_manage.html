@@ -1,0 +1,30 @@
+{% extends theme.adminbase %}
+
+
+{% block content %}
+<div class="frame" id="txt99">
+  <div style="MARGIN-TOP:10px;MARGIN-LEFT:10px">
+  <form method="post" action="/admin/manage?op=genesearch" name="sortForm">
+    开始ID:<INPUT style="HEIGHT: 15px" size="20" name="beginid" value="1" />  &nbsp; 结束ID:<INPUT style="HEIGHT: 15px" size="20" name="endid" value="999" />  <input type="submit" value="生成搜索索引"/>
+  </form>
+  </div>
+  
+
+  <div style="MARGIN-TOP:10px;MARGIN-LEFT:10px">
+  <form method="post" action="/admin/manage?op=modifybookdate" name="modifybookForm">  
+    书ID列表（用逗号间隔多个）:<INPUT style="HEIGHT: 15px" size="20" name="ids" value="1" />
+    <input type="submit" value="修改书籍上传时间"/>
+  </form>
+  </div>
+ </div>
+
+ <div style="MARGIN-TOP:10px;MARGIN-LEFT:10px">
+  <form method="post" action="/admin/manage?op=getallbookname" name="modifybookForm">  
+    <input type="submit" value="获得所有书籍标题"/>
+  </form>
+  </div>
+ </div>
+
+ 
+
+{% endblock %}

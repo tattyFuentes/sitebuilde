@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{% block title %} {{ config.blog_title|escape }} {% endblock %}</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<meta name="generator" content="blog on GAE" />
+{% block description %}<meta name="description" content="{{ config.site_description }}" />{% endblock %}
+{% block keywords %}<meta name="keywords" content="{{ config.site_keywords }}" />{% endblock %}
+<meta name="author" contect="hfhuga@gmail.com"/>
+<meta name="robots" contect="all|none|index|noindex|follow|nofollow"/>
+{% block script %}
+<script type="text/javascript" src="{{ theme.dir }}/js/jquery.js""></script>
+<script type="text/javascript" src="{{ theme.dir }}/js/picobox.js""></script>
+<SCRIPT type="text/javascript" src="{{ theme.dir }}/js/picobox_beauty.js"></SCRIPT>
+
+{% endblock %}
+
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{ theme.dir }}/css/Style.css" />
+<link rel="stylesheet" type="text/css" href="{{ theme.dir }}/css/adminstyle.css" />
+<link rel="stylesheet" type="text/css" href="{{ theme.dir }}/css/txt.css" />
+<link rel="stylesheet" type="text/css" href="{{ theme.dir }}/css/picobox.css" />
+<link rel="stylesheet" type="text/css" href="{{ theme.dir }}/css/picobox_beauty.css" />
+
+{% endblock %}
+
+
+</head>
+<body >
+<div id="wrap">
+  <div id="header">
+   {% include theme.adminheader_part %}
+  </div>
+
+{% block content %}
+{% endblock %}
+
+  <div id="footer">
+   {% include theme.adminfooter_part %}
+  </div> 
+                        
+</div>		
+</body>
+</html>

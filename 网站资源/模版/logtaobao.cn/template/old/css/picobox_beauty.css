@@ -1,0 +1,48 @@
+#picobox {
+	FONT-FAMILY: Tahoma,Verdana,Arial,Helvetica,"ËÎÌו",sans-serif
+}
+#picobox TD {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 1px; PADDING-BOTTOM: 0px; LINE-HEIGHT: 1px; PADDING-TOP: 0px
+}
+#picobox .top {
+	BACKGROUND: url(rounded-top.png) repeat-x 0px 0px; HEIGHT: 7px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-top.png")
+}
+#picobox .right {
+	BACKGROUND: url(rounded-right.png) repeat-y 0px 0px; WIDTH: 9px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-right.png")
+}
+#picobox .bottom {
+	BACKGROUND: url(rounded-bottom.png) repeat-x 0px 0px; HEIGHT: 9px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-bottom.png")
+}
+#picobox .left {
+	BACKGROUND: url(rounded-left.png) repeat-y 0px 0px; WIDTH: 7px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-left.png")
+}
+#picobox .rc_lt {
+	BACKGROUND: url(rounded-lt.png) no-repeat 0px 0px; WIDTH: 7px; HEIGHT: 7px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-lt.png")
+}
+#picobox .rc_rt {
+	BACKGROUND: url(rounded-rt.png) no-repeat 0px 0px; WIDTH: 9px; HEIGHT: 7px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-rt.png")
+}
+#picobox .rc_lb {
+	BACKGROUND: url(rounded-lb.png) no-repeat 0px 0px; WIDTH: 7px; HEIGHT: 9px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-lb.png")
+}
+#picobox .rc_rb {
+	BACKGROUND: url(rounded-rb.png) no-repeat 0px 0px; WIDTH: 9px; HEIGHT: 9px; _background: none; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="http://www.blogbus.com/user/imgs/picobox/picobox_beauty/rounded-rb.png")
+}
+#picobox TD.content {
+	FONT-SIZE: 12px; BACKGROUND: #fff; VERTICAL-ALIGN: top; LINE-HEIGHT: 2em; TEXT-ALIGN: left
+}
+#picobox #picoboxInner TD {
+	FONT-SIZE: 12px; LINE-HEIGHT: 2em
+}
+#picobox {
+	BACKGROUND: none transparent scroll repeat 0% 0%; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+#picoboxInner H1.picoboxTitle {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 12px; BACKGROUND: url(popup_heading.gif) no-repeat 0px 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; POSITION: relative
+}
+#picoboxInner H1.picoboxTitle DIV {
+	BACKGROUND: url(popup_heading.gif) no-repeat right 0px; OVERFLOW: hidden; COLOR: #fff; LINE-HEIGHT: 21px; HEIGHT: 21px
+}
+#picoboxInner H1.picoboxTitle A.close {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; FONT-SIZE: 13px; RIGHT: 6px; PADDING-BOTTOM: 3px; WIDTH: auto; COLOR: #fff; LINE-HEIGHT: 1em; PADDING-TOP: 3px; POSITION: absolute; TOP: 0px; HEIGHT: auto; TEXT-DECORATION: none
+}

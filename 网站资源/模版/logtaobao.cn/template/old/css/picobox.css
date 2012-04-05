@@ -1,0 +1,39 @@
+#picoboxMask {
+	DISPLAY: none; Z-INDEX: 4000; FILTER: alpha(opacity=20); LEFT: 0px; WIDTH: 100%; POSITION: absolute; TOP: 0px; HEIGHT: 100%; BACKGROUND-COLOR: #000; opacity: 0.2
+}
+#picobox {
+	BORDER-RIGHT: #666 3px solid; PADDING-RIGHT: 2px; BORDER-TOP: #666 3px solid; MARGIN-TOP: -150px; DISPLAY: none; PADDING-LEFT: 2px; Z-INDEX: 4001; LEFT: 50%; PADDING-BOTTOM: 2px; MARGIN-LEFT: -200px; OVERFLOW: hidden; BORDER-LEFT: #666 3px solid; WIDTH: 400px; PADDING-TOP: 2px; BORDER-BOTTOM: #666 3px solid; POSITION: absolute; TOP: 50%; HEIGHT: 300px; BACKGROUND-COLOR: #fff
+}
+#picobox H1.picoboxTitle {
+	PADDING-RIGHT: 0.5em; PADDING-LEFT: 0.5em; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; MARGIN: 0px; LINE-HEIGHT: 2em; PADDING-TOP: 0px; POSITION: relative; HEIGHT: 2em; BACKGROUND-COLOR: #efe
+}
+#picobox H1.picoboxTitle A {
+	RIGHT: 2px; WIDTH: 2em; COLOR: #c00; LINE-HEIGHT: 2em; POSITION: absolute; TOP: 0px; HEIGHT: 2em; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+#picobox DIV.picoboxBody {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; PADDING-TOP: 2px
+}
+#frontLogin {
+	PADDING-RIGHT: 8px; PADDING-LEFT: 8px; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; COLOR: #666; PADDING-TOP: 0px
+}
+#frontLogin #frontLoginArea {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; PADDING-BOTTOM: 0px; PADDING-TOP: 20px
+}
+#frontLogin #frontLoginArea FORM {
+	MARGIN: 0px
+}
+#frontLogin #frontLoginArea TABLE {
+	FONT-SIZE: 12px
+}
+#frontLogin #frontLoginArea TABLE TH {
+	PADDING-BOTTOM: 10px
+}
+#frontLogin #frontLoginArea TABLE TD {
+	PADDING-BOTTOM: 10px
+}
+#frontLogin #frontLoginArea TABLE TD .input {
+	BORDER-RIGHT: #ccc 1px solid; BORDER-TOP: #ccc 1px solid; BORDER-LEFT: #ccc 1px solid; WIDTH: 210px; BORDER-BOTTOM: #ccc 1px solid; HEIGHT: 18px
+}
+#frontLogin #frontLoginArea TABLE TD .button {
+	BORDER-RIGHT: medium none; BORDER-TOP: medium none; FONT-SIZE: 12px; BACKGROUND: url(bg_button_4.gif) no-repeat center bottom; BORDER-LEFT: medium none; WIDTH: 55px; COLOR: #1b6f01; LINE-HEIGHT: 25px; BORDER-BOTTOM: medium none; HEIGHT: 25px
+}

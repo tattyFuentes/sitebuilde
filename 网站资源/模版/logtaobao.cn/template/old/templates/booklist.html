@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %} {{ config.site_title|escape }} -- {{ category.name }} {% endblock %}
+{% block content %}
+<DIV class="frame" id="txt99"><DIV class="main"><DIV id="path"><INS><A href="/"></A></INS>您现在的位置：<A href="/">网络读书吧</A> → <A href="/">电子书下载</A> → <A href="/books/{{ category.cid }}/page/1">{{ category.name }}</A> → 小说列表</DIV><DIV id="searchFrame"><H1 class="cName"><A href="/">电子书下载</A>·<A href="/books/{{ category.cid }}/page/1"">{{ category.name }}</A></H1></DIV>
+
+<DIV id="pages">
+<DIV>
+<DIV class="show_page">
+<TABLE class="Tableborder5" cellSpacing="1" cellPadding="0" border="0">
+<FORM method="post"><TBODY><TR align="center"><TD class="tabletitle1" title="{{ category.name }}">&nbsp;{{ category.name }}&nbsp;</TD><TD class="tabletitle1" title="总数">&nbsp;{{ book_count }}&nbsp;</TD><TD class="tabletitle1" title="每页">&nbsp;</TD>
+<TD class="tabletitle1" title="页次">&nbsp;{{ currpage }}/{{ max_page }}页&nbsp;</TD>
+<TD class="tablebody1">&nbsp;
+<a href="/books/{{ category.cid }}/page/1" title="首页"><IMG alt="首页" src="/template/image/First.gif" border="0" />&nbsp;</a></TD>
+{% if show_prev %}
+    <TD class="tablebody1"><A href="/books/{{ category.cid }}/page/{{ prev }}"><IMG src="/template/image/Previous.gif" border="0" />&nbsp;</A></TD> 
+{% else %}
+    <TD class="tablebody1"><IMG src="/template/image/Previous.gif" border="0" />&nbsp;</TD> 
+{% endif %}
+{% for page in page_list %}
+{% if page == currpage %}
+  <TD class="tablebody2">&nbsp;<FONT class="normalTextSmall"><U><B>{{ page }}</B></U></FONT>&nbsp;</TD>
+{% else %}
+  <TD class="tablebody1">&nbsp;<A title="第2页" href="/books/{{ category.cid }}/page/{{ page }}">{{ page }}</A>&nbsp;</TD>
+{% endif %}  
+{% endfor %}
+
+{% if show_next %}
+<TD class="tablebody1">&nbsp;<A title="下一页" href="/books/{{ category.cid }}/page/{{ next }}"><IMG src="/template/image/Next.gif" border="0" /></A>&nbsp;</TD>
+{% else %}
+<TD class="tablebody1">&nbsp;<IMG src="/template/image/Next.gif" border="0" />&nbsp;</TD>
+{% endif %}
+
+<TD></TD>
+<TD class="tablebody1">&nbsp;<A title="尾页" href="/books/{{ category.cid }}/page/{{ max_page }}"><IMG src="/template/image/Last.gif" border="0" /></A>&nbsp;</TD>
+<TD class="tabletitle1" title="转到">&nbsp;GO&nbsp;</TD><TD class="tablebody1"><SELECT class="PageInput" onchange="javascript:window.location=this.options[this.selectedIndex].value;" size="1" name="page">
+{% for page in all_page_list %}
+<OPTION value="/books/{{ category.cid }}/page/{{ page }}">第{{ page }}页</OPTION>
+{% endfor %}
+</SELECT></TD>
+</TR></TBODY></FORM>
+</TABLE>
+</DIV>
+</DIV></DIV>
+
+<DIV id="catalog">
+{% for book in books %}
+<DIV class="listbg">
+<SPAN class="dingg">{{ forloop.counter }}</SPAN><A title="{{ book.name }}" href="/book/{{ book.bid }}">{{ book.name }}</A> [<SPAN class="oldDate globalDate">{{ book.last_modify_date|date:"Y-m-d" }}</SPAN>] <DIV style="PADDING-RIGHT: 20px; PADDING-LEFT: 20px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px">　　{{ book.description }}</DIV><DIV style="PADDING-RIGHT: 20px; PADDING-LEFT: 20px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px"><SPAN class="mainGreen">文件大小：</SPAN>{{ book.size }} <SPAN class="mainGreen">下载次数：</SPAN>{{ book.downcount }}</DIV></DIV>
+{% endfor %}
+
+
+</DIV>
+
+<DIV id="pages">
+<DIV>
+<DIV class="show_page">
+<TABLE class="Tableborder5" cellSpacing="1" cellPadding="0" border="0">
+<FORM method="post"><TBODY><TR align="center"><TD class="tabletitle1" title="{{ category.name }}">&nbsp;{{ category.name }}&nbsp;</TD><TD class="tabletitle1" title="总数">&nbsp;{{ book_count }}&nbsp;</TD><TD class="tabletitle1" title="每页">&nbsp;</TD>
+<TD class="tabletitle1" title="页次">&nbsp;{{ currpage }}/{{ max_page }}页&nbsp;</TD>
+<TD class="tablebody1">&nbsp;
+<a href="/books/{{ category.cid }}/page/1" title="首页"><IMG alt="首页" src="/template/image/First.gif" border="0" />&nbsp;</a></TD>
+{% if show_prev %}
+    <TD class="tablebody1"><A href="/books/{{ category.cid }}/page/{{ prev }}"><IMG src="/template/image/Previous.gif" border="0" />&nbsp;</A></TD> 
+{% else %}
+    <TD class="tablebody1"><IMG src="/template/image/Previous.gif" border="0" />&nbsp;</TD> 
+{% endif %}
+{% for page in page_list %}
+{% if page == currpage %}
+  <TD class="tablebody2">&nbsp;<FONT class="normalTextSmall"><U><B>{{ page }}</B></U></FONT>&nbsp;</TD>
+{% else %}
+  <TD class="tablebody1">&nbsp;<A title="第2页" href="/books/{{ category.cid }}/page/{{ page }}">{{ page }}</A>&nbsp;</TD>
+{% endif %}  
+{% endfor %}
+
+{% if show_next %}
+<TD class="tablebody1">&nbsp;<A title="下一页" href="/books/{{ category.cid }}/page/{{ next }}"><IMG src="/template/image/Next.gif" border="0" /></A>&nbsp;</TD>
+{% else %}
+<TD class="tablebody1">&nbsp;<IMG src="/template/image/Next.gif" border="0" />&nbsp;</TD>
+{% endif %}
+
+<TD></TD>
+<TD class="tablebody1">&nbsp;<A title="尾页" href="/books/{{ category.cid }}/page/{{ max_page }}"><IMG src="/template/image/Last.gif" border="0" /></A>&nbsp;</TD>
+<TD class="tabletitle1" title="转到">&nbsp;GO&nbsp;</TD><TD class="tablebody1"><SELECT class="PageInput" onchange="javascript:window.location=this.options[this.selectedIndex].value;" size="1" name="page">
+{% for page in all_page_list %}
+<OPTION value="/books/{{ category.cid }}/page/{{ page }}">第{{ page }}页</OPTION>
+{% endfor %}
+</SELECT></TD>
+</TR></TBODY></FORM>
+</TABLE>
+</DIV>
+</DIV></DIV>
+
+
+</DIV>
+
+
+<DIV class="sideBar">
+<div class="sideBox istxt99">
+        <h2><a href="http://www.webshuba.com/books/{{ category.cid }}/page/1">{{ category.name }}</a>热门小说</h2>
+<DIV class="sideArticle">
+{% for hotbook in hotbooks %}
+<LI>·<A title="{{ hotbook.name }}" href="http://www.webshuba.com/book/{{ hotbook.bid }}">{{ hotbook.name }}</A> </LI>
+{% endfor %}
+
+</DIV><SPAN style="CLEAR: both"></SPAN>
+
+</DIV></DIV>
+
+<div>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1628280863879045";
+/* 336x280, 创建于 09-9-11 */
+google_ad_slot = "5725150095";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+</DIV>
+ {% endblock %}

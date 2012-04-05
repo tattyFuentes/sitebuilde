@@ -1,0 +1,288 @@
+{% extends theme.adminbase %}
+{% block content %}
+<script type="text/javascript">
+function doCheck(ischecked) {
+	$('input.mch').each(function(i){	
+		this.checked = ischecked;
+	});
+}
+function getChecked() {
+	var ids = '';
+	$('input.mch').each(function(i){
+		if (this.checked) {
+			ids += this.value + ',';
+		}
+	});
+	if (ids != '') {
+		ids = ids.substr(0, ids.length-1);
+	}
+	return ids;
+}
+
+function confirmDel() {
+	var ids = getChecked();
+	if (ids.length == '') {
+		alert('请选择要删除的记录。');
+		return false;
+	}
+	if (!confirm('真的要删除选中的记录吗？')) {
+		return false;
+	}
+	return true;
+}
+
+function setEditValue(aId) {
+	$('#editbook_id').val(aId);		
+	$('#editbook_categoryid').val(document.getElementById('tempsave'+aId+'_categoryid').value);
+	$('#editbook_name').val(document.getElementById('tempsave'+aId+'_name').value);
+	$('#editbook_author').val(document.getElementById('tempsave'+aId+'_author').value);
+    var strTmp=document.getElementById('tempsave'+aId+'_description').value;
+	strTmp=strTmp.replace("\\'","\\\\'");
+	$('#editbook_description').val(strTmp);
+	$('#editbook_language').val(document.getElementById('tempsave'+aId+'_language').value);
+	$('#editbook_kindof').val(document.getElementById('tempsave'+aId+'_kindof').value);
+	$('#editbook_privacy').val(document.getElementById('tempsave'+aId+'_privacy').value);
+	$('#editbook_size').val(document.getElementById('tempsave'+aId+'_size').value);
+	$('#editbook_commendclass').val(document.getElementById('tempsave'+aId+'_commendclass').value);
+	$('#editbook_faceimage').val(document.getElementById('tempsave'+aId+'_faceimage').value);
+	$('#editbook_downurl').val(document.getElementById('tempsave'+aId+'_downurl').value);
+	$('#editbook_downcount').val(document.getElementById('tempsave'+aId+'_downcount').value);
+	Picobox.showDOMBox('修改小说','#editBook',{width:390,height:400});
+}
+
+</script>
+<div class="frame" id="txt99">
+    <div class="main">
+      <div class="pub_subMenu"">
+    <div class="addNewCat">
+      <input onclick="Picobox.showDOMBox('创建新小说','#addNewBook',{width:390,height:400});" type="submit" value="创建新小说" class="button" />
+    </div>
+  </div>
+<!--title end-->   
+  <form method="post" action="/admin/book?op=delete" onsubmit="return confirmDel();" name="sortForm">
+  <div id="pub_main">
+  <div class="th1px"><div class="th1px_l"><div class="th1px_r"></div></div></div>
+    <table cellpadding="0" cellspacing="0" class="pub_list01 pri_blogPostList">
+      <tr>
+        <th style="width:30px;" class="tdCenter"><input type="checkbox" onclick="doCheck(this.checked)"/></th>
+        <th>小说名称</th>
+        <th style="width:50px;">作者</th>
+	<th style="width:80px;">上传时间</th>
+        <th style="width:90px;" class="tdCenter">操作</th>
+		</tr>
+		{% for book in books %}
+      	<tr>
+        <td class="tdCenter"><input type="checkbox" name="bid" class="mch" value="{{ book.bid }}"/>
+		</td>
+        <td><a href="#">{{ book.name }}</a></td>
+		<td class="tdCenter">{{ book.author }}</td>
+        <td class="tdCenter">{{ book.last_modify_date }}</td>
+        <td class="tdCenter">
+		
+		<input type='hidden' id='tempsave{{ book.bid }}_categoryid' value='{{ book.category.cid }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_name' value='{{ book.name }}'/>
+        <TEXTAREA id='tempsave{{ book.bid }}_description' style="FONT-SIZE: 12px; WIDTH: 220px; FONT-FAMILY: arial;display:none;" rows="8">{{ book.description }}</TEXTAREA>
+		<input type='hidden' id='tempsave{{ book.bid }}_author' value='{{ book.author }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_language' value='{{ book.language }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_kindof' value='{{ book.kindof }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_privacy' value='{{ book.privacy }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_size' value='{{ book.size }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_commendclass' value='{{ book.commendclass }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_faceimage' value='{{ book.faceimage }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_downurl' value='{{ book.downurl }}'/>
+		<input type='hidden' id='tempsave{{ book.bid }}_downcount' value='{{ book.downcount }}'/>
+
+		<a href="#" onclick="setEditValue('{{ book.bid }}');">[修改]</a></td>
+        </tr>
+		{% endfor %}
+          </table>
+	<div class="th1pxb"><div class="th1px_l"><div class="th1px_r"></div></div></div>
+    <div class="pub_listFoot">
+     <div class="pri_blogPostAction">
+	  <input type="submit" name="button" class="button" value="删除" 
+	  onclick='document.sortForm.action="/admin/book?op=delete";document.sortForm.submit();'/>
+      </div>
+    </div>
+  </div>
+  </form>
+  <br/>
+  
+
+  <DIV class=channelContext>
+  <SPAN class=pager>
+  <SPAN class="total">共{{ max_page }}页</SPAN> 
+  <A class=first href="/admin/book/page/1">第一页</A>
+  {% if show_prev %}
+    <A class=prev href="/admin/book/page/{{ prev }}">上一页</A> 
+  {% endif %}
+{% for page in page_list %}
+{% ifequal page currpage %}
+<SPAN class=current>{{ page }}</SPAN>
+{% else %}
+<A class=page href="/admin/book/page/{{ page }}">{{ page }}</A>
+{% endifequal %}
+{% endfor %}
+{% if show_next %}
+<A class=next href="/admin/book/page/{{ next }}">下一页</A>
+{% endif %}
+<A class=last href="/admin/book/page/{{ max_page }}">最后一页</A>
+  </SPAN></DIV>
+<!--main end-->
+</div>
+
+
+<div id="addNewBook" style="display:none">
+	<form method="post" action="/admin/book?op=add">
+		<table border="0" cellpadding="0" cellspacing="0" width="350px" class="popup_edit" >
+		  <tr>
+		    <th class="height30">分类：</th>
+		    <td>			
+			<select name="categoryid" style="width:210px;" >		    
+			　　<option value></option>			　　
+			    {% for category in categorys %}
+			    <option value="{{ category.cid }}">{{ category.name }}</option>
+			　　{% endfor %}
+		　　</select>
+			</td>
+		  </tr>
+		  <tr>
+		    <th class="height30">名称：</th>
+		    <td><input name="name" type="text" style="width:200px;" /></td>
+		  </tr>
+
+		  <tr>
+		    <th class="height30">作者：</th>
+		    <td><input name="author" type="text" style="width:200px;" /></td>
+		  </tr>	
+          		  
+		  <tr>
+		    <th class="height30">描述：</th>
+		    <td><!--input name="description" type="text" style="width:200px;" /-->
+			<TEXTAREA id="description" style="FONT-SIZE: 12px; WIDTH: 220px; FONT-FAMILY: arial" name="description" rows="8"></TEXTAREA>
+			</td>
+			
+		  </tr>	
+		  <tr>
+		    <th class="height30">语言：</th>
+		    <td><input name="language" type="text" style="width:200px;" /></td>
+		  </tr>	
+		  <tr>
+		    <th class="height30">类型：</th>
+		    <td><input name="kindof" type="text" style="width:200px;" /></td>
+		  </tr>	
+		   <tr>
+		    <th class="height30">授权方式：</th>
+		    <td><input name="privacy" type="text" style="width:200px;" /></td>
+		  </tr>	 
+		  <tr>
+		    <th class="height30">文件大小：</th>
+		    <td><input name="size" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">推荐级别：</th>
+		    <td><input name="commendclass" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">封面图片：</th>
+		    <td><input name="faceimage" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">下载地址：</th>
+		    <td><input name="downurl" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">下载次数：</th>
+		    <td><input name="downcount" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <td colspan="2"><div class="button">
+		<input type="submit" value="保存修改" /><input type="button" onclick="parent.Picobox.hide()" value="取消" />
+		</div></td>
+		  </tr>
+		</table>
+	</form>
+</div>
+
+
+
+<div id="editBook" style="display:none">
+	<form method="post" action="/admin/book?op=saveBook">
+		<table border="0" cellpadding="0" cellspacing="0" width="350px" class="popup_edit" >
+		  <tr>
+		    <th class="height30">分类：</th>
+		    <td>			
+			<select name="editbook_categoryid" id="editbook_categoryid" style="width:210px;" >		    
+			　　<option value></option>			　　
+			    {% for category in categorys %}
+			    <option value="{{ category.cid }}">{{ category.name }}</option>
+			　　{% endfor %}
+		　　</select>
+			</td>
+		  </tr>
+		  
+		  <tr>
+		    <th class="height30">名称：</th>
+		    <td>
+			<input name="editbook_id" id="editbook_id" type="hidden" style="width:200px;" />
+			<input name="editbook_name" id="editbook_name" type="text" style="width:200px;" /></td>
+		  </tr>
+
+		  <tr>
+		    <th class="height30">作者：</th>
+		    <td><input name="editbook_author" id="editbook_author" type="text" style="width:200px;" /></td>
+		  </tr>	
+          		  
+		  <tr>
+		    <th class="height30">描述：</th>
+		    <td><!--input name="editbook_description" id="editbook_description" type="text" style="width:200px;" /-->
+			 <TEXTAREA id="editbook_description" style="FONT-SIZE: 12px; WIDTH: 200px; FONT-FAMILY: arial" name="editbook_description" rows="8"></TEXTAREA>
+			 </td>
+		  </tr>	
+		  <tr>
+		    <th class="height30">语言：</th>
+		    <td><input name="editbook_language" id="editbook_language" type="text" style="width:200px;" /></td>
+		  </tr>	
+		  <tr>
+		    <th class="height30">类型：</th>
+		    <td><input name="editbook_kindof" id="editbook_kindof" type="text" style="width:200px;" /></td>
+		  </tr>	
+		   <tr>
+		    <th class="height30">授权方式：</th>
+		    <td><input name="editbook_privacy" id="editbook_privacy" type="text" style="width:200px;" /></td>
+		  </tr>	 
+		  <tr>
+		    <th class="height30">文件大小：</th>
+		    <td><input name="editbook_size" id="editbook_size" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">推荐级别：</th>
+		    <td><input name="editbook_commendclass" id="editbook_commendclass" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">封面图片：</th>
+		    <td><input name="editbook_faceimage" id="editbook_faceimage" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">下载地址：</th>
+		    <td><input name="editbook_downurl" id="editbook_downurl" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <th class="height30">下载次数：</th>
+		    <td><input name="editbook_downcount" id="editbook_downcount" type="text" style="width:200px;" /></td>
+		  </tr>
+		  <tr>
+		    <td colspan="2"><div class="button">
+		<input type="submit" value="保存修改" /><input type="button" onclick="parent.Picobox.hide()" value="取消" />
+		</div></td>
+		  </tr>
+		</table>
+	</form>
+</div>
+
+
+
+    
+  
+    <span style="clear:both;"></span> 
+  </div>
+  {% endblock %}

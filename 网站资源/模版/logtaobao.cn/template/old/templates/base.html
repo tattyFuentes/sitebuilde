@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{% block title %} {{ config.site_title|escape }} {% endblock %}</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<meta name="generator" content="blog on GAE" />
+{% block description %}<meta name="description" content="{{ config.site_description }}" />{% endblock %}
+{% block keywords %}<meta name="keywords" content="{{ config.site_keywords }}" />{% endblock %}
+<meta name="author" contect="hfhuga@gmail.com"/>
+<meta name="robots" contect="all|none|index|noindex|follow|nofollow"/>
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/template/style/style.css" />
+<link rel="stylesheet" type="text/css" href="/template/style/other.css" />
+<link rel="stylesheet" type="text/css" href="/template/style/art.css" />
+<link rel="stylesheet" type="text/css" href="/template/style/theme_eladies_pack.css" />
+<link rel="stylesheet" type="text/css" href="/template/style/master_081006_pack.css" />
+{% endblock %}
+</head>
+<body >
+<div id="wrap">
+  <div id="header">
+   {% include 'header_part.htm' %}
+  </div>
+
+{% block content %}
+{% endblock %}
+
+
+{% block friendlinks %}
+  <div id="friendlinks">
+   {% include 'friendlink_part.htm' %}
+  </div> 
+  {% endblock %}
+
+{% block footer %}
+  <div id="footer">
+   {% include 'footer_part.htm' %}
+  </div> 
+{% endblock %}                        
+</div>		
+</body>
+</html>

@@ -1,0 +1,9 @@
+rewriteengine on
+rewritebase /
+rewriteRule  books/(.*)/page/(.*)$ /booklist.php?cid=$1&page=$2
+rewriteRule  book/(.*)$ /bookdetail.php?bid=$1
+rewriteRule  down/(.*)$ /bookdown.php?bid=$1
+rewriteRule  newbooks/page/(.*)$ /newlist.php?page=$1
+rewriteRule  search/(.*)$ /searchlist.php$1
+
+
