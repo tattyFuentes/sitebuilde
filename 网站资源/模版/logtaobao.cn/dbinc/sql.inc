@@ -3,7 +3,7 @@
 function SQL_getConn(){
   $db = new DB_MySQL;
   //$db->connect('C281957_webshuba','mysql509.ixwebhosting.com','C281957_hfhuga','Hfhuga941111');
-  $db->connect('webshuba','127.0.0.1','root','root');
+  $db->connect('logtaobao','127.0.0.1','root','root');
   return $db;
 }
 function SQL_getAllCat() {

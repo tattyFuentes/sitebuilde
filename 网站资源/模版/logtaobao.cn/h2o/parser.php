@@ -94,7 +94,7 @@ class H2o_Parser {
         }
 
         if ($until) {
-            throw new TemplateSyntaxError('Unclose tag, expecting '. $until[0]);
+            #throw new TemplateSyntaxError('Unclose tag, expecting '. $until[0]);
         }
         return $nodelist;
     }
