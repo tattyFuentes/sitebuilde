@@ -1,0 +1,15 @@
+<div class="box J_TBox tshop-pbsm tshop-pbsm-spr10c"  data-spm='110223W4.1-A0Wc.z-3ARYof' >
+<div class="shop-slider">
+<div class="bd">
+<div class="slider-promo J_Slider J_TWidget" data-type="scrolly" data-widget-type="Slide" style="height:490px;" data-widget-config="{'effect':'scrolly','contentCls': 'lst-main', 'navCls': 'lst-trigger', 'activeTriggerCls': 'current'}">
+<ul class="lst-main">
+<li><a href="#" style="height:490px;" target="_blank"><img data-ks-lazyload="http://img01.taobaocdn.com/imgextra/i1/62798117/T2OcmDXk0XXXXXXXXX_!!62798117.jpg"  alt="" /></a></li>
+<li><a href="#" style="height:490px;" target="_blank"><img data-ks-lazyload="http://img03.taobaocdn.com/imgextra/i3/62798117/T2yr1DXgNaXXXXXXXX_!!62798117.jpg"  alt="" /></a></li>
+<li><a href="#" style="height:490px;" target="_blank"><img data-ks-lazyload="http://img03.taobaocdn.com/imgextra/i3/62798117/T2yr1DXgNaXXXXXXXX_!!62798117.jpg"  alt="" /></a></li>
+<li><a href="#" style="height:490px;" target="_blank"><img data-ks-lazyload="http://img03.taobaocdn.com/imgextra/i3/62798117/T2yr1DXgNaXXXXXXXX_!!62798117.jpg"  alt="" /></a></li>
+<li><a href="#" style="height:490px;" target="_blank"><img data-ks-lazyload="http://img03.taobaocdn.com/imgextra/i3/62798117/T2yr1DXgNaXXXXXXXX_!!62798117.jpg"  alt="" /></a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
