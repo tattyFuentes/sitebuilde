@@ -1,6 +1,6 @@
 object frmCatchPlan: TfrmCatchPlan
-  Left = 264
-  Top = 17
+  Left = 226
+  Top = 94
   BorderStyle = bsDialog
   Caption = #37319#38598#26041#26696#32534#36753
   ClientHeight = 703
@@ -121,6 +121,15 @@ object frmCatchPlan: TfrmCatchPlan
       Caption = #27979#35797#35268#21017
       TabOrder = 4
       OnClick = btntestruleClick
+    end
+    object btntestarticle: TFlatButton
+      Left = 388
+      Top = 8
+      Width = 109
+      Height = 25
+      Caption = #27979#35797#25991#31456#35299#26512
+      TabOrder = 5
+      OnClick = btntestarticleClick
     end
   end
   object Panel5: TPanel

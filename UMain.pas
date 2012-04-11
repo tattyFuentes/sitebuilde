@@ -7,7 +7,7 @@ uses
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
   StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON,
-  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex;
+  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax;
 
 type
   TfrmMain = class(TForm)
@@ -408,16 +408,11 @@ var
   i:integer;
   htmlDoc:IHTMLDocument3;
   contentArea:HTMLTextAreaElement;
-
+  s22:string;
 
 begin
-  s:=readfile('d:\b.txt');
-  sss:=RegexSearchString(s,'<h2>爱情故事<\/h2>(.*)<\/ul>');
-  writefile('d:\c.txt',sss.Strings[0]);
-  RegexSearchString(sss[0],'a href=''(.*)''');
-
-  exit;
-  execCommand(pchar('ruby rubyscript\bababian.rb "'+utf8encode('hel中国日文lo'+chr(13)+chr(10)+'a\"aaa\""')+' "中国日文"'),true);
+  execCommand(pchar('ruby rubyscript\bababian.rb "我们是你们的" "bbbb"'),true);
+ // execCommand(pchar('ruby rubyscript\bababian.rb "'+utf8encode('hel中国日文lo'+chr(13)+chr(10)+'a\"aaa\""')+' "中国日文"'),true);
   writefile('d:\a.rb',utf8encode('我们是中国人'));
   exit;
   showmessage(RegexReplaceString(memo2.Lines.Text,'^[\s]*$',''));

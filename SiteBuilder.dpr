@@ -27,7 +27,8 @@ uses
   uTranslateYouDao in 'uTranslateYouDao.pas',
   UPublishPlanSyntax in 'UPublishPlanSyntax.pas',
   UHtmlToUbb in 'UHtmlToUbb.pas',
-  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan};
+  uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
+  UCatchThread in 'UCatchThread.pas';
 
 {$R *.res}
 

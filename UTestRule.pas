@@ -27,6 +27,9 @@ type
     parseType:integer;   //分析类型1为列表分析，2为文章分析
     planView: TPlanView; //规则
     catchPlanId:integer;
+    mIsTestObject:boolean;
+    mArticleObject:TArticleObject;
+    procedure TestOneArticleObject(articleObject:TArticleObject);
   end;
 var
   frmTestRule: TfrmTestRule;
@@ -52,7 +55,25 @@ begin
   mPlanAtriclePage2:= mPlanArticle2.getLinkObjectsByType(ptArticlePage)[0]as TPlanObject;
   mPlanCatchItem1:=mPlanArticle1.getLinkObjectsByType(ptCatchItems)[0]as TPlanObject;
   mPlanCatchItem2:=mPlanArticle2.getLinkObjectsByType(ptCatchItems)[0]as TPlanObject;
-  TestCatchPlan();
+  if(mIsTestObject) then
+    TestOneArticleObject(mArticleObject)
+  else
+    TestCatchPlan();
+end;
+
+
+procedure TfrmTestRule.TestOneArticleObject(articleObject:TArticleObject);
+begin
+  RichEdit1.Lines.Add('开始解析文章('+articleObject.title +')');
+  articleObject.catchPlanId:=inttostr(catchPlanId);
+  ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanAtriclePage1,mPlanCatchItem1);
+  //清理测试环境
+  if(articleObject.id<>'') then
+  begin
+    deleteArticle(articleObject.id);
+    deletedir(GetFileSavePath(mCachePlan)+articleObject.id+'\');
+  end;
+  RichEdit1.Lines.Add('解析文章('+articleObject.title +')结束');
 end;
 
 procedure TfrmTestRule.TestCatchPlan();
@@ -60,10 +81,11 @@ var
   list:TArticleList;
   i:integer;
   articleObject:TArticleObject;
+  sErrors:String;
 begin
   try
     RichEdit1.Lines.Add('开始解析列表');
-    list:=ParseArticleList(mCachePlan,mPlanList);
+    list:=ParseArticleList(mCachePlan,mPlanList,sErrors);
     for i:=0 to length(list)-1 do
     begin
       RichEdit1.Lines.Add('分解文章');
@@ -75,8 +97,6 @@ begin
         catchPlanId:=0;
       articleObject.catchPlanId:=inttostr(catchPlanId);
       ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanAtriclePage1,mPlanCatchItem1);
-
-
       RichEdit2.Lines.Add(list[i].tags);
       RichEdit2.Lines.Add(list[i].catchPlanId);
       RichEdit2.Lines.Add(list[i].author);

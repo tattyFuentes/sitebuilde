@@ -4,13 +4,14 @@ interface
 
 uses UPlanObject,UArticleObject,UHttp,SysUtils,UPublic,UVariableDefine,Classes,uLkJSON,UEngine;
 Type TArticleList=Array of TArticleObject;
-const ERRORSPLIT='----------------------------------------------------------------'+chr(13)+chr(10);
+const ERRORSPLIT=chr(13)+chr(10)+'----------------------------------------------------------------'+chr(13)+chr(10);
 
-function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
+function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject;var aError:String):TArticleList;
 function RequestUrl(aBaseConfig:TPlanObject;aUrl:String):String;
 //返回执行结果如果成功返回1 ，如果出现错误返回 错误消息
 function ParseArticleObject(aArticleObject:TArticleObject;aBaseConfig:TPlanObject;aArticleConfig:TPlanObject;aLimit:TPlanObject;aArrange:TPlanObject;aPage:TPlanObject;aCatchItem:TPlanObject):String;
 function GetFileSavePath(aBaseConfig:TPlanObject):String;
+
 implementation
 
 //检查采集项目规则是否配置，如果没有就报错
@@ -219,15 +220,15 @@ var
 begin
   //searchStrings.
   sResponse:=RequestUrl(aBaseConfig,aUrl);
-  writefile('d:\b.txt',sResponse);
+  //writefile('d:\b.txt',sResponse);
   listScope:=aListConfig.getProperty('CatchPlanAutoListBeginEnd','value');
   listContent:=getScopeContent(sResponse,listScope,VARLISTCONTENT,'列表规则中列表区域设置');
-  writefile('d:\a.txt',listContent);
+  //writefile('d:\a.txt',listContent);
   result:=getArticleList(listContent,aListConfig);
 end;
 
 
-function GetAutoList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
+function GetAutoList(aBaseConfig:TPlanObject;aListConfig:TPlanObject;var aError:String):TArticleList;
 var
   listUrl,tmpUrl:String;
   listBeginPage:string;
@@ -236,6 +237,9 @@ var
   intStep:integer;
   i,intBegin,intEnd,j:integer;
   tmpArrays:TArticleList;
+  isCatchAll:boolean;
+  intCatchNumber:integer;
+  sNumber:String;
 begin
   listUrl:=checkConfig(aListConfig,'CatchPlanAutoListUrl');
   listBeginPage:=checkConfig(aListConfig,'CatchPlanAutoListFirstPage');
@@ -245,6 +249,20 @@ begin
 
   intBegin:=strtoint(listBeginPage);
   intEnd:=strtoint(listEndPage);
+
+  if(aBaseConfig.getProperty('CatchPlanBaseIsCatchAll','value')='True') then
+     isCatchAll:=true
+  else
+  begin
+     isCatchAll:=false;
+     sNumber:=aBaseConfig.getProperty('CatchPlanBaseCatchNumber','value');
+     if(sNumber='') then
+       sNumber:='1';
+     intCatchNumber:=strtoint(sNumber);
+  end;
+
+
+
   if (intBegin>intEnd) then
   begin
     i:=intBegin;
@@ -252,12 +270,21 @@ begin
     begin
       tmpUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i-intStep;
-      tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      try
+        tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      except
+        on E: Exception do aError:=aError+ERRORSPLIT+'获得列表错误('+tmpUrl+')'+ERRORSPLIT+e.Message;
+      end;
       for j:=0 to length(tmpArrays)-1 do
       begin
+        if(not isCatchAll) then
+          if(intCatchNumber<=length(result)) then
+            exit;
+            
         setlength(result,length(result)+1);
         result[length(result)-1]:=tmpArrays[j];
       end;
+      sleep(100);
     end;
   end else
   begin
@@ -266,9 +293,16 @@ begin
     begin
       tmpUrl:=stringReplace(listUrl,VARLISTPAGENUMBER,inttostr(i),[rfReplaceAll]);
       i:=i+intStep;
-      tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      try
+        tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
+      except
+        on E: Exception do aError:=aError+ERRORSPLIT+'获得列表错误('+tmpUrl+')'+ERRORSPLIT+e.Message;
+      end;
       for j:=0 to length(tmpArrays)-1 do
       begin
+        if(not isCatchAll) then
+          if(intCatchNumber<=length(result)) then
+            exit;
         setlength(result,length(result)+1);
         result[length(result)-1]:=tmpArrays[j];
       end;
@@ -426,22 +460,46 @@ function ParseOneArrangeItems(aSource:String;aRule:String):String;
 var
   sTemp,sTemp2:String;
   intPos,intPos2:integer;
+  ss,sd:string;
 begin
   sTemp:=aRule;
   result:=aSource;
   if(sTemp='') then
     exit;
   intPos:=pos(chr(13)+chr(10),sTemp);
-  while intPos>0 do
+  while (true) do
   begin
-    sTemp2:=copy(sTemp,1,intPos-1);
-    intPos2:=pos('=',sTemp2);
-    if(intPos2>0) then
+    if(intPos>0) then
     begin
-      aSource:=RegexReplaceString(aSource,copy(sTemp2,1,intPos2-1),copy(sTemp2,intPos2+1,length(sTemp2)));
+      sTemp2:=copy(sTemp,1,intPos-1);
+      intPos2:=pos('=',sTemp2);
+      if(intPos2>0) then
+      begin
+        ss:=copy(sTemp2,1,intPos2-1);
+        sd:=copy(sTemp2,intPos2+1,length(sTemp2));
+        if(sd='') then
+          sd:=' ';
+        aSource:=RegexReplaceString(aSource,ss,sd);
+      end;
+      sTemp:=copy(sTemp,intPos+2,length(sTemp));
+      intPos:=pos(chr(13)+chr(10),sTemp);
+    end else
+    begin
+      if(sTemp<>'') then
+      begin
+        sTemp2:=sTemp;
+        intPos2:=pos('=',sTemp2);
+        if(intPos2>0) then
+        begin
+          ss:=copy(sTemp2,1,intPos2-1);
+          sd:=copy(sTemp2,intPos2+1,length(sTemp2));
+          if(sd='') then
+            sd:=' ';
+          aSource:=RegexReplaceString(aSource,ss,sd);
+        end;
+      end;
+      break;
     end;
-    sTemp:=copy(sTemp,intPos+2,length(sTemp));
-    intPos:=pos(chr(13)+chr(10),sTemp);
   end;
   result:=aSource;
 end;
@@ -539,7 +597,7 @@ begin
         raise EUserDefineError.create('采集项目(正文内容)规则设置有误,没找到文章内容！');
       end else
       begin
-        aArticleObject.content:=aArticleObject.content+VARARTICLECONTENTPAGENUMBER+searchStrings.Strings[tagStrings.IndexOf(VARARTICLECONTENT)];
+        aArticleObject.content:=aArticleObject.content+VARARTICLECONTENTPAGESPLITTAG+searchStrings.Strings[tagStrings.IndexOf(VARARTICLECONTENT)];
       end;
     end;
   finally
@@ -903,6 +961,8 @@ begin
       sExpression:='(?:'+sHtmlName+')=(.*)('+sFileExtension+')';
       try
         sList:=RegexSearchString(aArticleObject.content,sExpression);
+        if(sList=nil) then
+          exit;
         for i:=0 to sList.Count div 2-1 do
         begin
           try
@@ -944,24 +1004,47 @@ begin
 end;
 
 
+procedure testReturn(var s:string);
+begin
+  s:='hello world';
+end;
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 //公开接口根据列表配置获得文章地址列表
-function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject):TArticleList;
+function ParseArticleList(aBaseConfig:TPlanObject;aListConfig:TPlanObject;var aError:String):TArticleList;
 var
   listUrl:String;
   tmpUrl:string;
   tmpArrays:TArticleList;
   j:integer;
+  isCatchAll:boolean;
+  intCatchNumber:integer;
+  sNumber:String;
 begin
   if(aListConfig.getProperty('CatchPlanEnableAutoList','value')='True') then
   begin
-    result:=GetAutoList( aBaseConfig,aListConfig);
+    result:=GetAutoList(aBaseConfig,aListConfig,aError);
   end else
   begin
+    if(aBaseConfig.getProperty('CatchPlanBaseIsCatchAll','value')='True') then
+      isCatchAll:=true
+    else
+    begin
+      isCatchAll:=false;
+      sNumber:=aBaseConfig.getProperty('CatchPlanBaseCatchNumber','value');
+       if(sNumber='') then
+         sNumber:='1';
+       intCatchNumber:=strtoint(sNumber);
+      //intCatchNumber:=strtoint(aBaseConfig.getProperty('CatchPlanBaseCatchNumber','value'));
+    end;
     tmpUrl:=checkConfig(aListConfig,'CatchPlanListUrl');
     tmpArrays:=parseListArticleUrl(aBaseConfig,aListConfig,tmpUrl);
     for j:=0 to length(tmpArrays)-1 do
     begin
+      if(not isCatchAll) then
+          if(intCatchNumber<=length(result)) then
+            exit;
       setlength(result,length(result)+1);
       result[length(result)-1]:=tmpArrays[j];
     end;
@@ -975,55 +1058,67 @@ var
   sResponse:String;
   sError:String;
 begin
-  result:='1';
-  //处理限制条件前后都要限制，前面校验标题后者校验内容等项目
-  ParseLimitItems(aArticleObject,aLimit);  
-  articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
-  articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
-  aArticleObject.url:=articleUrl;
-  sResponse:=RequestUrl(aBaseConfig,articleUrl);
-  //writefile('d:\a.txt',sResponse);
-  //解析采集项目，出现错误不退出继续执行并返回错误结果
-  sError:=ParseCatchItems(aArticleObject,aCatchItem,sResponse);
-  if(sError<>'1') then
-    result:=sError;
-  //处理限制条件 ,出现错误直接退出表示一项不符合就不采集
-  ParseLimitItems(aArticleObject,aLimit);
-  //处理正文分页
-  ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
-  //数据整理，出现错误直接退出
-  ParseArrangeItems(aArticleObject,aArrange);
-  //生成数据库文章对象
-  createArticle(aArticleObject);
-  //处理启用正文内容下载，出现错误不退出继续执行并返回错误结果
-  sError:=ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
-  if(sError<>'1') then
-  begin
-    if(result='1') then
-      result:=sError
-    else
-      result:=result+ERRORSPLIT+sError;
+  try
+    result:='1';
+    //处理限制条件前后都要限制，前面校验标题后者校验内容等项目
+    ParseLimitItems(aArticleObject,aLimit);
+    articleUrl:=checkConfig(aArticleConfig,'CatchPlanPageUrl');
+    articleUrl:=stringreplace(articleUrl,VARARTICLEID,aArticleObject.id,[rfReplaceAll]);
+    aArticleObject.url:=articleUrl;
+    sResponse:=RequestUrl(aBaseConfig,articleUrl);
+    //writefile('d:\a.txt',sResponse);
+    //解析采集项目，出现错误不退出继续执行并返回错误结果
+    sError:=ParseCatchItems(aArticleObject,aCatchItem,sResponse);
+    if(sError<>'1') then
+      result:=sError;
+    //处理限制条件 ,出现错误直接退出表示一项不符合就不采集
+    ParseLimitItems(aArticleObject,aLimit);
+    //处理正文分页
+    ParseArticleContentPage(aArticleObject,aBaseConfig,aArticleConfig,aPage,aCatchItem,sResponse);
+    //数据整理，出现错误直接退出
+    ParseArrangeItems(aArticleObject,aArrange);
+    //生成数据库文章对象
+    createArticle(aArticleObject);
+    //处理启用正文内容下载，出现错误不退出继续执行并返回错误结果
+    sError:=ParseContentDownload(aArticleObject,aBaseConfig,aArticleConfig);
+    if(sError<>'1') then
+    begin
+      if(result='1') then
+        result:=sError
+      else
+        result:=result+ERRORSPLIT+sError;
+    end;
+    //处理文件下载
+    sError:=ParseDownloadFiles(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+    if(sError<>'1') then
+    begin
+      if(result='1') then
+        result:=sError
+      else
+        result:=result+ERRORSPLIT+sError;
+    end;
+    //处理缩略图
+    sError:=ParseThumb(aArticleObject,aCatchItem,sResponse,aBaseConfig);
+    if(sError<>'1') then
+    begin
+      if(result='1') then
+        result:=sError
+      else
+        result:=result+ERRORSPLIT+sError;
+    end;
+    //更新所有属性后修改数据库
+    updateArticle(aArticleObject);
+  except
+    on e:Exception do
+    begin
+       if result='1' then
+         result:=e.Message
+       else
+         result:=result+ERRORSPLIT+e.Message;
+    end
   end;
-  //处理文件下载
-  sError:=ParseDownloadFiles(aArticleObject,aCatchItem,sResponse,aBaseConfig);
-  if(sError<>'1') then
-  begin
-    if(result='1') then
-      result:=sError
-    else
-      result:=result+ERRORSPLIT+sError;
-  end;
-  //处理缩略图
-  sError:=ParseThumb(aArticleObject,aCatchItem,sResponse,aBaseConfig);
-  if(sError<>'1') then
-  begin
-    if(result='1') then
-      result:=sError
-    else
-      result:=result+ERRORSPLIT+sError;
-  end;
-  //更新所有属性后修改数据库
-  updateArticle(aArticleObject);
+  if(result<>'1') then
+    result:='处理文章('+aArticleObject.title+')出错,url:'+articleUrl+ERRORSPLIT+result;
 end;
 
 end.

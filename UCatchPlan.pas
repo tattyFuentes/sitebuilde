@@ -38,6 +38,7 @@ type
     btntestrule: TFlatButton;
     N1: TMenuItem;
     pop_execplan: TMenuItem;
+    btntestarticle: TFlatButton;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -69,6 +70,7 @@ type
     procedure checkBoxTreePlanCategoryAdvancedCustomDrawItem(
       Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
       Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
+    procedure btntestarticleClick(Sender: TObject);
 
 
 
@@ -89,19 +91,19 @@ type
     procedure ControlEvent(Sender: TObject);
     procedure renamePlanName(newName:string);
     procedure DrawRectByPoint(x,y:integer;dc:HDC);
-    procedure ExecCatchPlan(aPlanId:String);
   public
     { Public declarations }
     procedure OnInspectorButtonClick(Sender: TObject;AbsoluteIndex: Integer);
     procedure OnPlanViewMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState;X, Y: Integer);
     procedure PlanViewOnDrawObject(Sender: TdxCustomFlowChart; AObject: TdxFcObject;R: TRect);
+    procedure ExecCatchPlan(aPlanId:String);
   end;
 
 var
   frmCatchPlan: TfrmCatchPlan;
 
 implementation
-uses UHelp,UPlanViewHelp,UInspectorTextEditor,UGetCookies,UTools,UTest;
+uses UHelp,UPlanViewHelp,UInspectorTextEditor,UGetCookies,UTools,UTest,UCatchThread;
 {$R *.dfm}
 procedure TfrmCatchPlan.CreateCatchRule();
 begin
@@ -686,12 +688,16 @@ var
   list:TArticleList;
   i:integer;
   articleObject:TArticleObject;
+  sError:String;
 begin
   RichEdit1.Clear;
   InitPlanObjects();
   try
     logInfo('开始分析文章列表',RichEdit1,false);
-    list:=ParseArticleList(mCachePlan,mPlanList);
+    sError:='';
+    list:=ParseArticleList(mCachePlan,mPlanList,sError);
+    if(sError<>'') then
+      logInfo('逻辑错误:'+sError,RichEdit1,true);
     logInfo('成功分析文章列表,文章总数为:'+inttostr(length(list)),RichEdit1,false);
     for i:=0 to length(list)-1 do
     begin
@@ -700,8 +706,11 @@ begin
         logInfo('标题:'+list[i].title,RichEdit1,false);
         articleObject:= list[i];
         articleObject.catchPlanId:=aPlanId;
-        ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanAtriclePage1,mPlanCatchItem1);
+        sError:=ParseArticleObject(articleObject,mCachePlan,mPlanArticle1,mPlanLimit1,mPlanArrange1,mPlanAtriclePage1,mPlanCatchItem1);
+        if(sError<>'1') then
+          logInfo(sError,RichEdit1,true);
         RichEdit1.Lines.Add('成功分析文章'+inttostr(i));
+        sleep(1000);
       except
          on e:EUserDefineError do
            logInfo('逻辑错误:'+e.Message,RichEdit1,true);
@@ -725,10 +734,14 @@ end;
 
 
 procedure TfrmCatchPlan.pop_execplanClick(Sender: TObject);
+var
+  catchThead:TCatchThread;
 begin
   if(isGroupNode(checkBoxTreePlanCategory.Selected)) then
     exit;
-  ExecCatchPlan(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data);
+  catchThead:=TCatchThread.Create(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data,self);
+
+  //ExecCatchPlan(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data);
 end;
 
 procedure TfrmCatchPlan.checkBoxTreePlanCategoryAdvancedCustomDrawItem(
@@ -741,6 +754,23 @@ begin
     checkBoxTreePlanCategory.Canvas.Brush.Color := clHighlight;
     checkBoxTreePlanCategory.Canvas.Font.Color := clHighlightText;
   end;
+end;
+
+procedure TfrmCatchPlan.btntestarticleClick(Sender: TObject);
+var
+  frmTestRule:TfrmTestRule;
+  articleObject:TArticleObject;
+begin
+  frmTestRule:=TfrmTestRule.Create(self);
+  frmTestRule.catchPlanId:=strtoint(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data);
+  //frmTestRule.parseType:=1;
+  articleObject:=TArticleObject.Create;
+  frmTestRule.mIsTestObject:=true;
+  frmTestRule.planView:=PlanView;
+  articleObject.id:='http://women.sohu.com/20120407/n339498433';
+  articleObject.title:='为了满足情人我拒绝老公性要求';
+  frmTestRule.mArticleObject:=articleObject;
+  frmTestRule.ShowModal;
 end;
 
 end.

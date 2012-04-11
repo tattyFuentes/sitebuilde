@@ -99,84 +99,12 @@ object frmMain: TfrmMain
     Width = 817
     Height = 73
     Lines.Strings = (
-      '<div class="articleCell SG_j_linedot1">'
-      #9#9#9#9#9#9'<p class="atc_main '
-      'SG_dot">'
-      #9#9#9#9#9#9#9'<span '
-      'class="atc_ic_f"></span>'
-      #9#9#9#9#9#9#9'<span '
-      'class="atc_title">'
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9#9'<a title="tyj'#29436#30495#30340#35201#26469#20102'" '
       
-        'target="_blank" href="http://blog.sina.com.cn/s/blog_59880a7b010' +
-        '2e6mf.html">tyj'#29436
-      #30495#30340#35201#26469#20102'</a></span> '
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9'<span class="atc_ic_b"><img '
-      'class="SG_icon SG_icon18" '
-      
-        'src="http://simg.sinajs.cn/blog7style/images/common/sg_trans.gif' +
-        '" width="15" '
-      'height="15" title="'#27492#21338#25991#21253#21547#22270#29255'" align="absmiddle" /></span>'
-      #9#9#9#9#9#9'</p>'
-      #9#9#9#9#9#9'<p class="atc_info">'
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9'<span class="atc_data" '
-      'id="count_59880a7b0102e6mf"></span>'
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9'<span class="atc_tm SG_txtc">2012-02-22 '
-      '19:00</span>'
-      #9#9#9#9#9#9#9'<span '
-      'class="atc_set">'
-      #9#9#9#9#9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9'</span>'
-      #9#9#9#9#9#9'</p>'
-      #9#9#9#9#9'</div>'
-      #9#9#9#9#9#9#9#9'<div '
-      'class="articleCell SG_j_linedot1">'
-      #9#9#9#9#9#9'<p class="atc_main '
-      'SG_dot">'
-      #9#9#9#9#9#9#9'<span '
-      'class="atc_ic_f"></span>'
-      #9#9#9#9#9#9#9'<span '
-      'class="atc_title">'
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9#9'<a title="tyj'#26085#32447#32423#21035#20108#28010
-      #35843#25972#19979#21322#21608#21040#26469'" target="_blank" '
-      
-        'href="http://blog.sina.com.cn/s/blog_59880a7b0102e6m0.html">tyj'#26085 +
-        #32447#32423#21035#20108#28010#35843#25972
-      #19979#21322#21608#21040#26469'</a></span> '
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9'<span class="atc_ic_b"><img '
-      'class="SG_icon SG_icon18" '
-      
-        'src="http://simg.sinajs.cn/blog7style/images/common/sg_trans.gif' +
-        '" width="15" '
-      'height="15" title="'#27492#21338#25991#21253#21547#22270#29255'" align="absmiddle" /></span>'
-      #9#9#9#9#9#9'</p>'
-      #9#9#9#9#9#9'<p class="atc_info">'
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9'<span class="atc_data" '
-      'id="count_59880a7b0102e6m0"></span>'
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9'<span class="atc_tm SG_txtc">2012-02-21 '
-      '22:35</span>'
-      #9#9#9#9#9#9#9'<span '
-      'class="atc_set">'
-      #9#9#9#9#9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9
-      #9#9#9#9#9#9#9#9#9
-      #9#9#9#9#9#9#9#9#9)
+        '"c57d6e398312802f087c5013b3728df8:0:0:|;c4038ad3a81d6df84f3717c5' +
+        'e04b5484:0:1:|http://img01.taobaocdn.com/bao/uploaded/i1/1051520' +
+        '60/T2NVCqXfhaXXXXXXXX_!!105152060.jpg;2698d1a9c4832cfd7a5af0e807' +
+        'c6557c:0:2:|http://img04.taobaocdn.com/bao/uploaded/i4/105152060' +
+        '/T2hFGqXexaXXXXXXXX_!!105152060.jpg;"')
     TabOrder = 7
     WordWrap = False
   end
@@ -428,8 +356,8 @@ object frmMain: TfrmMain
       000000000000}
   end
   object PopupMenu1: TPopupMenu
-    Left = 728
-    Top = 24
+    Left = 656
+    Top = 56
     object pop_creategroup: TMenuItem
       Caption = #21019#24314#20998#32452
       OnClick = pop_creategroupClick
