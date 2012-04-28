@@ -1,0 +1,1 @@
+ruby rubyscript\sinablog.rb "ugahfh@sina.com" "coco2001" "logs/sinablog/sinabloglog" "http://control.blog.sina.com.cn/admin/article/article_add.php" "乌龙爱情" "新闻" "她在和他分手后，一个人来到日本旅游，不料却在日本醉酒后和来日本公干的他发生了。。。。。。" ""
