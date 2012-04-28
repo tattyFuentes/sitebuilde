@@ -72,7 +72,7 @@ var
   frmMain: TfrmMain;
 
 implementation
-uses UCatchPlan,UTest,UPublishPlanSyntax;
+uses UCatchPlan,UTest,UPublishPlanSyntax,uHttp;
 {$R *.dfm}
 
 procedure TfrmMain.FormCreate(Sender: TObject);
@@ -395,6 +395,53 @@ FreeAndNil(reg);
 end;
 
 
+function HexToInt(const S: String): DWORD;
+asm
+PUSH EBX 
+PUSH ESI
+
+MOV ESI, EAX //字符串地址
+MOV EDX, [EAX-4] //读取字符串长度
+
+XOR EAX, EAX //初始化返回值 
+XOR ECX, ECX //临时变量
+
+TEST ESI, ESI //判断是否为空指针
+JZ @@2 
+TEST EDX, EDX //判断字符串是否为空
+JLE @@2 
+MOV BL, $20
+@@0: 
+MOV CL, [ESI]
+INC ESI
+
+OR CL, BL //如果有字母则被转换为小写字母
+SUB CL, '0'
+JB @@2 // < '0' 的字符
+CMP CL, $09
+JBE @@1 // '0'..'9' 的字符
+SUB CL, 'a'-'0'-10
+CMP CL, $0A
+JB @@2 // < 'a' 的字符
+CMP CL, $0F
+JA @@2 // > 'f' 的字符
+@@1: // '0'..'9', 'A'..'F', 'a'..'f'
+SHL EAX, 4
+OR EAX, ECX
+DEC EDX
+JNZ @@0
+JMP @@3 
+@@2: 
+XOR EAX, EAX // 非法16进制字符串 
+@@3:
+POP ESI
+POP EBX
+RET
+end;
+ 
+
+
+
 procedure TfrmMain.Button6Click(Sender: TObject);
 var
   //frmTools:TFrmTools;
@@ -408,9 +455,37 @@ var
   i:integer;
   htmlDoc:IHTMLDocument3;
   contentArea:HTMLTextAreaElement;
-  s22:string;
-
+  s22,s33:string;
+  sList:TStringList;
+  sDownUrl:String;
+  widechar1:widechar;
+  tmpArray:Array of byte;
+  pos1:integer;
 begin
+  showmessage(HexUtf8ToString('%E8%BD%AE%E6%92%AD%E5%B0%BA%E5%AF%B8%EF%BC%9A%E5%AE%BD460%EF%BC%8C%E9%AB%98220.,%E5%95%86%E5%93%81%E5%9B%BE%E5%B0%BA%E5%AF%B8%EF%BC%9A%E5%AE%BD220%EF%BC%8C%E9%AB%98220.'));
+  sList:=RegexSearchString(memo2.Lines.Text,'(?:'+' url="'+')(.*)('+'jpg|swf|gif|png|"'+')');
+  if(sList=nil) then
+    exit;
+  for i:=0 to sList.Count div 2-1 do
+  begin
+    try
+      sDownUrl:=sList.Strings[i*2]+sList.Strings[i*2+1];
+      sDownUrl:=URLDecode(sDownUrl);
+      if(sDownUrl[1]='"') or (sDownUrl[1]='''') then
+      begin
+        sDownUrl:=copy(sDownUrl,2,length(sDownUrl));
+      end;
+      sDownUrl:=GetFileUrlBySourceUrl('http://img.uu1001.cn/sub_templets/146042.xml',sDownUrl);
+      memo1.Lines.Add(sDownUrl);
+    except
+    end;
+  end;
+  exit;
+
+
+
+
+
   execCommand(pchar('ruby rubyscript\bababian.rb "我们是你们的" "bbbb"'),true);
  // execCommand(pchar('ruby rubyscript\bababian.rb "'+utf8encode('hel中国日文lo'+chr(13)+chr(10)+'a\"aaa\""')+' "中国日文"'),true);
   writefile('d:\a.rb',utf8encode('我们是中国人'));
@@ -461,7 +536,7 @@ begin
   frmPublishPlan.ShowModal();
 end;
 
-initialization 
+initialization
   OleInitialize(nil);
 finalization
 try

@@ -39,6 +39,9 @@ type
     N1: TMenuItem;
     pop_execplan: TMenuItem;
     btntestarticle: TFlatButton;
+    N2: TMenuItem;
+    pop_copyplan: TMenuItem;
+    pop_pasteplan: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure pop_creategroupClick(Sender: TObject);
     procedure pop_deletegroupClick(Sender: TObject);
@@ -71,12 +74,15 @@ type
       Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
       Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
     procedure btntestarticleClick(Sender: TObject);
+    procedure pop_copyplanClick(Sender: TObject);
+    procedure pop_pasteplanClick(Sender: TObject);
 
 
 
   private
     { Private declarations }
-    mCachePlan,mPlanList,mPlanArticle1,mPlanArticle2,mPlanLimit1,mPlanLimit2,mPlanArrange1,mPlanArrange2,mPlanAtriclePage1,mPlanAtriclePage2,mPlanCatchItem1,mPlanCatchItem2:TPlanObject; 
+    mCachePlan,mPlanList,mPlanArticle1,mPlanArticle2,mPlanLimit1,mPlanLimit2,mPlanArrange1,mPlanArrange2,mPlanAtriclePage1,mPlanAtriclePage2,mPlanCatchItem1,mPlanCatchItem2:TPlanObject;
+    mCopyPlanId:String; 
     isChangeing:boolean;
     currentPlanNode:TTreeNode;
     arrayListBoxStoreData:THashedStringList;
@@ -246,9 +252,14 @@ begin
         pop_createplan.Enabled:=false;
         pop_execplan.Enabled:=false;
         pop_deletegroup.Enabled:=false;
+        pop_copyplan.Enabled:=false;
+        pop_pasteplan.Enabled:=false;
+
       end else begin
         pop_createplan.Enabled:=true;
         pop_execplan.Enabled:=false;
+        pop_copyplan.Enabled:=false;
+        pop_pasteplan.Enabled:=true;
       end;
       pop_deleteplan.Enabled:=false;
       //pop_editPlan.Enabled:=false;
@@ -260,6 +271,8 @@ begin
       pop_deleteplan.Enabled:=true;
       //pop_editPlan.Enabled:=true;
       pop_execplan.Enabled:=true;
+      pop_copyplan.Enabled:=true;
+      pop_pasteplan.Enabled:=false;
     end;
     node.Selected:=true;
   end;
@@ -283,7 +296,7 @@ var
   catchPlanObject:TPlanObject;
 begin
   catchPlanObject:=planview.GetObjectByType(ptCatchPlan);
-  
+
   if(catchPlanObject<>nil) then
   begin
     catchPlanObject.Text:=newName;
@@ -771,6 +784,74 @@ begin
   articleObject.title:='为了满足情人我拒绝老公性要求';
   frmTestRule.mArticleObject:=articleObject;
   frmTestRule.ShowModal;
+end;
+
+procedure TfrmCatchPlan.pop_copyplanClick(Sender: TObject);
+var
+  planId:string;
+  articleObject:TArticleObject;
+begin
+  if(isGroupNode(checkBoxTreePlanCategory.Selected)) then
+    exit;
+  mCopyPlanId:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
+  //planId:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
+  //
+  //createPlan
+
+
+  //catchThead:=TCatchThread.Create(checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data,self);
+
+end;
+
+procedure TfrmCatchPlan.pop_pasteplanClick(Sender: TObject);
+var
+  tmpPlanView: TPlanView;
+  tmpFileName:string;
+  tmpCatchPlanObject:TPlanObject;
+  contentStream:TMemoryStream;
+  tmpCategoryId:String;
+  node:TTreeNode;
+  parentNodeData:string;
+  newNodeId:integer;
+  nodeData:TTreeNodeData;
+begin
+  //articleObject:=getArticleById(strtoint(mCopyPlanId));
+  if(not isGroupNode(checkBoxTreePlanCategory.Selected)) then
+    exit;
+  tmpCategoryId:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
+  if(mCopyPlanId='') then
+  begin
+    MessageBox(self.Handle,'请先复制采集规则！','提示信息',MB_OK+MB_ICONINFORMATION);
+  end;
+
+  tmpFileName:=getPlanContentById(strtoint(mCopyPlanId));
+  if(tmpFileName<>'') then
+  begin
+    checkBoxTreePlanCategory.Selected.Expanded:=true;
+    nodeData.Data:='0';
+    node:=checkBoxTreePlanCategory.AddTreeNode('新采集方案',nodeData,checkBoxTreePlanCategory.Selected);
+    node.ImageIndex:=1;
+    node.SelectedIndex:=1;
+    parentNodeData:=checkBoxTreePlanCategory.GetTreeViewNodeData(checkBoxTreePlanCategory.Selected).Data;
+
+    //InitNewCatchPlan(PlanView,'新采集方案');
+    PlanView.LoadFromFile(tmpFileName);
+    deletefile(tmpFileName);
+    PlanView.OnMouseDown:=OnPlanViewMouseDown;
+    tmpCatchPlanObject:=PlanView.GetObjectByType(ptCatchPlan);
+    tmpCatchPlanObject.modifyProperty('CatchPlanBaseName','value','新采集方案');
+    contentStream:=TMemoryStream.Create;
+    PlanView.SaveToStream(contentStream);
+    newNodeId:=createPlan(strtoint(parentNodeData),'新采集方案',contentStream);
+    contentStream.Free;
+    onTreeNodeChanged(node,'新采集方案');
+    nodeData.Data:=inttostr(newNodeId);
+    checkBoxTreePlanCategory.ModifyTreeNodeData(Node,nodeData);
+    node.Focused:=true;
+    node.Selected:=true;
+    node.EditText;
+  end else
+    MessageBox(self.Handle,'请先复制采集规则！','提示信息',MB_OK+MB_ICONINFORMATION);
 end;
 
 end.

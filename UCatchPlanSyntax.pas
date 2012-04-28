@@ -898,7 +898,17 @@ function ParseThumb(aArticleObject:TArticleObject;aCatchItem:TPlanObject;aRespon
 var
   sExpression,sTemp:String;
   intPos:integer;
+  sDownUrl,sDownFileName:string;
 begin
+  if(aArticleObject.thumb<>'') then //在列表时已经获得直接处理下载
+  begin
+    sDownUrl:=aArticleObject.thumb;
+    aArticleObject.thumb:='';
+    sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\'+'thumbfiles'+'\',aArticleObject.url);
+    aArticleObject.AddThumb(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
+    exit;
+  end;
+
   result:='1';
   //sList:=nil;
   sExpression:=aCatchItem.getProperty('CatchPlanItemThumb','value');
@@ -958,7 +968,7 @@ begin
       sBlockFileUrl:=aArticleConfig.getProperty('CatchPlanPageBlockFileUrl','value');
       sHtmlName:=StringReplace(sHtmlName,chr(13)+chr(10),'|',[rfReplaceAll]);
       sFileExtension:=StringReplace(sFileExtension,chr(13)+chr(10),'|',[rfReplaceAll]);;
-      sExpression:='(?:'+sHtmlName+')=(.*)('+sFileExtension+')';
+      sExpression:='(?:'+sHtmlName+')(.*)('+sFileExtension+')';
       try
         sList:=RegexSearchString(aArticleObject.content,sExpression);
         if(sList=nil) then
@@ -967,24 +977,25 @@ begin
         begin
           try
             sDownUrl:=sList.Strings[i*2]+sList.Strings[i*2+1];
+            sDownUrl:=URLDecode(sDownUrl);
             if(sDownUrl[1]='"') or (sDownUrl[1]='''') then
             begin
               sDownUrl:=copy(sDownUrl,2,length(sDownUrl));
-              sDownUrl:=GetFileUrlBySourceUrl(aArticleObject.url,sDownUrl);
-              if(sAllowFileUrl<>'') then
-              begin
-                if(not isInstr(sDownUrl,sAllowFileUrl)) then
-                  continue;
-              end;
-
-              if(sBlockFileUrl<>'') then
-              begin
-                if(isInstr(sDownUrl,sBlockFileUrl)) then
-                  continue;
-              end;
-              sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\contentfiles\',aArticleObject.url);
-              aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
             end;
+            sDownUrl:=GetFileUrlBySourceUrl(aArticleObject.url,sDownUrl);
+            if(sAllowFileUrl<>'') then
+            begin
+              if(not isInstr(sDownUrl,sAllowFileUrl)) then
+                continue;
+            end;
+
+            if(sBlockFileUrl<>'') then
+            begin
+              if(isInstr(sDownUrl,sBlockFileUrl)) then
+                continue;
+            end;
+            sDownFileName:=DownLoadFile(sDownUrl,GetFileSavePath(aBaseConfig)+aArticleObject.id+'\contentfiles\',aArticleObject.url);
+            aArticleObject.AddContentFile(sDownUrl,copy(sDownFileName,length(GetFileSavePath(aBaseConfig))+1,length(sDownFileName)));
           except
             on e:Exception do
             begin

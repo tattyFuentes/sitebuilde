@@ -19,6 +19,7 @@ type
     property ObjectType:TPlanObjectType read FType write FType;
     property ItemProperty:String read FProperty write FProperty;
     function getProperty(name:String;aPropertyName:String):String;
+    function modifyProperty(name:String;aPropertyName:String;aPropertyValue:String):String;
     function getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;
   end;
 
@@ -45,6 +46,13 @@ begin
   result:=GetRowPropertyByName(name,UTF8ENCODE(FProperty),aPropertyName);
   //result:=RegexReplaceString(result,'([\^\.\$\{\}\[\]\?])','\\\1');
 end;
+
+function TPlanObject.modifyProperty(name:String;aPropertyName:String;aPropertyValue:String):String;
+begin
+   FProperty:=UTF8DECODE(ModifyRowPropertyByName(name,UTF8ENCODE(FProperty),aPropertyName,aPropertyValue));
+  //result:=RegexReplaceString(result,'([\^\.\$\{\}\[\]\?])','\\\1');
+end;
+
 
 function TPlanObject.getLinkObjectsByType(aType:TPlanObjectType):TPlanObjectArray;
 var

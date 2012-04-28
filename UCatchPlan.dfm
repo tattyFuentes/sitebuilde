@@ -354,5 +354,16 @@ object frmCatchPlan: TfrmCatchPlan
       Caption = #25191#34892#26041#26696
       OnClick = pop_execplanClick
     end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object pop_copyplan: TMenuItem
+      Caption = #22797#21046#26041#26696
+      OnClick = pop_copyplanClick
+    end
+    object pop_pasteplan: TMenuItem
+      Caption = #31896#36148#26041#26696
+      OnClick = pop_pasteplanClick
+    end
   end
 end

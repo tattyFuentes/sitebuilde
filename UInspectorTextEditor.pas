@@ -97,7 +97,7 @@ begin
   //sTemp:=copy(memText.Lines.Text,1,length(memText.Lines.Text)-2);
   sTemp:=memText.Lines.Text;
   //sTemp:=RegexReplaceString(sTemp,'([\^\.\$\{\}\[\]\?])','\\\1');
-  buttonRow.EditText:=trim(sTemp);
+  buttonRow.EditText:=TrimRight(sTemp);
   close;
 end;
 

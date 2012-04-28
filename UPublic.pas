@@ -49,6 +49,10 @@ function GetUniqeFileNameOfFolder(aFolder:String;aFileName:String):String;
 procedure logInfo(aInfo:String;aMsgWindow:TRichEdit;aIsError:boolean);
 procedure execCommand(aCommand:pchar;isClose:boolean);
 function RunDOS(CommandLine:String; var ExitCode: DWORD): string;
+function ModifyRowPropertyByName(name:String;JsonString:String;aPropertyName:String;aPropertyValue:String):string;
+function HexToInt(const S: String): DWORD;
+function HexUtf8ToString(s:string):string;
+
 const
   TVS_CHECKBOXES22 = $00000100;
 
@@ -57,8 +61,24 @@ implementation
 uses uXML,uLKJSON;
 
 
-
-
+function HexUtf8ToString(s:string):string;
+var
+  s1,s33,s22:string;
+  pos1:integer;
+begin
+  pos1:=pos('%',s);
+  while pos1>0 do
+  begin
+    s33:=copy(s,1,pos1-1);
+    s1:=copy(s,pos1+1,2);
+    s22:=s22+s33+chr(hextoint(s1));
+    s:=copy(s,pos1+3,length(s));
+    pos1:=pos('%',s);
+  end;
+  if(s<>'') then
+    s22:=s22+s;
+  result:=utf8decode(s22);
+end;
 
 procedure CheckResult(b: Boolean);
 
@@ -69,6 +89,53 @@ begin
     raise Exception.Create(SysErrorMessage(GetLastError));
 
 end;
+
+
+
+function HexToInt(const S: String): DWORD;
+asm
+PUSH EBX 
+PUSH ESI
+
+MOV ESI, EAX //字符串地址
+MOV EDX, [EAX-4] //读取字符串长度
+
+XOR EAX, EAX //初始化返回值 
+XOR ECX, ECX //临时变量
+
+TEST ESI, ESI //判断是否为空指针
+JZ @@2 
+TEST EDX, EDX //判断字符串是否为空
+JLE @@2 
+MOV BL, $20
+@@0: 
+MOV CL, [ESI]
+INC ESI
+
+OR CL, BL //如果有字母则被转换为小写字母
+SUB CL, '0'
+JB @@2 // < '0' 的字符
+CMP CL, $09
+JBE @@1 // '0'..'9' 的字符
+SUB CL, 'a'-'0'-10
+CMP CL, $0A
+JB @@2 // < 'a' 的字符
+CMP CL, $0F
+JA @@2 // > 'f' 的字符
+@@1: // '0'..'9', 'A'..'F', 'a'..'f'
+SHL EAX, 4
+OR EAX, ECX
+DEC EDX
+JNZ @@0
+JMP @@3 
+@@2: 
+XOR EAX, EAX // 非法16进制字符串 
+@@3:
+POP ESI
+POP EBX
+RET
+end;
+ 
 
 function RunDOS(CommandLine:String; var ExitCode: DWORD): string;
 
@@ -289,8 +356,16 @@ begin
         sList.Free;
     end else
     begin
-      sTemp:=ReverseString(aSourceUrl);
-      result:=ReverseString(copy(sTemp,pos('/',sTemp),length(sTemp)))+aFileUrl;
+      //绝对目录只需要host 为了淘宝模版图片特殊处理
+      sList:=RegexSearchString(lowercase(aSourceUrl),'(http://|https://)(.*)/');
+      if(sList<>nil) and (sList.Count=2) then
+      begin
+        result:=sList.Strings[0]+sList.Strings[1]+'/'+aFileUrl;
+      end;
+      if(sList<>nil) then
+        sList.Free;
+      //sTemp:=ReverseString(aSourceUrl);
+      //result:=ReverseString(copy(sTemp,pos('/',sTemp),length(sTemp)))+aFileUrl;
     end;
   end;
 end;
@@ -447,6 +522,32 @@ begin
 end;
 
 
+function ModifyOneRowByName(name:String;JsonObject:TlkJSONobject;aPropertyName:String;aPropertyValue:String):String;
+var
+  childsJsonObject:TlkJSONobject;
+  i:integer;
+begin
+  result:='-1';
+  if (JsonObject.Field['name'].Value=name) then
+  begin
+    JsonObject.Field[aPropertyName].Value:=aPropertyValue;
+    //修改成功标志
+    result:='1';
+    exit;
+  end;
+  childsJsonObject:=JsonObject.Field['childs'] as TlkJSONobject;
+  if(childsJsonObject<>nil) then
+  begin
+    for i:=0 to childsJsonObject.Count -1 do
+    begin
+      result:=ModifyOneRowByName(name,childsJsonObject.FieldByIndex[i] as TlkJSONobject,aPropertyName,aPropertyValue);
+      if result<>'-1' then
+        exit;
+    end;
+  end;
+end;
+
+
 
 function FindOneRowByName(name:String;JsonObject:TlkJSONobject;aPropertyName:String):string;
 var
@@ -491,6 +592,32 @@ begin
       exit;
   end;
 end;
+
+
+function ModifyRowPropertyByName(name:String;JsonString:String;aPropertyName:String;aPropertyValue:String):string;
+var
+  JsonRoot,JsonObject,JsonRows,JsonRowObject:TlkJSONobject;
+  i:integer;
+begin
+  result:='-1';
+  JsonRoot:=TlkJSON.ParseText(JsonString) as TlkJSONobject;
+  JsonRows:=(JsonRoot.Field['rows'] as TlkJSONobject);
+  for i:=0 to JsonRows.Count-1 do
+  begin
+    JsonObject:=JsonRows.FieldByIndex[i] as TlkJSONobject;
+    //showmessage(JsonObject.Field['value'].Value);
+    result:=ModifyOneRowByName(name,JsonRows.FieldByIndex[i] as TlkJSONobject,aPropertyName,aPropertyValue);
+    if(result<>'-1') then
+    begin
+      result:=TlkJSON.GenerateText(JsonRoot);
+      JsonRoot.Free;
+      exit;
+    end;
+  end;
+  JsonRoot.Free;
+end;
+
+
 
 
 function SaveOneInspectorRow(parentObject:TlkJSONobject;row:TdxInspectorRow;rowNumber:Integer):TlkJSONobject;

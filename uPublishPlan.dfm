@@ -137,9 +137,9 @@ object frmPublishPlan: TfrmPublishPlan
         Top = 1
         Width = 828
         Height = 525
-        ActivePage = TabSheet1
+        ActivePage = TabSheet3
         Align = alClient
-        TabIndex = 0
+        TabIndex = 2
         TabOrder = 0
         object TabSheet1: TTabSheet
           Caption = #22522#26412#35774#32622

@@ -7,7 +7,8 @@ Windows,Classes,SysUtils,IdBaseComponent, IdComponent, IdTCPConnection,IdTCPClie
 function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
 //下载文件
 function DownLoadFile(aUrl:string;aDestDir:String;aRefer:String):String;
-
+function URLDecode(const S: string): string;
+function URLEncode(const S: string; const InQueryString: Boolean): string;
 
 function PostStringList(aUrl:String;aMps:TStringList;aCookies:String):String;
 implementation
@@ -15,6 +16,75 @@ implementation
 
 //EIdConnClosedGracefully"tools "--> "debugger   options "的标签Language   exceptions,点击add   输入: 
 //eidconnclosedgracefully   然后点击按钮 "ok "就可以了! 
+
+
+function URLDecode(const S: string): string;
+var
+  Idx: Integer;   // loops thru chars in string
+  Hex: string;    // string of hex characters
+  Code: Integer;  // hex character code (-1 on error)
+begin
+  // Intialise result and string index
+  Result := '';
+  Idx := 1;
+  // Loop thru string decoding each character
+  while Idx <= Length(S) do
+  begin
+    case S[Idx] of
+      '%':
+      begin
+        // % should be followed by two hex digits - exception otherwise
+        if Idx <= Length(S) - 2 then
+        begin
+          // there are sufficient digits - try to decode hex digits
+          Hex := S[Idx+1] + S[Idx+2];
+          Code := SysUtils.StrToIntDef('$' + Hex, -1);
+          Inc(Idx, 2);
+        end
+        else
+          // insufficient digits - error
+          Code := -1;
+        // check for error and raise exception if found
+        if Code = -1 then
+          raise SysUtils.EConvertError.Create(
+            'Invalid hex digit in URL'
+          );
+        // decoded OK - add character to result
+        Result := Result + Chr(Code);
+      end;
+      '+':
+        // + is decoded as a space
+        Result := Result + ' '
+      else
+        // All other characters pass thru unchanged
+        Result := Result + S[Idx];
+    end;
+    Inc(Idx);
+  end;
+end;
+
+
+function URLEncode(const S: string; const InQueryString: Boolean): string;
+var
+  Idx: Integer; // loops thru characters in string
+begin
+  Result := '';
+  for Idx := 1 to Length(S) do
+  begin
+    case S[Idx] of
+      'A'..'Z', 'a'..'z', '0'..'9', '-', '_', '.':
+        Result := Result + S[Idx];
+      ' ':
+        if InQueryString then
+          Result := Result + '+'
+        else
+          Result := Result + '%20';
+      else
+        Result := Result + '%' + SysUtils.IntToHex(Ord(S[Idx]), 2);
+    end;
+  end;
+end;
+
 
 
 function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;

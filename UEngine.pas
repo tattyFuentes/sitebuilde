@@ -319,6 +319,8 @@ var
   SQLDataSet:TSQLDataSet;
   params:TParams;
 begin
+  if(aArticle.title='') then
+    aArticle.title:=GetGUID();
   if(isArticleObjectExists(aArticle.title,aArticle.catchPlanId)) then
     raise EUserDefineError.create('文章('+aArticle.title+')已经采集！');
 
