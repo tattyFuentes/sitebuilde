@@ -9,10 +9,37 @@ function addElement(doc:IXMLDocument;node:IXMLElement;tag:String):IXMLElement;
 function addElementEx(doc:IXMLDocument;node:IXMLElement;tag:String;value:String):IXMLElement;
 function findNodeByName(parentNode:IXMLNode;nodeName:String):IXMLNode;
 function getNodeValue(parentNode:IXMLNode):String;
+function getNodeAttibute(parentNode:IXMLNode;attibuteName:String):String;
 
 
 implementation
 
+
+function getNodeAttibute(parentNode:IXMLNode;attibuteName:String):String;
+var
+  i:integer;
+  tmpNode:IXMLNode;
+begin
+  result:='';
+  if(parentNode.Attributes<>nil) then
+  begin
+    tmpNode:=parentNode.Attributes.GetNamedItem(attibuteName);
+    if(tmpNode<>nil) then
+    begin
+      result:=tmpNode.NodeValue;
+    end;
+
+    {for i:=0 to  parentNode.Attributes.Length-1  do
+    begin
+      if(lowercase(parentNode.Attributes.Item[i].NodeName)=lowercase(attibuteName)) then
+      begin
+        result:=parentNode.Attributes.Item[i].NodeValue;
+        exit;
+      end;
+    end;}
+  end;
+
+end;
 
 function findNodeByName(parentNode:IXMLNode;nodeName:String):IXMLNode;
 var
@@ -85,6 +112,22 @@ end;
    </digital>
  </digitallist>
 }
+
+procedure analyzeTaoBaoMoban(strXML:WideString);
+var
+  i,j:integer;
+  doc :IXMLDocument;
+  root:IXMLNode;
+begin
+  doc:=CreateXMLDoc;
+  doc.LoadXML(strXML);
+  root:=doc.DocumentElement;
+  root:=root.FirstChild;
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    
+  end;
+end;
 
 procedure analyzeDigitalByIdsXML(strXML:WideString);
 var

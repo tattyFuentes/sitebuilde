@@ -25,11 +25,40 @@ procedure LoadPictureToDatabase;
 function getSystemConfig(name:String):String;
 function getPlanContentById(id:integer):String;
 function getArticleById(id:integer):TArticleObject;
+function getArticleListByCatchPlanId(catchPlanid:integer;page:integer):TArticleObjectList;
 function getPublishPlanContentById(id:integer):String;
 function getPlanContentById2(id:integer):TMemoryStream;
 
 implementation
 
+
+
+function getArticleListByCatchPlanId(catchPlanid:integer;page:integer):TArticleObjectList;
+var
+  SQLDataSet:TSQLDataSet;
+  tmpFileName:String;
+  tmpArticleObject:TArticleObject;
+begin
+  SQLDataSet:=TSQLDataSet.Create(nil);
+  SQLDataSet.SQLConnection:=DBConnection;
+  SQLDataSet.CommandType:=ctQuery;
+  with sqlDataset do
+  begin
+    CommandText:='select * from article where catchplanid='+inttostr(catchPlanid)+' order by createdate desc';
+    CommandText:=CommandText+' limit '+ inttostr((page-1)*50+1)+','+inttostr(50);
+    open();
+    while (not eof) do
+    begin
+      tmpArticleObject:=TArticleObject.Create;
+      tmpArticleObject.id:=FieldByName('id').Value;
+      tmpArticleObject.FromString(FieldByName('content').Value);
+      setlength(result,length(result)+1);
+      result[length(result)-1]:=tmpArticleObject;
+      Next;
+    end;
+    close();
+  end;
+end;
 
 function getArticleById(id:integer):TArticleObject;
 var

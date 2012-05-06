@@ -9,6 +9,7 @@ function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
 function DownLoadFile(aUrl:string;aDestDir:String;aRefer:String):String;
 function URLDecode(const S: string): string;
 function URLEncode(const S: string; const InQueryString: Boolean): string;
+function parseTaobaoZXXml(aUrl:String;aFilePath:String):String;
 
 function PostStringList(aUrl:String;aMps:TStringList;aCookies:String):String;
 implementation
@@ -86,6 +87,62 @@ begin
 end;
 
 
+
+function parseTaobaoZXXml(aUrl:String;aFilePath:String):String;
+var
+  sTemp,newUrl,sLow,sDownUrl:String;
+  hexString,hexDecodeString:String;
+  sList:TStringList;
+  i:integer;
+begin
+   result:=getStringFromUrl(aUrl,'',false);
+   sTemp:=result;
+   sList:=RegexSearchString(sTemp,'(?:'+' url="'+')(.*)('+'jpg|swf|gif|png|"'+')');
+   for i:=0 to sList.Count div 2-1 do
+   begin
+     sDownUrl:=sList.Strings[i*2]+sList.Strings[i*2+1];
+     newUrl:=URLDecode(sDownUrl);
+     if(newUrl[1]='"') or (newUrl[1]='''') then
+     begin
+       newUrl:=copy(newUrl,2,length(newUrl));
+     end;
+     newUrl:=GetFileUrlBySourceUrl(aUrl,newUrl);
+     sLow:=lowercase(newUrl);
+     if(pos('.jpg',sLow)>0) or (pos('.gif',sLow)>0) or (pos('.png',sLow)>0) then
+     begin
+       if(not DirectoryExists(aFilePath)) then
+         ForceDirectories(aFilePath);
+       try
+         DownLoadFile(newUrl,aFilePath,'');
+       except
+       end;
+       sTemp:=StringReplace(sTemp,sDownUrl,newUrl,[rfReplaceAll]);
+     end;
+   end;
+
+   sList:=RegexSearchString(sTemp,'f_t="(.*)"');
+   for i:=0 to sList.Count-1 do
+   begin
+     hexDecodeString:=HexUtf8ToString(sList.Strings[i]);
+     sTemp:=StringReplace(sTemp,sList.Strings[i],hexDecodeString,[rfReplaceAll]);
+   end;
+
+
+   sList:=RegexSearchString(sTemp,'f_n="(.*)"');
+   for i:=0 to sList.Count-1 do
+   begin
+     hexDecodeString:=HexUtf8ToString(sList.Strings[i]);
+     sTemp:=StringReplace(sTemp,sList.Strings[i],hexDecodeString,[rfReplaceAll]);
+   end;
+
+   sList:=RegexSearchString(sTemp,'i_t="(.*)"');
+   for i:=0 to sList.Count-1 do
+   begin
+     hexDecodeString:=HexUtf8ToString(sList.Strings[i]);
+     sTemp:=StringReplace(sTemp,sList.Strings[i],hexDecodeString,[rfReplaceAll]);
+   end;
+   result:=sTemp;
+end;
 
 function getStringFromUrl(aUrl:string;aEncode:string;aIsZip:boolean):String;
 var

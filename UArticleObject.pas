@@ -2,7 +2,10 @@ unit UArticleObject;
 
 interface
 uses uLkJSON,SysUtils,uTranslateYouDao;
+
+
 type
+
   TArticleObject = class(TObject)
   private
     FTitle:String;
@@ -41,6 +44,8 @@ type
     procedure ZhToEn();  //中文翻译成英文
     procedure EnToZh();  //英文翻译成中文
   end;
+
+  TArticleObjectList = Array of TArticleObject;  
 implementation
 //解析字符串生成属性
 procedure TArticleObject.FromString(aSource:String);

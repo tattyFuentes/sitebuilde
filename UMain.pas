@@ -7,7 +7,7 @@ uses
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
   StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON,
-  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax;
+  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax,OmniXML,uxml,UArticleTaoBaoZX;
 
 type
   TfrmMain = class(TForm)
@@ -44,6 +44,9 @@ type
     Button5: TButton;
     Button6: TButton;
     mWebBrowser: TWebBrowser;
+    Button7: TButton;
+    Button8: TButton;
+    Button9: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -61,8 +64,12 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure N15Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
   private
     { Private declarations }
+    procedure analyzeTaoBaoMoban(strXML:WideString);
      procedure InitSystemConfig();
   public
     { Public declarations }
@@ -440,6 +447,80 @@ RET
 end;
  
 
+procedure TfrmMain.analyzeTaoBaoMoban(strXML:WideString);
+var
+  i,j:integer;
+  doc :IXMLDocument;
+  root:IXMLNode;
+  tmpType:String;
+  bannerWidth,bannerHeight:String;
+  tmpUrl,tmpFileName,magickCmd:String;
+begin
+  memo2.Lines.Clear;
+  doc:=CreateXMLDoc;
+  doc.PreserveWhiteSpace:=false;
+  //doc.Load(strXML);
+  doc.LoadXML(strXML);
+  root:=doc.DocumentElement;
+  bannerWidth:=getNodeAttibute(root,'w');
+  bannerHeight:=getNodeAttibute(root,'h');
+  if(bannerWidth='') then
+    bannerWidth:='950';
+
+
+  root:=root.ChildNodes.Item[0];
+  magickCmd:='convert -size '+bannerWidth+'x'+bannerHeight+' -strip -colors 8 -depth 8 xc:none ';
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    memo2.Lines.Add(root.ChildNodes.Item[i].NodeName);
+    tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
+    memo2.Lines.Add('type='+getNodeAttibute(root.ChildNodes.Item[i],'type'));
+    memo2.Lines.Add('x='+getNodeAttibute(root.ChildNodes.Item[i],'x'));
+    memo2.Lines.Add('y='+getNodeAttibute(root.ChildNodes.Item[i],'y'));
+    memo2.Lines.Add('w='+getNodeAttibute(root.ChildNodes.Item[i],'w'));
+    if(tmpType='img') then
+    begin
+      tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url');
+      tmpFileName:=GetFileNameFromUrl(tmpUrl);
+      if(tmpFileName<>'') then
+      begin
+        if(pos('.jpg',tmpFileName)>0) or (pos('.gif',tmpFileName)>0) or (pos('.png',tmpFileName)>0) then
+        begin
+          magickCmd:=magickCmd+tmpFileName+' -geometry +'+getNodeAttibute(root.ChildNodes.Item[i],'x')+'+'+getNodeAttibute(root.ChildNodes.Item[i],'y')+' -composite ';
+        end;
+      end;
+      //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
+
+
+    end;
+
+    if(tmpType='tw_img') then
+    begin
+      memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
+    end;
+
+    if(tmpType='tw_txt') then
+    begin
+
+    end;
+
+
+    //convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
+
+
+    memo2.Lines.Add('h='+getNodeAttibute(root.ChildNodes.Item[i],'h'));
+
+
+
+    //memo2.Lines.Add(root.ChildNodes.Item[i].Attributes.Item[0].NodeName);
+    //getNodeAttibute(
+    //memo2.Lines.Add(root.ChildNodes.Item[i].Attributes.GetNamedItem('type11').NodeValue);
+
+  end;
+
+  magickCmd:=magickCmd+' d:\myimg.jpg';
+    execCommand(pchar(magickCmd),false);
+end;
 
 
 procedure TfrmMain.Button6Click(Sender: TObject);
@@ -462,6 +543,11 @@ var
   tmpArray:Array of byte;
   pos1:integer;
 begin
+
+  memo2.Lines.Clear;
+  //memo2.Lines.Add(parseTaobaoZXXml('http://img.uu1001.cn/sub_templets/146331.xml','d:\testxml2\'));
+  writefile('d:\testxml3\146331.xml','<?xml version="1.0" encoding="gbk" ?>'+parseTaobaoZXXml('http://img.uu1001.cn/sub_templets/146331.xml','d:\testxml3\'));
+  exit;
   showmessage(HexUtf8ToString('%E8%BD%AE%E6%92%AD%E5%B0%BA%E5%AF%B8%EF%BC%9A%E5%AE%BD460%EF%BC%8C%E9%AB%98220.,%E5%95%86%E5%93%81%E5%9B%BE%E5%B0%BA%E5%AF%B8%EF%BC%9A%E5%AE%BD220%EF%BC%8C%E9%AB%98220.'));
   sList:=RegexSearchString(memo2.Lines.Text,'(?:'+' url="'+')(.*)('+'jpg|swf|gif|png|"'+')');
   if(sList=nil) then
@@ -534,6 +620,24 @@ var
 begin
   frmPublishPlan:=TfrmPublishPlan.Create(self);
   frmPublishPlan.ShowModal();
+end;
+
+procedure TfrmMain.Button7Click(Sender: TObject);
+begin
+  writefile('d:\testxml4\149684.xml','<?xml version="1.0" encoding="gbk" ?>'+parseTaobaoZXXml('http://img.uu1001.cn/sub_templets/149684.xml','d:\testxml4\'));
+end;
+
+procedure TfrmMain.Button8Click(Sender: TObject);
+var
+  xml:String;
+begin
+  xml:=readfile('d:\testxml4\149684.xml');
+  analyzeTaoBaoMoban(xml);
+end;
+
+procedure TfrmMain.Button9Click(Sender: TObject);
+begin
+  frmArticleTaoBaoZX.ShowModal;
 end;
 
 initialization

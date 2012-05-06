@@ -28,7 +28,8 @@ uses
   UPublishPlanSyntax in 'UPublishPlanSyntax.pas',
   UHtmlToUbb in 'UHtmlToUbb.pas',
   uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
-  UCatchThread in 'UCatchThread.pas';
+  UCatchThread in 'UCatchThread.pas',
+  UArticleTaoBaoZX in 'UArticleTaoBaoZX.pas' {frmArticleTaoBaoZX};
 
 {$R *.res}
 
@@ -36,5 +37,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmPublishPlan, frmPublishPlan);
+  Application.CreateForm(TfrmArticleTaoBaoZX, frmArticleTaoBaoZX);
   Application.Run;
 end.
