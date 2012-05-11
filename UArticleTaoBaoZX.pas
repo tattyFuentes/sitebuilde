@@ -14,9 +14,10 @@ type
     Button2: TButton;
     ArticleGrid: TStringGrid;
     Panel3: TPanel;
-    memxml: TMemo;
     ScrollBox1: TScrollBox;
     PaintBox1: TPaintBox;
+    memxml: TMemo;
+    Memo1: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -28,6 +29,7 @@ type
     procedure getOnePage(page:integer);
     procedure analyzeTaoBaoMoban(strXML:WideString;filePath:String);
     function parseTaobaoXml(aXml:String):String;
+    procedure parseImgNode(imgNode:IXMLNode;filePath:String;x,y:integer);
   public
     { Public declarations }
      mCatchPlanId:integer;
@@ -102,16 +104,41 @@ var
   img:TImage;
   tmpArticleObject:TArticleObject;
   sXml:String;
+  thumbPath,contentFilePath:String;
+  imgArray:TStringArray;
+  tmpBmp,newBmp:TBitmap;
 begin
   tmpArticleObject:=mArticleList[ArticleGrid.row-1];
   sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
   memxml.Lines.Clear;
   memxml.Lines.Add(sXml);
-  analyzeTaoBaoMoban(sXml,'E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\');
-  //showmessage(tmpArticleObject.id);
-  //img:=TImage.Create(self);
-  //img.Picture.LoadFromFile('');
-  //PaintBox1.Canvas.Draw();
+  thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
+  contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
+
+  imgArray:=searchfile(thumbPath,'.jpg');
+  if(length(imgArray)>0) then
+  begin
+    paintbox1.Repaint;
+    tmpBmp:=getBmpFromFile(thumbPath+imgArray[0]);
+    newBmp:=resizeBmp(tmpBmp,900);
+    tmpBmp.Free;
+    paintbox1.Canvas.Draw(0,0,newBmp);
+    newBmp.Free;
+    //paintbox1.p
+  end;
+
+  {imgArray:=searchfile(thumbPath,'.jpg');
+  if(length(imgArray)>0) then
+  begin
+    paintbox1.Repaint;
+    tmpBmp:=getBmpFromFile(thumbPath+imgArray[0]);
+    newBmp:=resizeBmp(tmpBmp,600);
+    tmpBmp.Free;
+    paintbox1.Canvas.Draw(0,0,newBmp);
+    newBmp.Free;
+    //paintbox1.p
+  end;}
+  analyzeTaoBaoMoban(sXml,contentFilePath);
 end;
 
 
@@ -174,6 +201,29 @@ end;
 
 
 
+procedure TfrmArticleTaoBaoZX.parseImgNode(imgNode:IXMLNode;filePath:String;x,y:integer);
+var
+  tmpUrl,tmpFileName:String;
+  tmpBmp,newBmp:TBitMap;
+begin
+  tmpUrl:=getNodeAttibute(imgNode.FirstChild,'url');
+  tmpFileName:=filePath+GetFileNameFromUrl(tmpUrl);
+  if(tmpFileName<>'') then
+  begin
+    if(pos('.jpg',tmpFileName)>0) or (pos('.gif',tmpFileName)>0) or (pos('.png',tmpFileName)>0) then
+    begin
+       tmpBmp:=getBmpFromFile(tmpFileName);
+       newBmp:=resizeBmp(tmpBmp,300);
+       tmpBmp.Free;
+       //paintbox2.Canvas.Draw(x,0,newBmp);
+       newBmp.Free;
+       //paintbox1.Canvas.Draw(strtoint(getNodeAttibute(root.ChildNodes.Item[i],'x')),strtoint(getNodeAttibute(root.ChildNodes.Item[i],'y')),tmpBmp);
+       //tmpBmp.Free;
+      //magickCmd:=magickCmd+tmpFileName+' -geometry +'+getNodeAttibute(root.ChildNodes.Item[i],'x')+'+'+getNodeAttibute(root.ChildNodes.Item[i],'y')+' -composite ';
+    end;
+  end;
+end;
+
 
 procedure TfrmArticleTaoBaoZX.analyzeTaoBaoMoban(strXML:WideString;filePath:String);
 var
@@ -181,67 +231,50 @@ var
   doc :IXMLDocument;
   root:IXMLNode;
   tmpType:String;
-  bannerWidth,bannerHeight:String;
+  bannerWidth,bannerHeight,bannerVersion:String;
   tmpUrl,tmpFileName,magickCmd:String;
   tmpImg:TImage;
-  tmpPng:TPNGObject;
   pngRect:TRect;
-  tmpBmp:TBitmap;
-  
+  tmpBmp,newBmp:TBitmap;
+  x:integer;
 begin
   doc:=CreateXMLDoc;
   doc.PreserveWhiteSpace:=false;
   doc.LoadXML(strXML);
   root:=doc.DocumentElement;
   bannerWidth:=getNodeAttibute(root,'w');
+  bannerVersion:=getNodeAttibute(root,'v');
+  if(bannerVersion<>'3.0') then
+  begin
+    exit;
+  end;
+  memo1.Lines.clear;
   bannerHeight:=getNodeAttibute(root,'h');
   if(bannerWidth='') then
     bannerWidth:='950';
   root:=root.ChildNodes.Item[0];
-  paintbox1.Repaint;
+  //paintbox2.Repaint;
+  x:=0;
   for i:=0 to root.ChildNodes.Length-1 do
   begin
     tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
     if(tmpType='img') then
     begin
-      tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url');
-      tmpFileName:=filePath+GetFileNameFromUrl(tmpUrl);
-      if(tmpFileName<>'') then
-      begin
-        {if((pos('.png',tmpFileName)>0)) then
-        begin
-          tmpPng:=TPNGObject.Create;
-          tmpPng.LoadFromFile(tmpFileName);
-          pngRect.Left:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'x'));
-          pngRect.Top:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'y'));
-          pngRect.Right:=pngRect.Left+strtoint(getNodeAttibute(root.ChildNodes.Item[i],'w'));
-          pngRect.Bottom:=pngRect.Top+strtoint(getNodeAttibute(root.ChildNodes.Item[i],'h'));
-          tmpPng.Draw(paintbox1.Canvas,pngRect);
-          tmpPng.Free;
-        end;}
-        if(pos('.jpg',tmpFileName)>0) or (pos('.gif',tmpFileName)>0) or (pos('.png',tmpFileName)>0) then
-        begin
-           tmpBmp:=getBmpFromFile(tmpFileName);
-           //tmpBmp.LoadFromFile(tmpFileName);
-           //tmpBmp.Height:=tmpImg.Height;
-           //tmpBmp.Width:=tmpImg.Width;
-           //tmpBmp.Canvas.Draw(0,0,tmpImg.Picture.Graphic);
-           paintbox1.Canvas.Draw(strtoint(getNodeAttibute(root.ChildNodes.Item[i],'x')),strtoint(getNodeAttibute(root.ChildNodes.Item[i],'y')),tmpBmp);
-           tmpBmp.Free;
-          //magickCmd:=magickCmd+tmpFileName+' -geometry +'+getNodeAttibute(root.ChildNodes.Item[i],'x')+'+'+getNodeAttibute(root.ChildNodes.Item[i],'y')+' -composite ';
-        end;
-      end;
-      //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
+       //parseImgNode(root.ChildNodes.Item[i],filePath,0,0);
+       memo1.Lines.Add('type=img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+        getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y'));
     end;
 
     if(tmpType='tw_img') then
     begin
-      //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
+      memo1.Lines.Add('type=tw_img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+        getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y'));
     end;
 
     if(tmpType='tw_txt') then
     begin
-
+       memo1.Lines.Add('type=tw_txt url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+        getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y'));
     end;
     //convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
   end;

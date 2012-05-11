@@ -29,7 +29,8 @@ uses
   UHtmlToUbb in 'UHtmlToUbb.pas',
   uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
   UCatchThread in 'UCatchThread.pas',
-  UArticleTaoBaoZX in 'UArticleTaoBaoZX.pas' {frmArticleTaoBaoZX};
+  UArticleTaoBaoZX in 'UArticleTaoBaoZX.pas' {frmArticleTaoBaoZX},
+  UBmpFunc in 'UBmpFunc.pas';
 
 {$R *.res}
 

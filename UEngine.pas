@@ -44,7 +44,7 @@ begin
   SQLDataSet.CommandType:=ctQuery;
   with sqlDataset do
   begin
-    CommandText:='select * from article where catchplanid='+inttostr(catchPlanid)+' order by createdate desc';
+    CommandText:='select * from article where catchplanid='+inttostr(catchPlanid)+' order by createdate asc';
     CommandText:=CommandText+' limit '+ inttostr((page-1)*50+1)+','+inttostr(50);
     open();
     while (not eof) do

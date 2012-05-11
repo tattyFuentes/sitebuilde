@@ -14,6 +14,7 @@ var
 
 type
   TWinControlArray=Array of TControl;
+  TStringArray=array of string;
   TInspectorButtonClick =procedure(Sender: TObject;AbsoluteIndex: Integer)of object;
   EUserDefineError=class(Exception);
 function FindControlByName(controls:TWinControlArray;name:String):TControl;
@@ -52,6 +53,7 @@ function RunDOS(CommandLine:String; var ExitCode: DWORD): string;
 function ModifyRowPropertyByName(name:String;JsonString:String;aPropertyName:String;aPropertyValue:String):string;
 function HexToInt(const S: String): DWORD;
 function HexUtf8ToString(s:string):string;
+function searchfile(path:string;fileExt:String):TStringArray;//注意,path后面要有'\';
 
 const
   TVS_CHECKBOXES22 = $00000100;
@@ -287,6 +289,28 @@ begin
   result:=aFileName;
 
 end;
+
+
+function searchfile(path:string;fileExt:String):TStringArray;//注意,path后面要有'\';
+var
+  SearchRec:TSearchRec;
+  found:integer;
+begin
+  found:=FindFirst(path+'*'+fileExt,faAnyFile,SearchRec);
+  while found=0 do
+  begin
+    if (SearchRec.Name<>'.') and (SearchRec.Name<>'..')
+      and (SearchRec.Attr<>faDirectory) then
+    begin
+      setlength(result,length(result)+1);
+      result[length(result)-1]:= SearchRec.Name;
+    end;
+    found:=FindNext(SearchRec);
+  end;
+  FindClose(SearchRec);
+end; 
+
+
 
 procedure logInfo(aInfo:String;aMsgWindow:TRichEdit;aIsError:boolean);
 var
