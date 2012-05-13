@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Grids, StdCtrls, ExtCtrls,UEngine,UArticleObject,uPublic,uHttp,OmniXML,uxml,pngimage,uBmpFunc;
+  Dialogs, Grids, StdCtrls, ExtCtrls,UEngine,UArticleObject,uPublic,uHttp,OmniXML,uxml,uBmpFunc;
 
 type
   TfrmArticleTaoBaoZX = class(TForm)
@@ -27,6 +27,8 @@ type
     mCurrentPage:integer;
     mArticleList:TArticleObjectList;
     procedure getOnePage(page:integer);
+    procedure analyzeTaoBaoMoban10(strXML:WideString;filePath:String);
+    procedure analyzeTaoBaoMoban30(strXML:WideString;filePath:String);
     procedure analyzeTaoBaoMoban(strXML:WideString;filePath:String);
     function parseTaobaoXml(aXml:String):String;
     procedure parseImgNode(imgNode:IXMLNode;filePath:String;x,y:integer);
@@ -225,7 +227,8 @@ begin
 end;
 
 
-procedure TfrmArticleTaoBaoZX.analyzeTaoBaoMoban(strXML:WideString;filePath:String);
+
+procedure TfrmArticleTaoBaoZX.analyzeTaoBaoMoban30(strXML:WideString;filePath:String);
 var
   i,j:integer;
   doc :IXMLDocument;
@@ -260,9 +263,25 @@ begin
     tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
     if(tmpType='img') then
     begin
-       //parseImgNode(root.ChildNodes.Item[i],filePath,0,0);
-       memo1.Lines.Add('type=img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
-        getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y'));
+      tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url');
+      tmpFileName:=filePath+GetFileNameFromUrl(tmpUrl);
+      if(tmpFileName<>'') then
+      begin
+
+        if(pos('.jpg',tmpFileName)>0) or (pos('.gif',tmpFileName)>0) or (pos('.png',tmpFileName)>0) then
+        begin
+           tmpBmp:=getBmpFromFile(tmpFileName);
+           //tmpBmp.LoadFromFile(tmpFileName);
+           //tmpBmp.Height:=tmpImg.Height;
+           //tmpBmp.Width:=tmpImg.Width;
+           //tmpBmp.Canvas.Draw(0,0,tmpImg.Picture.Graphic);
+           //paintbox1.Canvas.
+           paintbox1.Canvas.Draw(strtoint(getNodeAttibute(root.ChildNodes.Item[i],'x')),strtoint(getNodeAttibute(root.ChildNodes.Item[i],'y')),tmpBmp);
+           tmpBmp.Free;
+          //magickCmd:=magickCmd+tmpFileName+' -geometry +'+getNodeAttibute(root.ChildNodes.Item[i],'x')+'+'+getNodeAttibute(root.ChildNodes.Item[i],'y')+' -composite ';
+        end;
+      end;
+      //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
     end;
 
     if(tmpType='tw_img') then
@@ -281,6 +300,107 @@ begin
 
   //magickCmd:=magickCmd+' d:\myimg.jpg';
   //execCommand(pchar(magickCmd),false);
+end;
+
+
+
+procedure TfrmArticleTaoBaoZX.analyzeTaoBaoMoban10(strXML:WideString;filePath:String);
+var
+  i,j:integer;
+  doc :IXMLDocument;
+  root:IXMLNode;
+  tmpType:String;
+  bannerWidth,bannerHeight,tmpString:String;
+  tmpUrl,tmpFileName,magickCmd:String;
+  tmpImg:TImage;
+  //tmpPng:TPNGObject;
+  pngRect:TRect;
+  tmpPos:integer;
+  tmpBmp:TBitmap;
+  
+begin
+  doc:=CreateXMLDoc;
+  doc.PreserveWhiteSpace:=false;
+  doc.LoadXML(strXML);
+  root:=doc.DocumentElement;
+  tmpString:=getNodeAttibute(root,'size');
+  if(tmpString<>'') then
+  begin
+    tmpPos:=pos('x',tmpString);
+    bannerWidth:=copy(tmpString,1,tmpPos-1);
+    bannerHeight:=copy(tmpString,tmpPos+1,length(tmpString));
+  end;
+  //bannerWidth:=getNodeAttibute(root,'size');
+  //bannerHeight:=getNodeAttibute(root,'h');
+  if(bannerWidth='') then
+    bannerWidth:='950';
+  if(bannerHeight='') then
+    bannerWidth:='600';
+    
+  root:=root.ChildNodes.Item[0];
+  paintbox1.Repaint;
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
+    if(tmpType='img') then
+    begin
+      tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'data');
+      tmpFileName:=filePath+GetFileNameFromUrl(tmpUrl);
+      if(tmpFileName<>'') then
+      begin
+        if(pos('.jpg',tmpFileName)>0) or (pos('.gif',tmpFileName)>0) or (pos('.png',tmpFileName)>0) then
+        begin
+           tmpBmp:=getBmpFromFile(tmpFileName);
+           //tmpBmp.LoadFromFile(tmpFileName);
+           //tmpBmp.Height:=tmpImg.Height;
+           //tmpBmp.Width:=tmpImg.Width;
+           //tmpBmp.Canvas.Draw(0,0,tmpImg.Picture.Graphic);
+           //paintbox1.Canvas.
+           paintbox1.Canvas.Draw(strtoint(getNodeAttibute(root.ChildNodes.Item[i],'x')),strtoint(getNodeAttibute(root.ChildNodes.Item[i],'y')),tmpBmp);
+           tmpBmp.Free;
+          //magickCmd:=magickCmd+tmpFileName+' -geometry +'+getNodeAttibute(root.ChildNodes.Item[i],'x')+'+'+getNodeAttibute(root.ChildNodes.Item[i],'y')+' -composite ';
+        end;
+      end;
+      //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
+    end;
+
+    if(tmpType='tw_img') then
+    begin
+      //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
+    end;
+
+    if(tmpType='tw_txt') then
+    begin
+
+    end;
+    //convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
+  end;
+
+  //magickCmd:=magickCmd+' d:\myimg.jpg';
+  //execCommand(pchar(magickCmd),false);
+end;
+
+
+procedure TfrmArticleTaoBaoZX.analyzeTaoBaoMoban(strXML:WideString;filePath:String);
+var
+  doc :IXMLDocument;
+  root:IXMLNode;
+  bannerVersion:String;
+begin
+  doc:=CreateXMLDoc;
+  doc.PreserveWhiteSpace:=false;
+  strXML:=StringReplace(strXML,'&','&amp;',[rfReplaceAll]);
+  strXML:=StringReplace(strXML,'..........................................................................................................................................................................................................................','',[rfReplaceAll]);
+  doc.LoadXML(strXML);
+  root:=doc.DocumentElement;
+  bannerVersion:=getNodeAttibute(root,'v');
+  if(bannerVersion='')then
+  begin
+    analyzeTaoBaoMoban10(strXML,filePath);
+  end else begin
+    analyzeTaoBaoMoban30(strXML,filePath);
+  end;
+
 end;
 
 end.

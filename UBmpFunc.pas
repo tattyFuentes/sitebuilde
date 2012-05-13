@@ -4,8 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  StdCtrls, ExtCtrls, ImgList, ComCtrls, jpeg,GraphicEx,StrUtils,uPublic,
-  PNGImage;
+  StdCtrls, ExtCtrls, ImgList, ComCtrls, jpeg,GraphicEx,StrUtils,uPublic;
 const
   MaxPixelCount = 32768;
 type
