@@ -10,6 +10,7 @@ function addElementEx(doc:IXMLDocument;node:IXMLElement;tag:String;value:String)
 function findNodeByName(parentNode:IXMLNode;nodeName:String):IXMLNode;
 function getNodeValue(parentNode:IXMLNode):String;
 function getNodeAttibute(parentNode:IXMLNode;attibuteName:String):String;
+procedure setNodeAttibute(parentNode:IXMLNode;attibuteName:String;value:String);
 implementation
 
 function getNodeAttibute(parentNode:IXMLNode;attibuteName:String):String;
@@ -24,6 +25,23 @@ begin
     if(tmpNode<>nil) then
     begin
       result:=tmpNode.NodeValue;
+    end;
+
+  end;
+end;
+
+
+procedure setNodeAttibute(parentNode:IXMLNode;attibuteName:String;value:String);
+var
+  i:integer;
+  tmpNode:IXMLNode;
+begin
+  if(parentNode.Attributes<>nil) then
+  begin
+    tmpNode:=parentNode.Attributes.GetNamedItem(attibuteName);
+    if(tmpNode<>nil) then
+    begin
+      tmpNode.NodeValue:=value;
     end;
 
   end;

@@ -176,7 +176,7 @@ begin
     fileName:=GetFileNameFromUrl(aUrl);
     if not DirectoryExists(aDestDir) then
       ForceDirectories(aDestDir);
-    fileName:=GetUniqeFileNameOfFolder(aDestDir,fileName);
+    //fileName:=GetUniqeFileNameOfFolder(aDestDir,fileName);
     fileStream:=TFileStream.Create(aDestDir+fileName,fmcreate);
     idHttp.RedirectMaximum:=2;
     idHttp.HandleRedirects:=true;

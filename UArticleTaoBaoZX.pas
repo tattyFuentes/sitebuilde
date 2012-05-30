@@ -18,10 +18,12 @@ type
     PaintBox1: TPaintBox;
     memxml: TMemo;
     Memo1: TMemo;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure ArticleGridClick(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
     mCurrentPage:integer;
@@ -112,6 +114,8 @@ var
 begin
   tmpArticleObject:=mArticleList[ArticleGrid.row-1];
   sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
+
+
   memxml.Lines.Clear;
   memxml.Lines.Add(sXml);
   thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
@@ -235,11 +239,13 @@ var
   root:IXMLNode;
   tmpType:String;
   bannerWidth,bannerHeight,bannerVersion:String;
-  tmpUrl,tmpFileName,magickCmd:String;
+  tmpUrl,tmpFileName:String;
   tmpImg:TImage;
   pngRect:TRect;
   tmpBmp,newBmp:TBitmap;
-  x:integer;
+  x,y,w,h:integer;
+  imagemagickcmd:String;
+  isFirstImage:boolean;
 begin
   doc:=CreateXMLDoc;
   doc.PreserveWhiteSpace:=false;
@@ -258,13 +264,44 @@ begin
   root:=root.ChildNodes.Item[0];
   //paintbox2.Repaint;
   x:=0;
+  imagemagickcmd:='C:\ImageMagick-6.7.6-Q16\convert -size '+bannerWidth+'x'+bannerHeight+' -strip -colors 256 -depth 16 xc:none ';
+  isFirstImage:=true;
   for i:=0 to root.ChildNodes.Length-1 do
   begin
     tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
     if(tmpType='img') then
     begin
+      //背景图片
       tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url');
-      tmpFileName:=filePath+GetFileNameFromUrl(tmpUrl);
+      x:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'x'));
+      y:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'y'));
+      w:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'w'));
+      h:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'h'));
+      x:=x-(w div 2);
+      y:=y-(h div 2);
+      tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url');
+      if(pos('.swf',tmpUrl)<=0) then
+      begin
+         if(not fileexists(filePath+getFileNameFromUrl(tmpUrl))) then 
+         begin
+           if(pos('http://',tmpUrl)<=0) then
+           begin
+             tmpUrl:='http://img.uu1001.cn/'+tmpUrl;
+           end;
+           downloadfile(tmpUrl, filePath+getFileNameFromUrl(tmpUrl),'taobao.com');
+         end;
+         if(fileexists(filePath+getFileNameFromUrl(tmpUrl))) then
+                 imagemagickcmd:=imagemagickcmd+filePath+getFileNameFromUrl(tmpUrl)+' -geometry +'+inttostr(x)+'+'+inttostr(y)+' -composite ';
+      end;
+      //512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
+
+
+
+
+      memo1.Lines.Add('type=img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+      getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y')+',w:'+getNodeAttibute(root.ChildNodes.Item[i],'w')+',h:'+getNodeAttibute(root.ChildNodes.Item[i],'h'))
+
+      {tmpFileName:=filePath+GetFileNameFromUrl(tmpUrl);
       if(tmpFileName<>'') then
       begin
 
@@ -280,14 +317,14 @@ begin
            tmpBmp.Free;
           //magickCmd:=magickCmd+tmpFileName+' -geometry +'+getNodeAttibute(root.ChildNodes.Item[i],'x')+'+'+getNodeAttibute(root.ChildNodes.Item[i],'y')+' -composite ';
         end;
-      end;
+      end; }
       //memo2.Lines.Add('url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url'));
     end;
 
     if(tmpType='tw_img') then
     begin
       memo1.Lines.Add('type=tw_img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
-        getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y'));
+      getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y')+',w:'+getNodeAttibute(root.ChildNodes.Item[i],'w')+',h:'+getNodeAttibute(root.ChildNodes.Item[i],'h'));
     end;
 
     if(tmpType='tw_txt') then
@@ -297,9 +334,8 @@ begin
     end;
     //convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
   end;
-
-  //magickCmd:=magickCmd+' d:\myimg.jpg';
-  //execCommand(pchar(magickCmd),false);
+  imagemagickcmd:=imagemagickcmd+' -quality 90 '+filePath+'\background.png';
+  execCommand(pchar(imagemagickcmd),false);
 end;
 
 
@@ -401,6 +437,38 @@ begin
     analyzeTaoBaoMoban30(strXML,filePath);
   end;
 
+end;
+
+procedure TfrmArticleTaoBaoZX.Button3Click(Sender: TObject);
+var
+  i,j:integer;
+  tmpArticleObject:TArticleObject;
+  sXml:String;
+  thumbPath,contentFilePath:string;
+begin
+  for i:=4 to 10000 do
+  begin
+     getOnePage(i);
+     if(length(mArticleList)>0) then
+     begin
+       for j:=0 to length(mArticleList)-1 do
+       begin
+         try
+           tmpArticleObject:=mArticleList[j];
+           sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
+           thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
+           contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
+           analyzeTaoBaoMoban(sXml,contentFilePath);
+         except
+         end;
+       end;
+     end else
+     begin
+       break;
+       showmessage('转图片完毕');
+     end;
+
+  end;
 end;
 
 end.

@@ -1,6 +1,6 @@
 object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
-  Left = 1
-  Top = 0
+  Left = 539
+  Top = 237
   Width = 1278
   Height = 770
   Caption = #28120#23453#35013#20462
@@ -29,22 +29,31 @@ object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
       Align = alTop
       TabOrder = 0
       object Button1: TButton
-        Left = 33
+        Left = 9
         Top = 12
-        Width = 153
+        Width = 80
         Height = 33
         Caption = #19978#19968#39029
         TabOrder = 0
         OnClick = Button1Click
       end
       object Button2: TButton
-        Left = 248
+        Left = 96
         Top = 12
-        Width = 161
+        Width = 73
         Height = 33
         Caption = #19979#19968#39029
         TabOrder = 1
         OnClick = Button2Click
+      end
+      object Button3: TButton
+        Left = 200
+        Top = 16
+        Width = 145
+        Height = 33
+        Caption = #29983#25104#32972#26223#22270
+        TabOrder = 2
+        OnClick = Button3Click
       end
     end
     object ArticleGrid: TStringGrid
