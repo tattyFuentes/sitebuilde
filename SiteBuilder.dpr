@@ -30,7 +30,12 @@ uses
   uPublishPlan in 'uPublishPlan.pas' {frmPublishPlan},
   UCatchThread in 'UCatchThread.pas',
   UArticleTaoBaoZX in 'UArticleTaoBaoZX.pas' {frmArticleTaoBaoZX},
-  UBmpFunc in 'UBmpFunc.pas';
+  UBmpFunc in 'UBmpFunc.pas',
+  StringGridEx in 'StringGridEx.pas',
+  UBaseMoBanObject in 'UBaseMoBanObject.pas',
+  UTextMoBanObject in 'UTextMoBanObject.pas',
+  UImageMoBanObject in 'UImageMoBanObject.pas',
+  URangeMoBanObject in 'URangeMoBanObject.pas';
 
 {$R *.res}
 

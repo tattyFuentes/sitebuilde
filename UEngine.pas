@@ -8,6 +8,7 @@ uses
 function createCateGory(parentId:integer;name:string;desc:string):integer;
 procedure updateCateGory(id:integer;name:string;desc:string);
 procedure updatePlanName(id:integer;name:string);
+procedure updateArticleFlag(id:integer;flag:integer);
 procedure updatePublishPlanName(id:integer;name:String);
 procedure updatePublishPlanContent(id:integer;content:String);
 procedure updatePlanContent(id:integer;contentStream:TMemoryStream);
@@ -77,6 +78,7 @@ begin
       result:=TArticleObject.Create;
       result.id:=FieldByName('id').Value;
       result.FromString(FieldByName('content').Value);
+      result.flag:=Strtoint(FieldByName('flag').Value);
       close();
     end;
   end;
@@ -358,7 +360,7 @@ begin
   SQLDataSet.CommandType:=ctQuery;
   with sqlDataset do
   begin
-    CommandText:='insert into article values(null,:title,now(),:parentid,:content)';
+    CommandText:='insert into article values(null,:title,now(),:parentid,:content,0)';
     SQLDataSet.Params[0].Value:=aArticle.title;
     SQLDataSet.Params[1].Value:=aArticle.catchPlanId;
     SQLDataSet.Params[2].Value:=aArticle.ToString;
@@ -461,6 +463,19 @@ begin
   addParam(params,'name',name,ftString,ptInput);
   addParam(params,'id',id,ftInteger,ptInput);
   sql:='update publishplan set name=:name where id=:id';
+  execUpdate(sql,params);
+end;
+
+
+procedure updateArticleFlag(id:integer;flag:integer);
+var
+  sql:string;
+  params:TParams;
+begin
+  params:=TParams.Create();
+  addParam(params,'flag',flag,ftInteger,ptInput);
+  addParam(params,'id',id,ftInteger,ptInput);
+  sql:='update article set flag=:flag where id=:id';
   execUpdate(sql,params);
 end;
 

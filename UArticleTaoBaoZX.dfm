@@ -1,6 +1,6 @@
 object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
-  Left = 539
-  Top = 237
+  Left = 355
+  Top = 244
   Width = 1278
   Height = 770
   Caption = #28120#23453#35013#20462
@@ -47,29 +47,23 @@ object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
         OnClick = Button2Click
       end
       object Button3: TButton
-        Left = 200
-        Top = 16
-        Width = 145
+        Left = 179
+        Top = 13
+        Width = 97
         Height = 33
         Caption = #29983#25104#32972#26223#22270
         TabOrder = 2
         OnClick = Button3Click
       end
-    end
-    object ArticleGrid: TStringGrid
-      Left = 1
-      Top = 58
-      Width = 415
-      Height = 527
-      Align = alClient
-      ColCount = 2
-      FixedCols = 0
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowSelect]
-      TabOrder = 1
-      OnClick = ArticleGridClick
-      ColWidths = (
-        121
-        262)
+      object Button4: TButton
+        Left = 288
+        Top = 13
+        Width = 97
+        Height = 33
+        Caption = #27979#35797#29983#25104'html'
+        TabOrder = 3
+        OnClick = Button4Click
+      end
     end
     object memxml: TMemo
       Left = 1
@@ -78,7 +72,34 @@ object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
       Height = 150
       Align = alBottom
       ScrollBars = ssVertical
+      TabOrder = 1
+    end
+    object ArticleGrid: TStringGridEx
+      Left = 1
+      Top = 58
+      Width = 415
+      Height = 527
+      Align = alClient
+      ColCount = 2
+      FixedCols = 0
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSelect]
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 2
+      OnClick = ArticleGridClick
+      TickCol = 2
+      Titles.Strings = (
+        #22909)
+      RowHeight = 24
+      ColWidths = (
+        107
+        272)
+      RowHeights = (
+        24
+        24
+        24
+        24
+        24)
     end
   end
   object Panel3: TPanel
@@ -106,14 +127,31 @@ object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
       end
     end
     object Memo1: TMemo
-      Left = 1
+      Left = 496
       Top = 801
-      Width = 851
-      Height = 52
-      Align = alClient
+      Width = 1006
+      Height = 218
       Lines.Strings = (
         'Memo1')
       TabOrder = 1
+    end
+    object btnPass: TButton
+      Left = 40
+      Top = 824
+      Width = 273
+      Height = 41
+      Caption = #36890#36807
+      TabOrder = 2
+      OnClick = btnPassClick
+    end
+    object btnNotPass: TButton
+      Left = 40
+      Top = 888
+      Width = 273
+      Height = 41
+      Caption = #19981#36890#36807
+      TabOrder = 3
+      OnClick = btnNotPassClick
     end
   end
 end

@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Grids, StdCtrls, ExtCtrls,UEngine,UArticleObject,uPublic,uHttp,OmniXML,uxml,uBmpFunc;
+  Dialogs, Grids, StdCtrls, ExtCtrls,UEngine,UArticleObject,uPublic,uHttp,OmniXML,uxml,uBmpFunc,
+  StringGridEx;
 
 type
   TfrmArticleTaoBaoZX = class(TForm)
@@ -12,18 +13,26 @@ type
     Panel1: TPanel;
     Button1: TButton;
     Button2: TButton;
-    ArticleGrid: TStringGrid;
     Panel3: TPanel;
     ScrollBox1: TScrollBox;
     PaintBox1: TPaintBox;
     memxml: TMemo;
     Memo1: TMemo;
     Button3: TButton;
+    Button4: TButton;
+    ArticleGrid: TStringGridEx;
+    btnPass: TButton;
+    btnNotPass: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure ArticleGridClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure ArticleGrid222DrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure Button4Click(Sender: TObject);
+    procedure ArticleGridClick(Sender: TObject);
+    procedure btnPassClick(Sender: TObject);
+    procedure btnNotPassClick(Sender: TObject);
   private
     { Private declarations }
     mCurrentPage:integer;
@@ -34,6 +43,7 @@ type
     procedure analyzeTaoBaoMoban(strXML:WideString;filePath:String);
     function parseTaobaoXml(aXml:String):String;
     procedure parseImgNode(imgNode:IXMLNode;filePath:String;x,y:integer);
+    function generateHtmlMoban(aXml:String;filePath:String):String;
   public
     { Public declarations }
      mCatchPlanId:integer;
@@ -52,10 +62,15 @@ var
   //articleList:TArticleObjectList;
   articleObject:TArticleObject;
   i:integer;
+  chk:Tcheckbox;
 begin
   //ArticleGrid.RowCount:=1;
-  mArticleList:=getArticleListByCatchPlanId(31,page);
+  for i:=1 to length(mArticleList) do
+  begin
+    ArticleGrid.RowSelected[i]:=false;
+  end;
 
+  mArticleList:=getArticleListByCatchPlanId(31,page);
   ArticleGrid.RowCount:=length(mArticleList)+1;
   for i:=0 to length(mArticleList)-1 do
   begin
@@ -63,8 +78,24 @@ begin
     ArticleGrid.Rows[i+1].Clear;
     ArticleGrid.Rows[i+1].Add(articleObject.id);
     ArticleGrid.Rows[i+1].Add(articleObject.url);
+    //ArticleGrid.Rows[i+1].Add('1');
 
+    //ArticleGrid.RowSelected[i+1]:=false;
+    {chk:=Tcheckbox.Create(self);
+    chk.name:=format('CellChk%d_%d',[i+1,3]);
+    chk.Caption:='';
+    chk.Enabled:=true;
+    chk.Checked:=false;
+    chk.Visible:=false;
+    chk.parent:=ArticleGrid;
+    chk.width:=chk.Height;
+    //chk.forbidden:=gridcheckboxMouseDown;
+    ArticleGrid.Rows[i+1].Add('');
+    ArticleGrid.Objects[i+1,2]:=chk;
+//    ArticleGrid.Cells(2,i+1)=
+    //ArticleGrid.Rows[i+1].Add(inttostr(articleObject.flag));  }
   end;
+  //
 end;
 procedure TfrmArticleTaoBaoZX.Button1Click(Sender: TObject);
 var
@@ -88,8 +119,11 @@ end;
 
 procedure TfrmArticleTaoBaoZX.FormCreate(Sender: TObject);
 begin
+  ArticleGrid.ColCount:=2;
   ArticleGrid.Rows[0].Add('文章id');
   ArticleGrid.Rows[0].Add('链接地址');
+//  ArticleGrid.Rows[0].Add('通过');
+  //ArticleGrid.ColCount
   mCurrentPage:=1;
 end;
 
@@ -112,12 +146,21 @@ var
   imgArray:TStringArray;
   tmpBmp,newBmp:TBitmap;
 begin
+  //ArticleGrid;
+  //ArticleGrid.
+  //ArticleGrid.EditorMode:=true;
+  //if(ArticleGrid.RowSelected[ArticleGrid.row]) then
+  //  showmessage('checked');
+
+  //else
+
+    //showmessage('not checked');
+
   tmpArticleObject:=mArticleList[ArticleGrid.row-1];
-  sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
-
-
+  {sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
   memxml.Lines.Clear;
-  memxml.Lines.Add(sXml);
+  memxml.Lines.Add(sXml);}
+
   thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
   contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
 
@@ -133,6 +176,10 @@ begin
     //paintbox1.p
   end;
 
+  
+
+
+
   {imgArray:=searchfile(thumbPath,'.jpg');
   if(length(imgArray)>0) then
   begin
@@ -144,7 +191,63 @@ begin
     newBmp.Free;
     //paintbox1.p
   end;}
-  analyzeTaoBaoMoban(sXml,contentFilePath);
+  //analyzeTaoBaoMoban(sXml,contentFilePath);
+end;
+
+
+
+
+function TfrmArticleTaoBaoZX.generateHtmlMoban(aXml:String;filePath:String):String;
+var
+  i,j:integer;
+  doc :IXMLDocument;
+  root:IXMLNode;
+  tmpType:String;
+  bannerWidth,bannerHeight,bannerVersion:String;
+  tmpUrl,tmpFileName:String;
+  tmpImg:TImage;
+  pngRect:TRect;
+  tmpBmp,newBmp:TBitmap;
+  x,y,w,h:integer;
+  imagemagickcmd:String;
+  isFirstImage:boolean;
+begin
+  doc:=CreateXMLDoc;
+  doc.PreserveWhiteSpace:=false;
+  doc.LoadXML(aXml);
+  root:=doc.DocumentElement;
+  bannerWidth:=getNodeAttibute(root,'w');
+  bannerVersion:=getNodeAttibute(root,'v');
+  if(bannerVersion<>'3.0') then
+  begin
+    exit;
+  end;
+  bannerHeight:=getNodeAttibute(root,'h');
+  if(bannerWidth='') then
+    bannerWidth:='950';
+  root:=root.ChildNodes.Item[0];
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
+    //商品图片
+    if(tmpType='tw_img') then
+    begin
+      memo1.Lines.Add('type=tw_img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+      getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y')+',w:'+getNodeAttibute(root.ChildNodes.Item[i],'w')+',h:'+getNodeAttibute(root.ChildNodes.Item[i],'h'));
+    end;
+    //模版文字
+    if(tmpType='s_txt') then
+    begin
+      memo1.Lines.Add('type=tw_img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+      getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y')+',w:'+getNodeAttibute(root.ChildNodes.Item[i],'w')+',h:'+getNodeAttibute(root.ChildNodes.Item[i],'h'));
+    end;
+    //商品文字描述
+    if(tmpType='tw_txt') then
+    begin
+       memo1.Lines.Add('type=tw_txt url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
+        getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y'));
+    end;
+  end;
 end;
 
 
@@ -471,4 +574,75 @@ begin
   end;
 end;
 
+procedure TfrmArticleTaoBaoZX.ArticleGrid222DrawCell(Sender: TObject; ACol,
+  ARow: Integer; Rect: TRect; State: TGridDrawState);
+var
+  chk: TCheckbox;
+  grid: TStringgrid;
+begin
+  grid := Sender As TStringgrid;
+  if (ACol=2) and (ARow>=0) then
+  begin
+    chk:= TCheckbox(grid.Objects[ aRow+1,aCol ]);
+    If Assigned(chk) Then Begin
+       chk.SetBounds( (rect.left + rect.right - chk.width) div 2,
+       (rect.top + rect.bottom - chk.height) div 2,
+       chk.width, chk.height );
+    if not chk.visible then
+       chk.show;
+    end;
+  end;
+End;
+
+procedure TfrmArticleTaoBaoZX.Button4Click(Sender: TObject);
+var
+  i,j:integer;
+  tmpArticleObject:TArticleObject;
+  sXml:String;
+  thumbPath,contentFilePath:string;
+begin
+  for i:=1 to 10000 do
+  begin
+     getOnePage(i);
+     if(length(mArticleList)>0) then
+     begin
+       for j:=0 to length(mArticleList)-1 do
+       begin
+         try
+           tmpArticleObject:=mArticleList[j];
+           sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
+           thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
+           contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
+           generateHtmlMoban(sXml,contentFilePath);
+         except
+         end;
+       end;
+     end else
+     begin
+       break;
+       showmessage('转图片完毕');
+     end;
+  end;
+end;
+
+procedure TfrmArticleTaoBaoZX.btnPassClick(Sender: TObject);
+var
+  tmpArticleObject:TArticleObject;
+begin
+  tmpArticleObject:=mArticleList[ArticleGrid.row-1];
+  updateArticleFlag(strtoint(tmpArticleObject.id),1);
+end;
+
+procedure TfrmArticleTaoBaoZX.btnNotPassClick(Sender: TObject);
+var
+  tmpArticleObject:TArticleObject;
+begin
+  tmpArticleObject:=mArticleList[ArticleGrid.row-1];
+  updateArticleFlag(strtoint(tmpArticleObject.id),0);
+end;
+
+
 end.
+
+
+

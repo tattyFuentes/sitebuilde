@@ -53,6 +53,7 @@ function RunDOS(CommandLine:String; var ExitCode: DWORD): string;
 function ModifyRowPropertyByName(name:String;JsonString:String;aPropertyName:String;aPropertyValue:String):string;
 function HexToInt(const S: String): DWORD;
 function HexUtf8ToString(s:string):string;
+function isCrossRect(R1, R2: TRect): Boolean;
 function searchfile(path:string;fileExt:String):TStringArray;//注意,path后面要有'\';
 
 const
@@ -1221,6 +1222,19 @@ begin
       GetChildControls(tmpControl as TWinControl,controlArray,NoIncludeControlName);
     end;
   end;
+end;
+
+
+function isCrossRect(R1, R2: TRect): Boolean;
+var
+b1, b2: Boolean;
+begin
+b1 := Abs((r1.Left + R1.Right) - (r2.Left + r2.Right)) < (R1.Right + R2.Right - R1.Left - R2.Left);
+b2 := Abs((R1.Top + R1.Bottom) - (R2.Top + R2.Bottom)) < (r1.Bottom + R2.Bottom - R1.Top - R2.Top);
+if b1 and b2 then
+    Result := True
+else
+    Result := False;
 end;
 
 

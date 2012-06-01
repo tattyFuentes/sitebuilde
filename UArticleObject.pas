@@ -21,6 +21,7 @@ type
     FContentFiles:String;
     FCategory:String;
     FUrl:String;
+    FFlag:integer;
   public
     property title:string read FTitle write FTitle;
     property content:string read FContent write FContent;
@@ -35,6 +36,7 @@ type
     property url:String read FUrl write FUrl;
     property contentFiles:String read FContentFiles write FContentFiles;
     property category:String read FCategory write FCategory;
+    property flag:integer read FFlag write FFlag;
     procedure AddThumb(aFileUrl:String;aFilePath:String);
     procedure AddDownloadFile(aFileUrl:String;aFilePath:String);
     procedure AddContentFile(aFileUrl:String;aFilePath:String);
