@@ -64,11 +64,7 @@ var
   i:integer;
   chk:Tcheckbox;
 begin
-  //ArticleGrid.RowCount:=1;
-  for i:=1 to length(mArticleList) do
-  begin
-    ArticleGrid.RowSelected[i]:=false;
-  end;
+ 
 
   mArticleList:=getArticleListByCatchPlanId(31,page);
   ArticleGrid.RowCount:=length(mArticleList)+1;
@@ -161,8 +157,8 @@ begin
   memxml.Lines.Clear;
   memxml.Lines.Add(sXml);}
 
-  thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
-  contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
+  thumbPath:='D:\work\ÌÔ±¦×°ĞŞ\Í¼ÎÄ\'+tmpArticleObject.id+'\thumbfiles\';
+  contentFilePath:='D:\work\ÌÔ±¦×°ĞŞ\Í¼ÎÄ\'+tmpArticleObject.id+'\contentfiles\';
 
   imgArray:=searchfile(thumbPath,'.jpg');
   if(length(imgArray)>0) then

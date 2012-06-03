@@ -88,11 +88,3 @@ Comments=
 [Excluded Packages]
 d:\program files\borland\delphi6\Bin\dclindy60.bpl=Internet Direct (Indy) for D6 Property and Component Editors
 C:\Program Files\Developer Express Inc\ExpressInspector\Delphi 6\Lib\dcldxExRwD6.bpl=ExpressInspector Extended Rows
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=3
-Item0=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source;D:\Program Files\Borland\Delphi6\Lib\Protocols;D:\Program Files\Borland\Delphi6\Lib\system;D:\Program Files\Borland\Delphi6\Lib\core;E:\privte\myprogram\delphi\sitebuildegoogle\components\pngobject
-Item1=E:\privte\myprogram\delphi\flatstyl\Source;E:\privte\myprogram\delphi\sitebuildegoogle\components\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source;D:\Program Files\Borland\Delphi6\Lib\Protocols;D:\Program Files\Borland\Delphi6\Lib\system;D:\Program Files\Borland\Delphi6\Lib\core
-Item2=E:\privte\myprogram\delphi\flatstyl\Source;D:\TDDOWNLOAD\TPerlRegEx;E:\privte\myprogram\delphi\sitebuildegoogle\components;E:\privte\myprogram\delphi\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\OmniXML;D:\work\网站\工具\sitebuildegoogle\components\TPerlRegEx;D:\work\网站\工具\sitebuildegoogle\components;D:\work\网站\工具\sitebuildegoogle\components\FlatStyle6\source;D:\Program Files\Borland\Delphi6\Lib\Protocols;D:\Program Files\Borland\Delphi6\Lib\system;D:\Program Files\Borland\Delphi6\Lib\core
