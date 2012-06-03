@@ -36,7 +36,7 @@ uses
   UTextMoBanObject in 'UTextMoBanObject.pas',
   UImageMoBanObject in 'UImageMoBanObject.pas',
   URangeMoBanObject in 'URangeMoBanObject.pas',
-  UMoBan in '..\..\..\..\Program Files\Borland\Delphi6\Lib\UMoBan.pas';
+  UMoBan in 'UMoBan.pas';
 
 {$R *.res}
 
