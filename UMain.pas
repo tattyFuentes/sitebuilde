@@ -7,7 +7,7 @@ uses
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
   StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON,
-  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax,OmniXML,uxml,UArticleTaoBaoZX;
+  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax,OmniXML,uxml,UArticleTaoBaoZX,UMoBan;
 
 type
   TfrmMain = class(TForm)
@@ -47,6 +47,7 @@ type
     Button7: TButton;
     Button8: TButton;
     Button9: TButton;
+    Button10: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -67,6 +68,7 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
+    procedure Button10Click(Sender: TObject);
   private
     { Private declarations }
     procedure analyzeTaoBaoMoban(strXML:WideString);
@@ -640,12 +642,22 @@ begin
   frmArticleTaoBaoZX.ShowModal;
 end;
 
+procedure TfrmMain.Button10Click(Sender: TObject);
+var
+  moban:TMoBan;
+begin
+  moban:=TMoBan.Create(nil);
+  moban.fromXml(readfile('C:\Apache2.2\logtaobao.cn\2991.xml'));
+  showmessage(inttostr(length(moban.root.childs)));
+end;
+
+
 initialization
   OleInitialize(nil);
 finalization
 try
   OleUninitialize; 
-except 
+except
 end; 
 
 

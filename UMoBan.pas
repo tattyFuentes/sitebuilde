@@ -1,20 +1,21 @@
 unit UMoBan;
 
 interface
-uses uLkJSON,SysUtils,uTranslateYouDao,UBaseMoBanObject,Classes,URangeMoBanObject,OmniXML,uxml;
+uses uLkJSON,SysUtils,uTranslateYouDao,UBaseMoBanObject,Classes,URangeMoBanObject,OmniXML,uxml,UTextMoBanObject,UImageMoBanObject;
 type
   TMoBan = class(TObject)
   private
     FRoot:TRangeMoBanObject;
-    FRows:TMobanObjectList;
+    //FRows:TMobanObjectList;
     FWidth:integer;
     FHeight:integer;
     //function getLastCrossObject(obj:TBaseMoBanObject):TBaseMoBanObject;
   public
     constructor Create(Owner: TComponent);
     destructor Destroy; override;
-    property rows:TMobanObjectList read FRows;
+
     property root:TRangeMoBanObject read FRoot;
+    //property rows:TMobanObjectList read FRoot.childs;
     property width:integer read FWidth write FWidth;
     property height:integer read FHeight write FHeight;
     procedure addRow(row:TRangeMoBanObject);
@@ -30,11 +31,14 @@ implementation
  var
    i:integer;
  begin
+   result:=nil;
    for i:=0 to length(row.childs)-1 do
    begin
-     row.childs[i].isObjectCross(obj);
-     result:=row.childs[i] as TRangeMoBanObject;
-     exit;
+     if row.childs[i].isObjectCross(obj) then
+     begin
+       result:=row.childs[i] as TRangeMoBanObject;
+       exit;
+     end;
    end;
  end;
 
@@ -42,11 +46,15 @@ implementation
  var
    i:integer;
  begin
-   for i:=0 to length(FRows)-1 do
+   result:=nil;
+   for i:=0 to length(root.childs)-1 do
    begin
-     FRows[i].isObjectCross(obj);
-     result:=FRows[i] as TRangeMoBanObject;
-     exit;
+     if(root.childs[i].isObjectCross(obj)) then
+     begin
+       result:=root.childs[i] as TRangeMoBanObject;
+       exit;
+     end;
+
    end;
  end;
 
@@ -158,6 +166,45 @@ implementation
    end;
  end;
 
+
+function textMobanObjectFromXml(node:IXMLNode):TTextMoBanObject;
+var
+  x,y,w,h:integer;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  result:=TTextMoBanObject.Create;
+  result.x:=x-(w div 2);
+  result.y:=y-(h div 2);
+  result.width:=w;
+  result.height:=h;
+  result.text:=getNodeAttibute(node.FirstChild,'f_t');
+  result.fontColor:=getNodeAttibute(node.FirstChild,'f_c');
+  result.fontName:='宋体';
+  result.fontSize:=12;
+  result.flag:=FLAG_TXET;
+end;
+
+function imageMobanObjectFromXml(node:IXMLNode):TImageMoBanObject;
+var
+  x,y,w,h:integer;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  result:=TImageMoBanObject.Create;
+  result.x:=x-(w div 2);
+  result.y:=y-(h div 2);
+  result.width:=w;
+  result.height:=h;
+  result.url:=getNodeAttibute(node.FirstChild,'url');
+  result.flag:=FLAG_IMAGE;
+end;
+
+
  //根据xml生成行列
 procedure TMoBan.fromXml(aXml:String);
 var
@@ -165,9 +212,9 @@ var
   doc :IXMLDocument;
   root:IXMLNode;
   tmpType:String;
-  bannerWidth,bannerHeight,bannerVersion:String;
+  bannerVersion:String;
   tmpUrl,tmpFileName:String;
-  x,y,w,h:integer;
+  w,h:integer;
   imagemagickcmd:String;
   tmpMoBanObject:TBaseMoBanObject;
   isFirstImage:boolean;
@@ -176,15 +223,16 @@ begin
   doc.PreserveWhiteSpace:=false;
   doc.LoadXML(aXml);
   root:=doc.DocumentElement;
-  bannerWidth:=getNodeAttibute(root,'w');
   bannerVersion:=getNodeAttibute(root,'v');
   if(bannerVersion<>'3.0') then
   begin
     exit;
   end;
-  bannerHeight:=getNodeAttibute(root,'h');
-  if(bannerWidth='') then
-    bannerWidth:='950';
+  if(getNodeAttibute(root,'w')='') then
+     width:=950
+  else
+     width:=strtoint(getNodeAttibute(root,'w'));
+  height:=strtoint(getNodeAttibute(root,'h'));
   root:=root.ChildNodes.Item[0];
   for i:=0 to root.ChildNodes.Length-1 do
   begin
@@ -192,17 +240,17 @@ begin
     //商品图片
     if(tmpType='tw_img') then
     begin
-      //memo1.Lines.Add('type=tw_img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
-      getNodeAttibute(root.ChildNodes.Item[i],'x');
+      addchild(imageMobanObjectFromXml(root.ChildNodes.Item[i]));
     end;
     //模版文字
     if(tmpType='s_txt') then
     begin
+      addchild(textMobanObjectFromXml(root.ChildNodes.Item[i]));
     end;
     //商品文字描述
     if(tmpType='tw_txt') then
     begin
-      
+      addchild(textMobanObjectFromXml(root.ChildNodes.Item[i]));
     end;
   end;   
 end;
@@ -212,10 +260,10 @@ begin
    //FRoot.width;
 end;
 
- procedure TMoBan.addChild(child:TBaseMoBanObject);
- var
-   tmpRow,tmpCell:TRangeMoBanObject;
- begin
+procedure TMoBan.addChild(child:TBaseMoBanObject);
+var
+  tmpRow,tmpCell:TRangeMoBanObject;
+begin
    tmpRow:=getInRow(child);
    if(tmpRow=nil) then
    begin
@@ -249,17 +297,16 @@ end;
        resizeRow(tmpRow);
      end;
    end;
- end;
+end;
 
- constructor TMoBan.Create(Owner: TComponent);
- begin
+constructor TMoBan.Create(Owner: TComponent);
+begin
    FRoot:=TRangeMoBanObject.Create;
-   FRows:=FRoot.childs;
- end;
+end;
 
- destructor TMoBan.Destroy;
- begin
- end;
+destructor TMoBan.Destroy;
+begin
+end;
 
 
 end.

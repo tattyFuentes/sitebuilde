@@ -1,7 +1,7 @@
 unit UBaseMoBanObject;
 
 interface
-uses uLkJSON,SysUtils,uTranslateYouDao,Types,UPublic;
+uses uLkJSON,SysUtils,uTranslateYouDao,Types,UPublic,Classes;
 
 const FLAG_RANGE=1;
 const FLAG_TXET=2;
@@ -33,6 +33,7 @@ type
     property flag:integer read FFlag write FFlag;
     property rect:TRect read getRect;
     property parent:TBaseMoBanObject read FParent write FParent;
+    //constructor Create(Owner: TComponent);
     function isObjectCross(obj:TBaseMoBanObject):boolean;
   end;
   TMobanObjectList = Array of TBaseMoBanObject;
@@ -72,6 +73,7 @@ begin
     tmpParent:=tmpParent.parent;
   end;
 end;
+
 
 
 function TBaseMoBanObject.isObjectCross(obj:TBaseMoBanObject):boolean;

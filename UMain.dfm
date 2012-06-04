@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 810
-  Top = 478
+  Left = 183
+  Top = 195
   Width = 1280
   Height = 733
   Caption = '9'
@@ -433,6 +433,15 @@ object frmMain: TfrmMain
     Caption = #28120#23453#35013#20462#32534#36753
     TabOrder = 13
     OnClick = Button9Click
+  end
+  object Button10: TButton
+    Left = 1064
+    Top = 152
+    Width = 145
+    Height = 57
+    Caption = #27979#35797#27169#29256
+    TabOrder = 14
+    OnClick = Button10Click
   end
   object MainMenu: TMainMenu
     Left = 480
