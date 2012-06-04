@@ -645,9 +645,15 @@ end;
 procedure TfrmMain.Button10Click(Sender: TObject);
 var
   moban:TMoBan;
+  i:integer;
 begin
+  memo2.Lines.Clear;
   moban:=TMoBan.Create(nil);
-  moban.fromXml(readfile('C:\Apache2.2\logtaobao.cn\2991.xml'));
+  moban.fromXml(readfile('C:\Apache2.2\logtaobao.cn\13015.xml'));
+  for i:=0 to length(moban.root.childs)-1 do
+  begin
+     memo2.Lines.Add(inttostr(moban.root.childs[i].x)+','+inttostr(moban.root.childs[i].y));
+  end;
   showmessage(inttostr(length(moban.root.childs)));
 end;
 

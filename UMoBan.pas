@@ -255,8 +255,34 @@ begin
   end;   
 end;
 
-function TMoBan.toHtml():String;
+
+function getDiv(w,h,marginLeft,marginTop:integer;backgroundImg:String):String;
 begin
+  if backgroundImg<>'' then
+     result:='<div style="background-image:'+backgroundImg+';'
+  else
+    result:='<div style="';
+  result:=result+'width:'+inttostr(w)+'px;'+'height:'+inttostr(h)+'px;';
+  result:=result+'margin-left:'+ inttostr(marginLeft)+'px;margin-top:'+ inttostr(marginTop)+'px">';
+end;
+
+function TMoBan.toHtml():String;
+var
+  i,j:integer;
+  html:String;
+begin
+  html:=getDiv(width,height,0,0,'background.jpg');
+  for i:=0 to length(root.childs)-1 do
+  begin
+    html:=html+getDiv(root.childs[i].width ,height,0,root.childs[i].y,'');
+    //cell
+    for j:=0 to length((root.childs[i]  as TRangeMoBanObject).childs)-1 do
+    begin
+      
+    end;
+    html:=html+'</div>';
+  end;
+  html:=html+'</div>';
    //FRoot.width;
 end;
 

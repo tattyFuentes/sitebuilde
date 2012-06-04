@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 183
-  Top = 195
+  Left = 49
+  Top = 119
   Width = 1280
   Height = 733
   Caption = '9'

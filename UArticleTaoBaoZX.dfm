@@ -1,6 +1,6 @@
 object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
-  Left = 355
-  Top = 244
+  Left = 2
+  Top = 0
   Width = 1278
   Height = 770
   Caption = #28120#23453#35013#20462
