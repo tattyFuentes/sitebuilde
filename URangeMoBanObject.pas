@@ -10,6 +10,7 @@ type
   public
     property childs:TMobanObjectList read FChilds write FChilds;
     procedure addChild(obj:TBaseMoBanObject);
+    constructor Create();
   end;
 implementation
 
@@ -22,15 +23,16 @@ begin
   if (self.isObjectCross(obj)) then
   begin
     result:=self;
-    for i:=0 to length(childs)-1 do
+    //childs.Count
+    for i:=0 to childs.Count-1 do
     begin
-      if(childs[i].isObjectCross(obj)) then
+      if((childs.Items[i] as TBaseMoBanObject).isObjectCross(obj)) then
       begin
-        if(childs[i].flag=FLAG_RANGE) then
+        if((childs.Items[i] as TBaseMoBanObject).flag=FLAG_RANGE) then
         begin
            result:=(childs[i] as TRangeMoBanObject).getLastCrossObject(obj);
         end else
-          result:=childs[i];
+          result:=(childs.Items[i] as TBaseMoBanObject);
       end;
       //tmpObject:=childs[i].
     end;
@@ -45,8 +47,9 @@ procedure TRangeMoBanObject.addChild(obj:TBaseMoBanObject);
 var
   tmpObject:TBaseMoBanObject;
 begin
-  setlength(FChilds,length(FChilds)+1);
-  FChilds[length(FChilds)-1]:=obj;
+  //setlength(FChilds,length(FChilds)+1);
+  //FChilds[length(FChilds)-1]:=obj;
+  FChilds.Add(obj);
   obj.parent:=self;
   //不是range对象
   if(obj.flag<>FLAG_RANGE) then
@@ -55,5 +58,10 @@ begin
   end;
 end;
 
+
+constructor TRangeMoBanObject.Create();
+begin
+  FChilds:=TMobanObjectList.create();
+end;
 
 end.

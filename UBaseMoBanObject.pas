@@ -1,7 +1,7 @@
 unit UBaseMoBanObject;
 
 interface
-uses uLkJSON,SysUtils,uTranslateYouDao,Types,UPublic,Classes;
+uses uLkJSON,SysUtils,uTranslateYouDao,Types,UPublic,Classes,Contnrs;
 
 const FLAG_RANGE=1;
 const FLAG_TXET=2;
@@ -13,8 +13,6 @@ type
   private
     FX:integer;
     FY:integer;
-
-
     FWidth:Integer;
     FHeight:Integer;
     FFlag:Integer;  //类型 1为range 2 为 txtobject 3 为image object
@@ -35,8 +33,10 @@ type
     property parent:TBaseMoBanObject read FParent write FParent;
     //constructor Create(Owner: TComponent);
     function isObjectCross(obj:TBaseMoBanObject):boolean;
+    
   end;
-  TMobanObjectList = Array of TBaseMoBanObject;
+  //TMobanObjectList = Array of TBaseMoBanObject;
+  TMobanObjectList = TObjectList;
 implementation
 
 function TBaseMoBanObject.getRect():TRect;
@@ -80,5 +80,7 @@ function TBaseMoBanObject.isObjectCross(obj:TBaseMoBanObject):boolean;
 begin
   result:=isCrossRect(rect,obj.getRect);
 end;
+
+
 
 end.

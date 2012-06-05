@@ -10,7 +10,7 @@ type
     FWidth:integer;
     FHeight:integer;
     procedure sortRows();
-    function oneCellToHtml():String;
+    function oneCellToHtml(cell:TRangeMoBanObject):String;
     //function getLastCrossObject(obj:TBaseMoBanObject):TBaseMoBanObject;
   public
     constructor Create(Owner: TComponent);
@@ -35,9 +35,9 @@ implementation
    i:integer;
  begin
    result:=nil;
-   for i:=0 to length(row.childs)-1 do
+   for i:=0 to row.childs.Count-1 do
    begin
-     if row.childs[i].isObjectCross(obj) then
+     if (row.childs[i] as TBaseMoBanObject).isObjectCross(obj) then
      begin
        result:=row.childs[i] as TRangeMoBanObject;
        exit;
@@ -50,9 +50,9 @@ implementation
    i:integer;
  begin
    result:=nil;
-   for i:=0 to length(root.childs)-1 do
+   for i:=0 to root.childs.Count-1 do
    begin
-     if(root.childs[i].isObjectCross(obj)) then
+     if((root.childs[i] as TBaseMoBanObject).isObjectCross(obj)) then
      begin
        result:=root.childs[i] as TRangeMoBanObject;
        exit;
@@ -72,11 +72,11 @@ implementation
    minX:integer;
  begin
    minX:=40000;
-   for i:=0 to length(list)-1 do
+   for i:=0 to list.Count-1 do
    begin
-     if(list[i].x<minX) then
+     if((list[i] as TBaseMoBanObject).x<minX) then
      begin
-       minX:=list[i].x;
+       minX:=(list[i] as TBaseMoBanObject).x;
      end;
    end;
    result:=minX;
@@ -88,11 +88,11 @@ implementation
    minY:integer;
  begin
    minY:=40000;
-   for i:=0 to length(list)-1 do
+   for i:=0 to list.Count-1 do
    begin
-     if(list[i].y<minY) then
+     if((list[i] as TBaseMoBanObject).y<minY) then
      begin
-       minY:=list[i].y;
+       minY:=(list[i] as TBaseMoBanObject).y;
      end;
    end;
    result:=minY;
@@ -104,13 +104,15 @@ implementation
  var
    i:integer;
    maxBottom:integer;
+   tmpObject:TBaseMoBanObject;
  begin
    maxBottom:=0;
-   for i:=0 to length(list)-1 do
+   for i:=0 to list.Count-1 do
    begin
-     if(list[i].y+list[i].height>maxBottom) then
+     tmpObject:=(list[i] as TBaseMoBanObject);
+     if(tmpObject.y+tmpObject.height>maxBottom) then
      begin
-       maxBottom:=list[i].y+list[i].height;
+       maxBottom:=tmpObject.y+tmpObject.height;
      end;
    end;
    result:=maxBottom;
@@ -120,13 +122,15 @@ implementation
  var
    i:integer;
    maxRight:integer;
+   tmpObject:TBaseMoBanObject;
  begin
    maxRight:=0;
-   for i:=0 to length(list)-1 do
+   for i:=0 to list.Count -1 do
    begin
-     if(list[i].x+list[i].width>maxRight) then
+     tmpObject:=(list[i] as TBaseMoBanObject);
+     if(tmpObject.x+tmpObject.width>maxRight) then
      begin
-       maxRight:=list[i].x+list[i].width;
+       maxRight:=tmpObject.x+tmpObject.width;
      end;
    end;
    result:=maxRight;
@@ -138,7 +142,7 @@ implementation
  var
    minLeft,minTop,maxRight,maxBottom:integer;
  begin
-   if(length(cell.childs)>1) then
+   if(cell.childs.Count>1) then
    begin
      minLeft:=getMinLeft(cell.childs);
      minTop:=getMinTop(cell.childs);
@@ -156,7 +160,7 @@ implementation
  var
    minLeft,minTop,maxRight,maxBottom:integer;
  begin
-   if(length(row.childs)>1) then
+   if(row.childs.Count>1) then
    begin
      minLeft:=getMinLeft(row.childs);
      minTop:=getMinTop(row.childs);
@@ -278,9 +282,9 @@ var
   i,j:integer;
   tmpRow:TRangeMoBanObject;
 begin
-  for i:=High(root.childs) downto Low(root.childs) do
-  for j:=Low(root.childs) to High(root.childs)-1 do
-    if root.childs[j].y >root.childs[j+1].y then
+  for i:=root.childs.Count-1 downto 0 do
+  for j:=0 to root.childs.Count-2 do
+    if (root.childs[j] as TRangeMoBanObject).y >(root.childs[j+1] as TRangeMoBanObject).y then
     begin
       tmpRow:=root.childs[j] as TRangeMoBanObject;
       root.childs[j]:=root.childs[j+1];
@@ -289,9 +293,48 @@ begin
 end;
 
 
-function TMoBan.oneCellToHtml():String;
+function TMoBan.oneCellToHtml(cell:TRangeMoBanObject):String;
+var
+  i:integer;
+  tmpImageMoBanObject:TImageMoBanObject;
+  tmpTextMoBanObject:TTextMoBanObject;
+  tmpMobanObject:TBaseMoBanObject;
+  html:String;
 begin
-  
+  html:='';
+  for i:=0 to cell.childs.Count-1 do
+  begin
+    if(cell.childs[i] is TImageMoBanObject) then
+    begin
+      tmpImageMoBanObject:=cell.childs[i] as TImageMoBanObject;
+      if(i=0) then
+      begin
+        html:=getDiv(tmpImageMoBanObject.width,tmpImageMoBanObject.height,tmpImageMoBanObject.x-cell.x,tmpImageMoBanObject.y-cell.y,'',true);
+        html:=html+'<img src="'+tmpImageMoBanObject.url+'"/>';
+        html:=html+'</div>';
+      end else begin
+        tmpMobanObject:=cell.childs[i-1] as TBaseMoBanObject;
+        html:=getDiv(tmpImageMoBanObject.width,tmpImageMoBanObject.height,tmpImageMoBanObject.x-tmpMobanObject.x-tmpMobanObject.width,tmpImageMoBanObject.y-tmpMobanObject.height-tmpMobanObject.y,'',true);
+        html:='<img src="'+tmpImageMoBanObject.url+'"/>';
+        html:=html+'</div>';
+      end;
+    end else if(cell.childs[i] is TTextMoBanObject) then
+    begin
+      tmpTextMoBanObject:=cell.childs[i] as TTextMoBanObject;
+      if(i=0) then
+      begin
+        html:=getDiv(tmpTextMoBanObject.width,tmpTextMoBanObject.height,tmpTextMoBanObject.x-cell.x,tmpTextMoBanObject.y-cell.y,'',true);
+        html:=html+tmpTextMoBanObject.text;
+        html:=html+'</div>';
+      end else begin
+        tmpMobanObject:=cell.childs[i-1] as TBaseMoBanObject;
+        html:=getDiv(tmpTextMoBanObject.width,tmpTextMoBanObject.height,tmpTextMoBanObject.x-tmpMobanObject.x-tmpMobanObject.width,tmpTextMoBanObject.y-tmpMobanObject.height-tmpMobanObject.y,'',true);
+        html:=html+tmpTextMoBanObject.text;
+        html:=html+'</div>';
+      end;
+    end;
+  end;
+  result:=html;
 end;
 
 
@@ -299,19 +342,22 @@ function TMoBan.toHtml():String;
 var
   i,j:integer;
   html:String;
-  tmpCell,tmpCell2,tmpRow:TRangeMoBanObject;
+  tmpCell,tmpCell2,tmpRow,tmpRow2:TRangeMoBanObject;
 begin
   sortRows();
   html:=getDiv(width,height,0,0,'background.png',false);
-  for i:=0 to length(root.childs)-1 do
+  for i:=0 to root.childs.Count-1 do
   begin
     tmpRow:=root.childs[i] as TRangeMoBanObject;
     if(i=0) then
-      html:=html+getDiv(root.childs[i].width ,root.childs[i].height,0,root.childs[i].y,'',false)
+      html:=html+getDiv(tmpRow.width ,tmpRow.height,0,tmpRow.y,'',false)
     else
-      html:=html+getDiv(root.childs[i].width ,root.childs[i].height,0,root.childs[i].y-root.childs[i-1].y-root.childs[i-1].height,'',false);
+    begin
+      tmpRow2:= root.childs[i-1] as TRangeMoBanObject;
+      html:=html+getDiv(tmpRow.width ,tmpRow.height,0,tmpRow.y-tmpRow2.y-tmpRow2.height,'',false);
+    end;
     //cell
-    for j:=0 to length((root.childs[i]  as TRangeMoBanObject).childs)-1 do
+    for j:=0 to ((root.childs[i]  as TRangeMoBanObject).childs).Count-1 do
     begin
       tmpCell:=(root.childs[i]  as TRangeMoBanObject).childs[j] as TRangeMoBanObject;
       if(j=0) then
@@ -321,6 +367,7 @@ begin
         tmpCell2:=(root.childs[i]  as TRangeMoBanObject).childs[j-1] as TRangeMoBanObject;
         html:=html+getDiv(tmpCell.width ,tmpCell.height,tmpCell.x-tmpCell2.x-tmpCell2.width,tmpCell.y-tmpRow.y,'',true);
       end;
+      html:=html+oneCellToHtml(tmpCell);
       html:=html+'</div>';
     end;
     html:=html+'</div>';
@@ -342,13 +389,13 @@ begin
      tmpRow.x:= 0;
      tmpRow.y:= child.y;
      tmpRow.height:=child.height;
-     addRow(tmpRow);
      tmpCell:=TRangeMoBanObject.create();
      tmpCell.width:=child.width;
      tmpCell.height:=child.height;
      tmpCell.x:=child.x;
      tmpCell.y:=child.y;
      tmpRow.addChild(tmpCell);
+     addRow(tmpRow);
    end else
    begin
      tmpCell:=getInCell(child,tmpRow);
