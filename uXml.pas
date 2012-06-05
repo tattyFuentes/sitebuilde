@@ -26,7 +26,6 @@ begin
     begin
       result:=tmpNode.NodeValue;
     end;
-
   end;
 end;
 

@@ -9,6 +9,8 @@ type
     //FRows:TMobanObjectList;
     FWidth:integer;
     FHeight:integer;
+    procedure sortRows();
+    function oneCellToHtml():String;
     //function getLastCrossObject(obj:TBaseMoBanObject):TBaseMoBanObject;
   public
     constructor Create(Owner: TComponent);
@@ -24,6 +26,7 @@ type
     function getInCell(obj:TBaseMoBanObject;row:TRangeMoBanObject):TRangeMoBanObject;
     procedure fromXml(aXml:String);
     function toHtml():String;
+
   end;
 implementation
 
@@ -161,7 +164,7 @@ implementation
      maxBottom:=getMaxBottom(row.childs);
      row.x:=minLeft;
      row.y:=minTop;
-     row.width:=maxRight-minLeft;
+     //row.width:=maxRight-minLeft;
      row.height:=maxBottom-minTop;
    end;
  end;
@@ -255,34 +258,75 @@ begin
   end;   
 end;
 
-
-function getDiv(w,h,marginLeft,marginTop:integer;backgroundImg:String):String;
+function getDiv(w,h,marginLeft,marginTop:integer;backgroundImg:String;isFloat:boolean):String;
 begin
   if backgroundImg<>'' then
-     result:='<div style="background-image:'+backgroundImg+';'
+     result:='<div style="overflow:hidden;background-image:url('+backgroundImg+');'
   else
-    result:='<div style="';
+    result:='<div style="overflow:hidden;border:solid 1px blue;';
+  if(isFloat) then
+  begin
+    result:=result+'float:left;';
+  end;
+
   result:=result+'width:'+inttostr(w)+'px;'+'height:'+inttostr(h)+'px;';
   result:=result+'margin-left:'+ inttostr(marginLeft)+'px;margin-top:'+ inttostr(marginTop)+'px">';
 end;
+
+procedure TMoBan.sortRows();
+var
+  i,j:integer;
+  tmpRow:TRangeMoBanObject;
+begin
+  for i:=High(root.childs) downto Low(root.childs) do
+  for j:=Low(root.childs) to High(root.childs)-1 do
+    if root.childs[j].y >root.childs[j+1].y then
+    begin
+      tmpRow:=root.childs[j] as TRangeMoBanObject;
+      root.childs[j]:=root.childs[j+1];
+      root.childs[j+1]:=tmpRow;
+    end;
+end;
+
+
+function TMoBan.oneCellToHtml():String;
+begin
+  
+end;
+
 
 function TMoBan.toHtml():String;
 var
   i,j:integer;
   html:String;
+  tmpCell,tmpCell2,tmpRow:TRangeMoBanObject;
 begin
-  html:=getDiv(width,height,0,0,'background.jpg');
+  sortRows();
+  html:=getDiv(width,height,0,0,'background.png',false);
   for i:=0 to length(root.childs)-1 do
   begin
-    html:=html+getDiv(root.childs[i].width ,height,0,root.childs[i].y,'');
+    tmpRow:=root.childs[i] as TRangeMoBanObject;
+    if(i=0) then
+      html:=html+getDiv(root.childs[i].width ,root.childs[i].height,0,root.childs[i].y,'',false)
+    else
+      html:=html+getDiv(root.childs[i].width ,root.childs[i].height,0,root.childs[i].y-root.childs[i-1].y-root.childs[i-1].height,'',false);
     //cell
     for j:=0 to length((root.childs[i]  as TRangeMoBanObject).childs)-1 do
     begin
-      
+      tmpCell:=(root.childs[i]  as TRangeMoBanObject).childs[j] as TRangeMoBanObject;
+      if(j=0) then
+        html:=html+getDiv(tmpCell.width ,tmpCell.height,tmpCell.x,tmpCell.y-tmpRow.y,'',true)
+      else
+      begin
+        tmpCell2:=(root.childs[i]  as TRangeMoBanObject).childs[j-1] as TRangeMoBanObject;
+        html:=html+getDiv(tmpCell.width ,tmpCell.height,tmpCell.x-tmpCell2.x-tmpCell2.width,tmpCell.y-tmpRow.y,'',true);
+      end;
+      html:=html+'</div>';
     end;
     html:=html+'</div>';
   end;
   html:=html+'</div>';
+  result:=html;
    //FRoot.width;
 end;
 
