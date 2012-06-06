@@ -1,7 +1,7 @@
 unit UMoBan;
 
 interface
-uses uLkJSON,SysUtils,uTranslateYouDao,UBaseMoBanObject,Classes,URangeMoBanObject,OmniXML,uxml,UTextMoBanObject,UImageMoBanObject;
+uses uLkJSON,SysUtils,uTranslateYouDao,UBaseMoBanObject,Classes,URangeMoBanObject,OmniXML,uxml,UTextMoBanObject,UImageMoBanObject,Math;
 type
   TMoBan = class(TObject)
   private
@@ -10,7 +10,9 @@ type
     FWidth:integer;
     FHeight:integer;
     procedure sortRows();
+    procedure sortCells(cell:TRangeMoBanObject);
     function oneCellToHtml(cell:TRangeMoBanObject):String;
+    function getPubStyle():String;
     //function getLastCrossObject(obj:TBaseMoBanObject):TBaseMoBanObject;
   public
     constructor Create(Owner: TComponent);
@@ -189,6 +191,10 @@ begin
   result.height:=h;
   result.text:=getNodeAttibute(node.FirstChild,'f_t');
   result.fontColor:=getNodeAttibute(node.FirstChild,'f_c');
+  if(result.fontColor<>'') then
+  begin
+    result.fontColor:=StringReplace(result.fontColor,'0x','#',[rfReplaceAll]);
+  end;
   result.fontName:='ËÎÌו';
   result.fontSize:=12;
   result.flag:=FLAG_TXET;
@@ -264,32 +270,61 @@ end;
 
 function getDiv(w,h,marginLeft,marginTop:integer;backgroundImg:String;isFloat:boolean):String;
 begin
-  if backgroundImg<>'' then
-     result:='<div style="overflow:hidden;background-image:url('+backgroundImg+');'
+  {if backgroundImg<>'' then
+     result:='<div style="text-align:center;overflow:hidden;background-image:url('+backgroundImg+');'
   else
-    result:='<div style="overflow:hidden;border:solid 1px blue;';
+    result:='<div style="text-align:center;overflow:hidden;border:solid 0px blue;';}
+
+  if backgroundImg<>'' then
+     result:='<div class="xiumobandiv" style="background-image:url('+backgroundImg+');'
+  else
+    result:='<div class="xiumobandiv" style="';
   if(isFloat) then
   begin
     result:=result+'float:left;';
   end;
 
-  result:=result+'width:'+inttostr(w)+'px;'+'height:'+inttostr(h)+'px;';
-  result:=result+'margin-left:'+ inttostr(marginLeft)+'px;margin-top:'+ inttostr(marginTop)+'px">';
+  result:=result+'width:'+inttostr(w)+'px;'+'height:'+inttostr(h)+'px;'+'line-height:'+inttostr(h)+'px;';
+  //result:=result+'margin-left:'+ inttostr(marginLeft)+'px;margin-top:'+ inttostr(marginTop)+'px">';
+  result:=result+'margin:'+ inttostr(marginTop)+'px 0px 0px '+inttostr(marginLeft)+'px">';
 end;
+
+
+function CompareY(Item1, Item2: TObject): Integer;
+var
+  y1,y2:integer;
+begin
+  //Item1
+  y1:=(Item1 as TBaseMoBanObject).y;
+  y2:=(Item2 as TBaseMoBanObject).y;
+  result := CompareValue(y1,y2);
+  //result := CompareValue((Item1^ as TBaseMoBanObject).y, (Item2^ as TBaseMoBanObject).y);
+end;
+function CompareX(Item1, Item2: TObject): Integer;
+var
+  x1,x2:integer;
+begin
+  //Item1
+  x1:=(Item1 as TBaseMoBanObject).x;
+  x2:=(Item2 as TBaseMoBanObject).x;
+  result := CompareValue(x1,x2);
+  //result := CompareValue((Item1^ as TBaseMoBanObject).y, (Item2^ as TBaseMoBanObject).y);
+end;
+
 
 procedure TMoBan.sortRows();
 var
   i,j:integer;
   tmpRow:TRangeMoBanObject;
 begin
-  for i:=root.childs.Count-1 downto 0 do
-  for j:=0 to root.childs.Count-2 do
-    if (root.childs[j] as TRangeMoBanObject).y >(root.childs[j+1] as TRangeMoBanObject).y then
-    begin
-      tmpRow:=root.childs[j] as TRangeMoBanObject;
-      root.childs[j]:=root.childs[j+1];
-      root.childs[j+1]:=tmpRow;
-    end;
+  root.childs.Sort(@CompareY);
+end;
+
+procedure TMoBan.sortCells(cell:TRangeMoBanObject);
+begin
+  //root.childs.Sort(@CompareY);
+  cell.childs.Sort(@CompareY);
+  //cell.childs.Sort(@CompareX);
 end;
 
 
@@ -301,21 +336,28 @@ var
   tmpMobanObject:TBaseMoBanObject;
   html:String;
 begin
+  sortCells(cell);
   html:='';
   for i:=0 to cell.childs.Count-1 do
   begin
     if(cell.childs[i] is TImageMoBanObject) then
     begin
       tmpImageMoBanObject:=cell.childs[i] as TImageMoBanObject;
+      {tmpImageMoBanObject.x:=tmpImageMoBanObject.x+1;
+      tmpImageMoBanObject.y:=tmpImageMoBanObject.y+1;
+      tmpImageMoBanObject.height:=tmpImageMoBanObject.height-2;
+      tmpImageMoBanObject.width:=tmpImageMoBanObject.width-2;  }
       if(i=0) then
       begin
-        html:=getDiv(tmpImageMoBanObject.width,tmpImageMoBanObject.height,tmpImageMoBanObject.x-cell.x,tmpImageMoBanObject.y-cell.y,'',true);
-        html:=html+'<img src="'+tmpImageMoBanObject.url+'"/>';
+        html:=getDiv(tmpImageMoBanObject.width,tmpImageMoBanObject.height,tmpImageMoBanObject.x-cell.x,tmpImageMoBanObject.y-cell.y,'',false);
+        //html:=html+'<img src="'+tmpImageMoBanObject.url+'"/>';
+        html:=html+'<img src="'+tmpImageMoBanObject.url+'" width="'+inttostr(tmpImageMoBanObject.width)+'px" height="'+inttostr(tmpImageMoBanObject.height)+'px"/>';
         html:=html+'</div>';
       end else begin
         tmpMobanObject:=cell.childs[i-1] as TBaseMoBanObject;
-        html:=getDiv(tmpImageMoBanObject.width,tmpImageMoBanObject.height,tmpImageMoBanObject.x-tmpMobanObject.x-tmpMobanObject.width,tmpImageMoBanObject.y-tmpMobanObject.height-tmpMobanObject.y,'',true);
-        html:='<img src="'+tmpImageMoBanObject.url+'"/>';
+        html:=html+getDiv(tmpImageMoBanObject.width,tmpImageMoBanObject.height,tmpImageMoBanObject.x-cell.x,tmpImageMoBanObject.y-tmpMobanObject.height-tmpMobanObject.y,'',false);
+        html:=html+'<img src="'+tmpImageMoBanObject.url+'" width="'+inttostr(tmpImageMoBanObject.width)+'px" height="'+inttostr(tmpImageMoBanObject.height)+'px"/>';
+        //html:='<img src="'+tmpImageMoBanObject.url+'" width="'+inttostr(tmpImageMoBanObject.width)+'px" height="'+inttostr(tmpImageMoBanObject.height)+'px"/>';
         html:=html+'</div>';
       end;
     end else if(cell.childs[i] is TTextMoBanObject) then
@@ -323,17 +365,28 @@ begin
       tmpTextMoBanObject:=cell.childs[i] as TTextMoBanObject;
       if(i=0) then
       begin
-        html:=getDiv(tmpTextMoBanObject.width,tmpTextMoBanObject.height,tmpTextMoBanObject.x-cell.x,tmpTextMoBanObject.y-cell.y,'',true);
-        html:=html+tmpTextMoBanObject.text;
+        html:=getDiv(tmpTextMoBanObject.width,tmpTextMoBanObject.height,tmpTextMoBanObject.x-cell.x,tmpTextMoBanObject.y-cell.y,'',false);
+        html:=html+'<span style="color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</span>';
         html:=html+'</div>';
       end else begin
-        tmpMobanObject:=cell.childs[i-1] as TBaseMoBanObject;
-        html:=getDiv(tmpTextMoBanObject.width,tmpTextMoBanObject.height,tmpTextMoBanObject.x-tmpMobanObject.x-tmpMobanObject.width,tmpTextMoBanObject.y-tmpMobanObject.height-tmpMobanObject.y,'',true);
-        html:=html+tmpTextMoBanObject.text;
+        html:=html+getDiv(tmpTextMoBanObject.width,tmpTextMoBanObject.height,tmpTextMoBanObject.x-cell.x,tmpTextMoBanObject.y-(cell.childs[i-1] as TBaseMoBanObject).y-(cell.childs[i-1] as TBaseMoBanObject).height,'',false);
+        html:=html+'<span style="color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</span>';
         html:=html+'</div>';
       end;
     end;
   end;
+  result:=html;
+end;
+
+
+function TMoBan.getPubStyle():String;
+var
+  html:string;
+begin
+  html:='<style>';
+  html:=html+'.xiumobandiv{';
+  html:=html+'text-align:center;overflow:hidden;border:solid 0px blue;}';
+  html:=html+'</style>';
   result:=html;
 end;
 
@@ -345,7 +398,11 @@ var
   tmpCell,tmpCell2,tmpRow,tmpRow2:TRangeMoBanObject;
 begin
   sortRows();
-  html:=getDiv(width,height,0,0,'background.png',false);
+
+
+  html:=getPubStyle();
+
+  html:=html+getDiv(width,height,0,0,'background.jpg',false);
   for i:=0 to root.childs.Count-1 do
   begin
     tmpRow:=root.childs[i] as TRangeMoBanObject;
@@ -394,6 +451,7 @@ begin
      tmpCell.height:=child.height;
      tmpCell.x:=child.x;
      tmpCell.y:=child.y;
+     tmpCell.addChild(child);
      tmpRow.addChild(tmpCell);
      addRow(tmpRow);
    end else
@@ -410,6 +468,7 @@ begin
        tmpCell.height:=child.height;
        tmpCell.x:=child.x;
        tmpCell.y:=child.y;
+       tmpCell.addChild(child);
        tmpRow.addChild(tmpCell);
        resizeRow(tmpRow);
      end;

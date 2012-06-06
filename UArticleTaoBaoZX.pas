@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Grids, StdCtrls, ExtCtrls,UEngine,UArticleObject,uPublic,uHttp,OmniXML,uxml,uBmpFunc,
+  Dialogs, Grids, StdCtrls, ExtCtrls,UEngine,UArticleObject,uPublic,uHttp,OmniXML,uxml,uBmpFunc,UMoBan,
   StringGridEx;
 
 type
@@ -378,6 +378,10 @@ begin
       h:=strtoint(getNodeAttibute(root.ChildNodes.Item[i],'h'));
       x:=x-(w div 2);
       y:=y-(h div 2);
+      if(x<0) then
+        x:=0;
+      if(y<0) then
+        y:=0;
       tmpUrl:=getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url');
       if(pos('.swf',tmpUrl)<=0) then
       begin
@@ -393,9 +397,6 @@ begin
                  imagemagickcmd:=imagemagickcmd+filePath+getFileNameFromUrl(tmpUrl)+' -geometry +'+inttostr(x)+'+'+inttostr(y)+' -composite ';
       end;
       //512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
-
-
-
 
       memo1.Lines.Add('type=img url='+getNodeAttibute(root.ChildNodes.Item[i].FirstChild,'url')+' x:'+
       getNodeAttibute(root.ChildNodes.Item[i],'x')+' y:'+getNodeAttibute(root.ChildNodes.Item[i],'y')+',w:'+getNodeAttibute(root.ChildNodes.Item[i],'w')+',h:'+getNodeAttibute(root.ChildNodes.Item[i],'h'))
@@ -545,7 +546,14 @@ var
   sXml:String;
   thumbPath,contentFilePath:string;
 begin
-  for i:=4 to 10000 do
+
+  tmpArticleObject:=getArticleById(3015);
+  sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
+  thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
+  contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
+  analyzeTaoBaoMoban(sXml,contentFilePath);
+
+  for i:=1 to 1 do
   begin
      getOnePage(i);
      if(length(mArticleList)>0) then
@@ -595,9 +603,10 @@ var
   i,j:integer;
   tmpArticleObject:TArticleObject;
   sXml:String;
+  moban:TMoBan;
   thumbPath,contentFilePath:string;
 begin
-  for i:=1 to 10000 do
+  for i:=1 to 1 do
   begin
      getOnePage(i);
      if(length(mArticleList)>0) then
@@ -609,7 +618,10 @@ begin
            sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
            thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
            contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
-           generateHtmlMoban(sXml,contentFilePath);
+           moban:=TMoBan.Create(nil);
+           moban.fromXml(sXml);
+           writefile(contentFilePath+mArticleList[j].id+'.html',moban.toHtml());
+           //generateHtmlMoban(sXml,contentFilePath);
          except
          end;
        end;
