@@ -385,7 +385,7 @@ var
 begin
   html:='<style>';
   html:=html+'.xiumobandiv{';
-  html:=html+'text-align:center;overflow:hidden;border:solid 0px blue;}';
+  html:=html+'text-align:center;overflow:hidden;display:blo}';
   html:=html+'</style>';
   result:=html;
 end;
