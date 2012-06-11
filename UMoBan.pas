@@ -28,6 +28,7 @@ type
     function getInCell(obj:TBaseMoBanObject;row:TRangeMoBanObject):TRangeMoBanObject;
     procedure fromXml(aXml:String);
     function toHtml():String;
+    function toTableHtml():String;
 
   end;
 implementation
@@ -389,6 +390,64 @@ begin
   html:=html+'</style>';
   result:=html;
 end;
+
+
+
+function getTable(w,h,backgroundImg:String):String;
+begin
+  if backgroundImg<>'' then
+     result:='<div style="background-image:url('+backgroundImg+');'
+  else
+    result:='<div style="';
+  result:=result+'width:'+inttostr(w)+'px;'+'height:'+inttostr(h)+'px;'+'line-height:'+inttostr(h)+'px;';
+  result:=result+'<table>';
+end;
+
+
+function getRow(row:TRangeMoBanObject):String ;
+begin
+  result:='<tr height='+inttostr(row.height)+'px';
+end;
+
+function getCell(cell:TRangeMoBanObject):String ;
+begin
+  result:='<td height='+inttostr(cell.height)+'px width='+inttostr(cell.width);
+end;
+
+
+function TMoBan.toTableHtml():String;
+var
+  i,j:integer;
+  html:String;
+  tmpCell,tmpCell2,tmpRow,tmpRow2:TRangeMoBanObject;
+begin
+  sortRows();
+  html:=html+getTable(width,height,0,0,'background.jpg');
+  for i:=0 to root.childs.Count-1 do
+  begin
+    tmpRow:=root.childs[i] as TRangeMoBanObject;
+    html:=html+getRow(tmpRow)
+    //cell
+    for j:=0 to ((root.childs[i]  as TRangeMoBanObject).childs).Count-1 do
+    begin
+      tmpCell:=(root.childs[i]  as TRangeMoBanObject).childs[j] as TRangeMoBanObject;
+      if(j=0) then
+        html:=html+getDiv(tmpCell.width ,tmpCell.height,tmpCell.x,tmpCell.y-tmpRow.y,'',true)
+      else
+      begin
+        tmpCell2:=(root.childs[i]  as TRangeMoBanObject).childs[j-1] as TRangeMoBanObject;
+        html:=html+getDiv(tmpCell.width ,tmpCell.height,tmpCell.x-tmpCell2.x-tmpCell2.width,tmpCell.y-tmpRow.y,'',true);
+      end;
+      html:=html+oneCellToHtml(tmpCell);
+      html:=html+'</td>';
+    end;
+    html:=html+'</tr>';
+  end;
+  html:=html+'</table></div>';
+  result:=html;
+   //FRoot.width;
+end;
+
 
 
 function TMoBan.toHtml():String;
