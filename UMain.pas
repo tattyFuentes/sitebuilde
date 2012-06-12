@@ -657,7 +657,7 @@ begin
   //showmessage(inttostr(length(moban.root.childs)));
   memo1.Lines.Clear;
   memo1.Lines.Add(moban.toHtml());
-  writefile('C:\Apache2.2\logtaobao.cn\3015.html',moban.toHtml());
+  writefile('C:\Apache2.2\logtaobao.cn\3015.html',moban.toTableHtml());
 end;
 
 initialization
