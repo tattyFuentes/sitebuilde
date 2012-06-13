@@ -11,8 +11,9 @@ type
     FHeight:integer;
     procedure sortRows();
     procedure sortCells(cell:TRangeMoBanObject);
+    function oneObjectToTableHtml(cell:TBaseMoBanObject):String;
     function oneCellToHtml(cell:TRangeMoBanObject):String;
-    function oneCellToTableHtml(cell:TRangeMoBanObject):String;
+    function oneCellToTableHtml(cell:TRangeMoBanObject;height:integer):String;
     function getPubStyle():String;
     //function getLastCrossObject(obj:TBaseMoBanObject):TBaseMoBanObject;
   public
@@ -393,42 +394,22 @@ begin
 end;
 
 
-
-function TMoBan.oneCellToTableHtml(cell:TRangeMoBanObject):String;
+function TMoBan.oneObjectToTableHtml(cell:TBaseMoBanObject):String;
 var
-  i:integer;
   tmpImageMoBanObject:TImageMoBanObject;
   tmpTextMoBanObject:TTextMoBanObject;
-  tmpMobanObject:TBaseMoBanObject;
-  html:String;
 begin
-  sortCells(cell);
-  html:='';
-  for i:=0 to cell.childs.Count-1 do
-  //for i:=0 to 0 do
+  if(cell is TImageMoBanObject) then
   begin
-    if(cell.childs[i] is TImageMoBanObject) then
-    begin
-      tmpImageMoBanObject:=cell.childs[i] as TImageMoBanObject;
-      if(i=0) then
-      begin
-        html:=html+'<img src="'+tmpImageMoBanObject.url+'" width="'+inttostr(tmpImageMoBanObject.width)+'px" height="'+inttostr(tmpImageMoBanObject.height)+'px"/>';
-      end else begin
-        html:=html+'<img src="'+tmpImageMoBanObject.url+'" width="'+inttostr(tmpImageMoBanObject.width)+'px" height="'+inttostr(tmpImageMoBanObject.height)+'px"/>';
-      end;
-    end else if(cell.childs[i] is TTextMoBanObject) then
-    begin
-      tmpTextMoBanObject:=cell.childs[i] as TTextMoBanObject;
-      if(i=0) then
-      begin
-        html:=html+'<span style="color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</span>';
-      end else begin
-        html:=html+'<span style="color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</span>';
-      end;
-    end;
+    tmpImageMoBanObject:=cell as TImageMoBanObject;
+    result:='<img src="'+tmpImageMoBanObject.url+'" width="'+inttostr(tmpImageMoBanObject.width)+'px" height="'+inttostr(tmpImageMoBanObject.height)+'px"/>';
+  end else if(cell is TTextMoBanObject) then
+  begin
+    tmpTextMoBanObject:=cell as TTextMoBanObject;
+    result:='<span style="valign:middle;color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</span>';
   end;
-  result:=html;
 end;
+
 
 
 
@@ -436,7 +417,8 @@ function getTable(w,h:integer;backgroundImg:String;allTds:TMoBanObjectList):Stri
 var
   i:integer;
 begin
-  result:='<table cellSpacing=0 cellpadding=0 width='+inttostr(w)+' height='+inttostr(h)+' style="background-image:url('+backgroundImg+');">';
+  //result:='<table cellSpacing=0 cellpadding=0 border=0 width='+inttostr(w)+' height='+inttostr(h)+' style="background-image:url('+backgroundImg+');">';
+  result:='<table cellSpacing=0 cellpadding=0 border=0 width='+inttostr(w)+' style="background-image:url('+backgroundImg+');">';
 end;
 
 
@@ -445,9 +427,20 @@ begin
   result:='<tr height='+inttostr(row.height)+'px>';
 end;
 
-function getTableTd(width:integer;height:integer):String;
+function getTableTd(width:integer;height:integer;backGroundImage:string):String;
 begin
-  result:='<td width='+inttostr(width)+'px height='+inttostr(height)+'px>';
+  if(backGroundImage='') then
+    result:='<td valign="middle" align="center" width='+inttostr(width)+'px height='+inttostr(height)+'px>'
+  else begin
+    result:='<td valign="middle" align="center" width='+inttostr(width)+'px height='+inttostr(height)+'px background="'+backGroundImage+'">'
+    //result:='<td width='+inttostr(width)+'px height='+inttostr(height)+'px>';
+    //result:=result+'<div style="background-image:url('+backGroundImage+');width:'+inttostr(width)+'px;height:'+inttostr(height)+'px'+ '">';
+  end;
+end;
+
+function getEmptyDiv(width,height:integer):String ;
+begin
+  result:='<span style="width:'+inttostr(width)+'px;height:'+inttostr(height)+'px"></span>';
 end;
 
 
@@ -457,13 +450,72 @@ begin
   result:='<tr height='+inttostr(height)+'px><td>&nbsp;</td></tr>';
 end;
 
-function getEmptyTableTd(width:integer):String ;
+
+
+
+function getEmptyTableTd(width:integer;height:integer):String ;
 begin
-  result:='<td valign="middle" align="center" width='+inttostr(width)+'px>&nbsp;</td>';
+  result:='<td width='+inttostr(width)+'px height='+inttostr(height)+'>&nbsp;</td>';
+end;
+
+function getMaxImageIndex(cell:TRangeMoBanObject):integer;
+var
+  i:integer;
+  maxMianJi:integer;
+begin
+  maxMianJi:=0;
+  for i:=0 to cell.childs.Count-1 do
+  begin
+    if((cell.childs[i] as TBaseMoBanObject).width*(cell.childs[i] as TBaseMoBanObject).height>maxMianJi) then
+    begin
+      maxMianJi:=(cell.childs[i] as TBaseMoBanObject).width*(cell.childs[i] as TBaseMoBanObject).height;
+      result:=i;
+    end;
+  end;
 end;
 
 
-
+function TMoBan.oneCellToTableHtml(cell:TRangeMoBanObject;height:integer):String;
+var
+  i,maxImageIndex,baseY:integer;
+  tmpImageMoBanObject:TImageMoBanObject;
+  tmpTextMoBanObject:TTextMoBanObject;
+  tmpMobanObject:TBaseMoBanObject;
+  html:String;
+begin
+  html:='';
+  if(cell.childs.Count=1) then
+  begin
+    html:=html+getTableTd(cell.width, height,'');
+    html:=html+oneObjectToTableHtml(cell.childs[0] as TBaseMoBanObject);
+    maxImageIndex:=-1;
+  end else begin
+    sortCells(cell);
+    maxImageIndex:=getMaxImageIndex(cell);
+    if(cell.childs[maxImageIndex] is TImageMoBanObject) then
+      //html:=html+getTableTd(cell.width, height,'')
+      html:=html+getTableTd(cell.width, height,(cell.childs[maxImageIndex] as TImageMoBanObject).url)
+    else begin
+      maxImageIndex:=-1;
+      html:=html+getTableTd(cell.width, height,'');
+    end;
+    baseY:=cell.y;
+    for i:=0 to cell.childs.Count-1 do
+    begin
+      if(maxImageIndex>-1) and (maxImageIndex=i) then
+        continue;
+      //在上部填充空div填充高度
+      if(cell.childs[i] as TBaseMoBanObject).y-baseY>0 then
+      begin
+        html:=html+getEmptyDiv(cell.width,(cell.childs[i] as TBaseMoBanObject).y-baseY);
+        baseY:=(cell.childs[i] as TBaseMoBanObject).y+(cell.childs[i] as TBaseMoBanObject).height;
+      end;
+      html:=html+oneObjectToTableHtml(cell.childs[i] as TBaseMoBanObject);
+    end;
+  end;
+  html:=html+'</td>';
+  result:=html;
+end;
 
 function TMoBan.toTableHtml():String;
 var
@@ -484,20 +536,19 @@ begin
       baseY:=tmpRow.y+tmpRow.height;
     end;
     html:=html+getTableTr(tmpRow);
-    html:=html+'<td><table cellSpacing=0 cellpadding=0><tr>';
+    html:=html+'<td><table cellSpacing=0 cellpadding=0 border=0><tr>';
     //cell
     baseX:=0;
     for j:=0 to ((root.childs[i]  as TRangeMoBanObject).childs).Count-1 do
     begin
-      tmpCell:=(root.childs[i]  as TRangeMoBanObject).childs[j] as TRangeMoBanObject;
+      tmpCell:=tmpRow.childs[j] as TRangeMoBanObject;
       if(tmpCell.x-baseX>0) then
       begin
-        html:=html+getEmptyTableTd(tmpCell.x-baseX);
+        html:=html+getEmptyTableTd(tmpCell.x-baseX,tmpRow.height);
         baseX:=tmpCell.x+tmpCell.width;
       end;
-      html:=html+getTableTd(tmpCell.width, (root.childs[i]  as TRangeMoBanObject).height);
-      html:=html+oneCellToTableHtml(tmpCell);
-      html:=html+'</td>';
+      html:=html+oneCellToTableHtml(tmpCell,tmpRow.height);
+      //html:=html+'</td>';
     end;
     html:=html+'</tr></table></td></tr>';
   end;
