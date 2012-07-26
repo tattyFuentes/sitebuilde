@@ -1,6 +1,6 @@
 object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
-  Left = 303
-  Top = 232
+  Left = 301
+  Top = 200
   Width = 1278
   Height = 770
   Caption = #28120#23453#35013#20462
@@ -31,38 +31,47 @@ object frmArticleTaoBaoZX: TfrmArticleTaoBaoZX
       object Button1: TButton
         Left = 9
         Top = 12
-        Width = 80
+        Width = 48
         Height = 33
         Caption = #19978#19968#39029
         TabOrder = 0
         OnClick = Button1Click
       end
       object Button2: TButton
-        Left = 96
+        Left = 72
         Top = 12
-        Width = 73
+        Width = 57
         Height = 33
         Caption = #19979#19968#39029
         TabOrder = 1
         OnClick = Button2Click
       end
       object Button3: TButton
-        Left = 179
+        Left = 139
         Top = 13
-        Width = 97
+        Width = 70
         Height = 33
         Caption = #29983#25104#32972#26223#22270
         TabOrder = 2
         OnClick = Button3Click
       end
       object Button4: TButton
-        Left = 288
+        Left = 216
         Top = 13
         Width = 97
         Height = 33
         Caption = #27979#35797#29983#25104'html'
         TabOrder = 3
         OnClick = Button4Click
+      end
+      object Button5: TButton
+        Left = 320
+        Top = 16
+        Width = 87
+        Height = 29
+        Caption = #22788#29702#36873#25321
+        TabOrder = 4
+        OnClick = Button5Click
       end
     end
     object memxml: TMemo

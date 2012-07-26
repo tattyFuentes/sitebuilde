@@ -39,6 +39,7 @@ function RegexSearchString(sourceString:String;findExpression:String):TStringLis
 function ReplaceRegexChar(aSource:String):String;
 function Pseudooriginal(aSource:String;aDictionaryFile:String):String;
 function SplitStringToStringList(aSource:String):TStringList;
+function SplitStringToArray(aSource:String;tag:String):TStringArray;
 procedure DeleteDir(sDirectory:String);
 //获得下载文件的路径（处理相对路径和绝对路径）
 function GetFileUrlBySourceUrl(aSourceUrl:String;aFileUrl:String):String;
@@ -397,6 +398,38 @@ begin
     end;
   end;
 end;
+
+
+
+function SplitStringToArray(aSource:String;tag:String):TStringArray;
+var
+  sTemp,sTemp2:String;
+  intPos,intPos2:integer;
+begin
+  sTemp:=aSource;
+  if(sTemp='') then
+    exit;
+  intPos:=pos(tag,sTemp);
+  while true do
+  begin
+    if(intPos>0) then
+      sTemp2:=copy(sTemp,1,intPos-(length(tag)-1))
+    else
+      sTemp2:=sTemp;
+    setlength(result,length(result)+1);
+    result[length(result)-1]:=sTemp2;
+    if(intPos<=0) then
+      break;
+    sTemp:=copy(sTemp,intPos+length(tag),length(sTemp));
+    intPos:=pos(tag,sTemp);
+  end;
+  //result:=aSource;
+end;
+
+
+
+
+
 
 
 //split字符串 （chr(13)+chr(10)分割行，一行用=分割名字和值）

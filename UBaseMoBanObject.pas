@@ -6,6 +6,7 @@ uses uLkJSON,SysUtils,uTranslateYouDao,Types,UPublic,Classes,Contnrs;
 const FLAG_RANGE=1;
 const FLAG_TXET=2;
 const FLAG_IMAGE=3;
+const FLAG_DYNAMIC=3;
 
 type
 

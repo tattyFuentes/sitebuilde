@@ -36,7 +36,8 @@ uses
   UTextMoBanObject in 'UTextMoBanObject.pas',
   UImageMoBanObject in 'UImageMoBanObject.pas',
   URangeMoBanObject in 'URangeMoBanObject.pas',
-  UMoBan in 'UMoBan.pas';
+  UMoBan in 'UMoBan.pas',
+  UDynamicMoBanObject in 'UDynamicMoBanObject.pas';
 
 {$R *.res}
 

@@ -7,10 +7,12 @@ uses
 function createRoot(rootName:String):IXMLDocument;
 function addElement(doc:IXMLDocument;node:IXMLElement;tag:String):IXMLElement;
 function addElementEx(doc:IXMLDocument;node:IXMLElement;tag:String;value:String):IXMLElement;
+function addNode(doc:IXMLDocument;node:IXMLNode;tag:String):IXMLNode;
+function addNodeEx(doc:IXMLDocument;node:IXMLNode;tag:String;value:String):IXMLNode;
 function findNodeByName(parentNode:IXMLNode;nodeName:String):IXMLNode;
 function getNodeValue(parentNode:IXMLNode):String;
 function getNodeAttibute(parentNode:IXMLNode;attibuteName:String):String;
-procedure setNodeAttibute(parentNode:IXMLNode;attibuteName:String;value:String);
+procedure setNodeAttibute(doc:IXMLDocument;parentNode:IXMLNode;attibuteName:String;value:String);
 implementation
 
 function getNodeAttibute(parentNode:IXMLNode;attibuteName:String):String;
@@ -30,10 +32,33 @@ begin
 end;
 
 
-procedure setNodeAttibute(parentNode:IXMLNode;attibuteName:String;value:String);
+function addNode(doc:IXMLDocument;node:IXMLNode;tag:String):IXMLNode;
+var
+  newNode:IXMLElement;
+begin
+  newNode:=doc.CreateElement(tag);
+  node.AppendChild(newNode);
+  result:=newNode;
+end;
+
+function addNodeEx(doc:IXMLDocument;node:IXMLNode;tag:String;value:String):IXMLNode;
+var
+  newNode:IXMLElement;
+begin
+  newNode:=doc.CreateElement(tag);
+  if value<>'' then
+    newNode.Text:=value;
+  node.AppendChild(newNode);
+  result:=newNode;
+end;
+
+
+
+procedure setNodeAttibute(doc:IXMLDocument;parentNode:IXMLNode;attibuteName:String;value:String);
 var
   i:integer;
   tmpNode:IXMLNode;
+  attributeNode:IXMLAttr;
 begin
   if(parentNode.Attributes<>nil) then
   begin
@@ -41,8 +66,11 @@ begin
     if(tmpNode<>nil) then
     begin
       tmpNode.NodeValue:=value;
+    end else begin
+      attributeNode := doc.createAttribute(attibuteName);
+      attributeNode.Value := value;
+      parentNode.Attributes.SetNamedItem(attributeNode);
     end;
-
   end;
 end;
 
@@ -274,7 +302,7 @@ var
   doc:IXMLDocument;
 begin
   doc:=CreateXMLDoc;
-  doc.AppendChild(doc.CreateProcessingInstruction('xml', 'version="1.0" encoding="gbk"'));
+  doc.AppendChild(doc.CreateProcessingInstruction('xml', 'version="1.0" encoding="utf-8"'));
   doc.DocumentElement:=doc.CreateElement(rootName);
   Result:=doc;
 end;

@@ -21,6 +21,7 @@ type
    public
      constructor Create(const OnEvent: TObjectProcedure) ;
      property OnEvent: TObjectProcedure read FOnEvent write FOnEvent;
+
    end;
 
   TFrmTools = class(TForm)
@@ -110,6 +111,9 @@ type
     procedure setElementBorder(element:IHTMLElement);
     function GetHtmlNodeIndex(node:IHTMLDOMNode):integer;
     procedure insertVariableTag(tag:String;bOnlyOne:boolean);
+    procedure parseElementsAbsolutePosition(element:IHTMLElement);
+    procedure oneNodePosition(node:IHTMLDOMNode);
+    function getAbsoluteLocation(element:IHTMLDOMNode):String;
   public
     { Public declarations }
   end;
@@ -178,6 +182,7 @@ begin
   if(oldelement as IHTMLDOMNode).nodeType=ELEMENT_NODE then
     oldElementOuterHtml:=oldelement.outerHTML;
   element.style.setAttribute('border','#FF0000 2px solid',0);
+
 end;
 
 procedure TFrmTools.Document_OnMouseOver;
@@ -186,6 +191,7 @@ var
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
+
 
    setElementBorder(element);
 
@@ -209,6 +215,68 @@ begin
 end;
 
 
+function TFrmTools.getAbsoluteLocation(element:IHTMLDOMNode):String;
+var
+  offsetTop,offsetLeft,offsetWidth,offsetHeight:integer;
+  tmpNode:IHTMLDOMNode;
+begin
+  tmpNode:=element;
+  offsetTop:=0;
+  offsetLeft:=0;
+  offsetWidth:=0;
+  offsetHeight:=0;
+  while tmpNode<>nil do
+  begin
+    begin
+      if(tmpNode.nodeType<>ELEMENT_NODE) then
+      begin
+        break;
+      end;
+
+
+      try
+        offsetTop:=offsetTop+(tmpNode as IHTMLElement).offsetTop;
+        offsetLeft:=offsetLeft+(tmpNode as IHTMLElement).offsetLeft;
+        richedit1.Lines.Add(tmpNode.nodeName+':'+inttostr((tmpNode as IHTMLElement).offsetLeft));
+        tmpNode:=tmpNode.parentNode;
+      except
+        break;
+      end;
+    end;
+  end;
+  if(tmpNode.nodeType=ELEMENT_NODE) then
+  begin
+    offsetWidth:=(element as IHTMLElement).offsetWidth;
+    offsetHeight:=(element as IHTMLElement).offsetHeight;
+  end;
+  result:=inttostr(offsetLeft)+','+inttostr(offsetTop)+','+inttostr(offsetWidth)+','+inttostr(offsetHeight);
+end;
+
+
+
+procedure TFrmTools.oneNodePosition(node:IHTMLDOMNode);
+var
+  tmpNode:IHTMLDOMNode;
+begin
+  richedit1.Lines.Add(node.nodeName+':'+getAbsoluteLocation(node));
+  tmpNode:=node.firstChild;
+  while tmpNode<>nil do
+  begin
+    oneNodePosition(tmpNode);
+    tmpNode:=tmpNode.nextSibling;
+  end;
+end;
+
+
+procedure TFrmTools.parseElementsAbsolutePosition(element:IHTMLElement);
+var
+  tmpHtmlNode,tmpHtmlNode2:IHTMLDOMNode;
+begin
+  tmpHtmlNode:=element as IHTMLDOMNode;
+  oneNodePosition(tmpHtmlNode);
+  //tmpHtmlNode.childNodes.
+end;
+
 procedure TFrmTools.Document_OnMouseDown;
 var
    element : IHTMLElement;
@@ -218,10 +286,12 @@ var
    nodeIndexArray:array of integer;
    treeNode:TTreeNode;
    hButton : HWND;
-
 begin
    if htmlDoc = nil then Exit;
    element := htmlDoc.parentWindow.event.srcElement;
+   parseElementsAbsolutePosition(element);
+   exit;
+
 
    try
    if(treeview1.Items.Count>0) then
@@ -278,6 +348,7 @@ begin
    begin
      RichEdit1.Text:='加载完成，请点击箭头以选择上方网页中的内容块。';
      htmlDoc := WebBrowser1.Document as IHTMLDocument2;
+
      //htmlDoc.onmousedown:=(TEventObject.Create(Document_OnMouseDown) as IDispatch) ;
      //htmlDoc.onmouseover := (TEventObject.Create(Document_OnMouseOver) as IDispatch) ;
      mydoc:=webbrowser1.Document as IHTMLDocument3;

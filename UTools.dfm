@@ -1,6 +1,6 @@
 object FrmTools: TFrmTools
-  Left = 536
-  Top = 298
+  Left = 607
+  Top = 218
   Width = 1280
   Height = 762
   Caption = #36741#21161#24037#20855
@@ -79,7 +79,7 @@ object FrmTools: TFrmTools
       Width = 761
       Height = 21
       TabOrder = 0
-      Text = 'http://localhost'
+      Text = 'http://philipschina.tmall.com/?spm=a220o.1000859.0.95'
     end
     object Button1: TButton
       Left = 823

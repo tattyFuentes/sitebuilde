@@ -23,6 +23,7 @@ type
     ArticleGrid: TStringGridEx;
     btnPass: TButton;
     btnNotPass: TButton;
+    Button5: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -33,6 +34,7 @@ type
     procedure ArticleGridClick(Sender: TObject);
     procedure btnPassClick(Sender: TObject);
     procedure btnNotPassClick(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
     mCurrentPage:integer;
@@ -157,23 +159,31 @@ begin
   memxml.Lines.Clear;
   memxml.Lines.Add(sXml);}
 
-  thumbPath:='D:\work\ÌÔ±¦×°ÐÞ\Í¼ÎÄ\'+tmpArticleObject.id+'\thumbfiles\';
-  contentFilePath:='D:\work\ÌÔ±¦×°ÐÞ\Í¼ÎÄ\'+tmpArticleObject.id+'\contentfiles\';
+  //thumbPath:='D:\work\ÌÔ±¦×°ÐÞ\Í¼ÎÄ\'+tmpArticleObject.id+'\thumbfiles\';
+  //contentFilePath:='D:\work\ÌÔ±¦×°ÐÞ\Í¼ÎÄ\'+tmpArticleObject.id+'\contentfiles\';
+
+  thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
+  contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
 
   imgArray:=searchfile(thumbPath,'.jpg');
   if(length(imgArray)>0) then
   begin
     paintbox1.Repaint;
     tmpBmp:=getBmpFromFile(thumbPath+imgArray[0]);
-    newBmp:=resizeBmp(tmpBmp,900);
+    newBmp:=resizeBmp(tmpBmp,600);
     tmpBmp.Free;
     paintbox1.Canvas.Draw(0,0,newBmp);
     newBmp.Free;
     //paintbox1.p
   end;
-
-  
-
+  if(fileexists(contentFilePath+'background.jpg')) then
+  begin
+    tmpBmp:=getBmpFromFile(contentFilePath+'background.jpg');
+    newBmp:=resizeBmp(tmpBmp,600);
+    tmpBmp.Free;
+    paintbox1.Canvas.Draw(620,0,newBmp);
+    newBmp.Free;
+  end;
 
 
   {imgArray:=searchfile(thumbPath,'.jpg');
@@ -257,8 +267,8 @@ var
 begin
    result:=aXml;
    sTemp:=result;
-   memxml.Lines.Clear;
-   memxml.Lines.Add(aXml);
+   //memxml.Lines.Clear;
+   //memxml.Lines.Add(aXml);
    sList:=RegexSearchString(sTemp,'(?:'+' url="'+')(.*)('+'jpg|swf|gif|png|"'+')');
    for i:=0 to sList.Count div 2-1 do
    begin
@@ -434,7 +444,7 @@ begin
     end;
     //convert -size 512x512 -strip -colors 8 -depth 8 xc:none u0.png -geometry +0+0 -composite u1.png -geometry +256+0 -composite d0.png -geometry +0+256 -composite d1.png -geometry +256+256 -composite dest4.png
   end;
-  imagemagickcmd:=imagemagickcmd+' -quality 90 '+filePath+'\background.png';
+  imagemagickcmd:=imagemagickcmd+' -quality 95 '+filePath+'\background.jpg';
   execCommand(pchar(imagemagickcmd),false);
 end;
 
@@ -555,7 +565,7 @@ begin
 
   for i:=1 to 1 do
   begin
-     getOnePage(i);
+     getOnePage(mCurrentPage);
      if(length(mArticleList)>0) then
      begin
        for j:=0 to length(mArticleList)-1 do
@@ -606,7 +616,7 @@ var
   moban:TMoBan;
   thumbPath,contentFilePath:string;
 begin
-  for i:=1 to 1 do
+  for i:=1 to 3 do
   begin
      getOnePage(i);
      if(length(mArticleList)>0) then
@@ -619,8 +629,9 @@ begin
            thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
            contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
            moban:=TMoBan.Create(nil);
+           writefile(contentFilePath+mArticleList[j].id+'.xml',sXml);
            moban.fromXml(sXml);
-           writefile(contentFilePath+mArticleList[j].id+'.html',moban.toHtml());
+           writefile(contentFilePath+mArticleList[j].id+'.html',moban.toTableHtml());
            //generateHtmlMoban(sXml,contentFilePath);
          except
          end;
@@ -649,6 +660,25 @@ begin
   updateArticleFlag(strtoint(tmpArticleObject.id),0);
 end;
 
+
+procedure TfrmArticleTaoBaoZX.Button5Click(Sender: TObject);
+var
+  i:integer;
+  tmpArticleObject:TArticleObject;
+  sXml:String;
+  thumbPath,contentFilePath:string;
+begin
+  for i:=0 to memxml.Lines.Count-1 do
+  begin
+    tmpArticleObject:=getArticleById(strtoint(memxml.Lines.Strings[i]));
+    sXml:=parseTaobaoXml('<?xml version="1.0" encoding="gbk" ?><banner '+tmpArticleObject.content+'</banner>');
+    thumbPath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\thumbfiles\';
+    contentFilePath:='E:\privte\sitebuildestore\xiumobantuwen\'+tmpArticleObject.id+'\contentfiles\';
+    writefile(contentFilePath+tmpArticleObject.id+'.xml',sXml);
+    analyzeTaoBaoMoban(sXml,contentFilePath);
+  end;
+
+end;
 
 end.
 

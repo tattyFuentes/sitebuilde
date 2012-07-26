@@ -49,7 +49,7 @@ object frmMain: TfrmMain
     TitleFont.Style = []
   end
   object Button1: TButton
-    Left = 256
+    Left = 248
     Top = 96
     Width = 113
     Height = 33
@@ -60,7 +60,7 @@ object frmMain: TfrmMain
   object Memo1: TMemo
     Left = 216
     Top = 440
-    Width = 793
+    Width = 385
     Height = 225
     Lines.Strings = (
       
@@ -395,8 +395,8 @@ object frmMain: TfrmMain
     OnClick = Button6Click
   end
   object mWebBrowser: TWebBrowser
-    Left = 1040
-    Top = 360
+    Left = 1072
+    Top = 352
     Width = 169
     Height = 265
     TabOrder = 10
@@ -435,13 +435,110 @@ object frmMain: TfrmMain
     OnClick = Button9Click
   end
   object Button10: TButton
-    Left = 1064
-    Top = 152
+    Left = 1072
+    Top = 288
     Width = 145
     Height = 57
-    Caption = #27979#35797#27169#29256
+    Caption = 'dynamic'
     TabOrder = 14
     OnClick = Button10Click
+  end
+  object Button11: TButton
+    Left = 1080
+    Top = 96
+    Width = 161
+    Height = 33
+    Caption = #27979#35797'json'
+    TabOrder = 15
+    OnClick = Button11Click
+  end
+  object Button12: TButton
+    Left = 1080
+    Top = 144
+    Width = 161
+    Height = 33
+    Caption = #19979#36733#32654#22270#36164#28304
+    TabOrder = 16
+    OnClick = Button12Click
+  end
+  object Memo3: TMemo
+    Left = 640
+    Top = 440
+    Width = 361
+    Height = 225
+    Lines.Strings = (
+      '3069'
+      '3070'
+      '3087'
+      '3088'
+      '3130'
+      '3131'
+      '3137'
+      '3138'
+      '3139'
+      '6437'
+      '6455'
+      '6462'
+      '6464'
+      '6497'
+      '6501'
+      '6556'
+      '6557'
+      '6561'
+      '6582'
+      '6584'
+      '6604'
+      '6607'
+      '6656'
+      '6717'
+      '6722'
+      '6739'
+      '6780'
+      '6805'
+      '7138'
+      '3078'
+      '3079'
+      '3083'
+      '3110'
+      '3112'
+      '3118'
+      '3121'
+      '6450'
+      '6451'
+      '6467'
+      '6489'
+      '6517'
+      '6595'
+      '6634'
+      '6700'
+      '6750'
+      '6772'
+      '6791'
+      '6813'
+      '6815'
+      '6819'
+      '6820'
+      '6855'
+      '6856'
+      '6857'
+      '6858'
+      '6887'
+      '6922'
+      '6989'
+      '7086'
+      '7087'
+      '7091'
+      '7097'
+      '7147')
+    TabOrder = 17
+  end
+  object Edit1: TEdit
+    Left = 1032
+    Top = 208
+    Width = 177
+    Height = 21
+    TabOrder = 18
+    Text = 'Edit1'
   end
   object MainMenu: TMainMenu
     Left = 480
@@ -471,6 +568,7 @@ object frmMain: TfrmMain
     end
     object N19: TMenuItem
       Caption = #23567#24037#20855
+      OnClick = N19Click
     end
   end
   object DataSource1: TDataSource

@@ -7,7 +7,7 @@ uses
   Dialogs, Menus, ComCtrls,UPublic,CommCtrl, CheckBoxTreeView, ShellCtrls,
   DBXpress, DB, SqlExpr, DBClient, Grids, DBGrids, FMTBcd, Provider,UDatabase,UTree,
   StdCtrls, ImgList,UEngine, PerlRegEx,UPlanViewHelp, ToolWin, ExtCtrls,UArticleObject,uPublishPlan,uTranslateGoogle,uLkJSON,
-  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax,OmniXML,uxml,UArticleTaoBaoZX,UMoBan;
+  OleCtrls, SHDocVw,UHtmlToUbb,MSHTML,activex,UCatchPlanSyntax,OmniXML,uxml,UArticleTaoBaoZX,UMoBan,UTools;
 
 type
   TfrmMain = class(TForm)
@@ -48,6 +48,10 @@ type
     Button8: TButton;
     Button9: TButton;
     Button10: TButton;
+    Button11: TButton;
+    Button12: TButton;
+    Memo3: TMemo;
+    Edit1: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -69,9 +73,13 @@ type
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure Button10Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
+    procedure Button12Click(Sender: TObject);
+    procedure N19Click(Sender: TObject);
   private
     { Private declarations }
     procedure analyzeTaoBaoMoban(strXML:WideString);
+    procedure downMeituSucai(aUrl:String);
      procedure InitSystemConfig();
   public
     { Public declarations }
@@ -646,18 +654,136 @@ procedure TfrmMain.Button10Click(Sender: TObject);
 var
   moban:TMoBan;
   i:integer;
+  sTemp:String;
 begin
   memo2.Lines.Clear;
   moban:=TMoBan.Create(nil);
-  moban.fromXml(readfile('C:\Apache2.2\logtaobao.cn\3015.xml'));
-  for i:=0 to moban.root.childs.Count-1 do
+  for i:=0 to memo3.Lines.Count-1 do
   begin
-     //memo2.Lines.Add(inttostr(moban.root.childs[i].x)+','+inttostr(moban.root.childs[i].y));
+    edit1.Text:=memo3.Lines.Strings[i];
+    sTemp:=moban.convertToMyXml(readfile('E:\privte\sitebuildestore\xiumobantuwen\'+memo3.Lines.Strings[i]+'\contentfiles\'+memo3.Lines.Strings[i]+'.xml'),'background.png');
+    sTemp:=utf8encode(sTemp);
+    writefile('C:\Apache2.2\logtaobao.cn\xml\moban\'+memo3.Lines.Strings[i]+'.xml',sTemp);
+    copyfile(pchar('E:\privte\sitebuildestore\xiumobantuwen\'+memo3.Lines.Strings[i]+'\contentfiles\background.png'),pchar('C:\Apache2.2\logtaobao.cn\xml\moban\'+memo3.Lines.Strings[i]+'.png'),false);
   end;
-  //showmessage(inttostr(length(moban.root.childs)));
-  memo1.Lines.Clear;
-  memo1.Lines.Add(moban.toHtml());
-  writefile('C:\Apache2.2\logtaobao.cn\3015.html',moban.toTableHtml());
+end;
+
+
+
+procedure TfrmMain.downMeituSucai(aUrl:String);
+var
+  JsonRoot,JsonObject:TlkJSONobject;
+  list,childList:TlkJSONList;
+  JsonString:String;
+  strPath,httpThumb,httpMeter:string;
+  i:integer;
+begin
+  strPath:=copy(aUrl,length('http://xiuxiu.web.meitu.com/xml')+1,length(aurl));
+  strPath:=copy(strPath,0,length(strPath)-length('xiuxiu.json'));
+  strPath:=StringReplace(strPath,'/','\',[rfReplaceAll]);
+  strPath:='d:\temp1'+strPath;
+  ForceDirectories(strPath);
+
+  memo2.Lines.Clear;
+  JsonString:=getStringFromUrl(aUrl,'',false);
+  JsonString:=StringReplace(JsonString,'http:\/\/sucai.dl.meitu.com\/websucai\/','http:\/\/www.logtaobao.cn\/sucai\/img\/',[rfReplaceAll]);
+  JsonString:=StringReplace(JsonString,'http:\/\/img01.meitu.com\/sucai\/img\/','http:\/\/www.logtaobao.cn\/sucai\/img\/',[rfReplaceAll]);
+  writefile(strPath+'xiumoban.json',JsonString);
+  exit;
+
+
+  JsonRoot:=TlkJSON.ParseText(JsonString) as TlkJSONobject;
+  //JsonRoot.Field(
+
+  httpThumb:= JsonRoot.Field['thumbBase'].Child[0].value;
+  httpMeter:= JsonRoot.Field['materBase'].Child[0].value;
+
+
+  list:=JsonRoot.Field['newest'] as TlkJSONList;
+  for i:=0 to list.Count-1 do
+  begin
+    JsonObject:=list.Child[i] as TlkJSONobject;
+    //Àı¬‘Õº
+    downloadfile(httpThumb+JsonObject.Field['t'].Value, strPath,'');
+    downloadfile(httpMeter+JsonObject.Field['m'].Value, strPath,'');
+
+    memo2.Lines.Add(JsonObject.Field['t'].Value);
+    //‘≠ ºÕº
+    //memo2.Lines.Add(JsonObject.Field['m'].Value);
+  end;
+
+  list:=JsonRoot.Field['hottest'] as TlkJSONList;
+  for i:=0 to list.Count-1 do
+  begin
+    JsonObject:=list.Child[i] as TlkJSONobject;
+    if(memo2.Lines.IndexOf(JsonObject.Field['t'].Value)=-1) then
+    begin
+      //Àı¬‘Õº
+      memo2.Lines.Add(JsonObject.Field['t'].Value);
+      downloadfile(httpThumb+JsonObject.Field['t'].Value, strPath,'');
+      downloadfile(httpMeter+JsonObject.Field['m'].Value, strPath,'');
+      //‘≠ ºÕº
+      //memo2.Lines.Add(JsonObject.Field['m'].Value);
+    end;
+  end;
+end;
+
+
+procedure TfrmMain.Button11Click(Sender: TObject);
+var
+  JsonRoot,JsonObject:TlkJSONobject;
+  list,childList:TlkJSONList;
+  JsonString:String;
+  i:integer;
+begin
+ downMeituSucai('http://xiuxiu.web.meitu.com/xml/shipin/zhuangshi/huangguan/xiuxiu.json');
+end;
+
+procedure TfrmMain.Button12Click(Sender: TObject);
+var
+  tmpXml:String;
+  doc :IXMLDocument;
+  root:IXMLNode;
+  shipinNodeList:IXMLNodeList;
+  i,j,n:integer;
+begin
+  memo2.Lines.Clear;
+  tmpXml:=readfile('F:\share\meitu\maters.xml');
+  tmpXml:=utf8decode(tmpXml);
+  doc:=CreateXMLDoc;
+  doc.PreserveWhiteSpace:=false;
+  doc.LoadXML(tmpXml);
+  root:=doc.DocumentElement;
+  root:=root.ChildNodes.Item[1];
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    if('trinket'=getNodeAttibute(root.ChildNodes.Item[i],'name')) then
+    begin
+      shipinNodeList:=root.ChildNodes.Item[i].childNodes;
+      for j:=0 to shipinNodeList.Length-1 do
+      begin
+        for n:=0 to shipinNodeList.Item[j].ChildNodes.Length-1 do
+        begin
+          memo2.Lines.Add(getNodeAttibute(shipinNodeList.Item[j].ChildNodes.Item[n],'url'));
+          downMeituSucai(getNodeAttibute(shipinNodeList.Item[j].ChildNodes.Item[n],'url'));
+        end;
+      end;
+    end;
+
+
+
+
+    //memo2.Lines.Add(getNodeAttibute(root.ChildNodes.Item[i],'name'));
+  end;
+
+end;
+
+procedure TfrmMain.N19Click(Sender: TObject);
+var
+  frmTools:TFrmTools;
+begin
+  frmTools:=TFrmTools.Create(self);
+  frmTools.ShowModal;
 end;
 
 initialization

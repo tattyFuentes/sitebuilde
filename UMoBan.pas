@@ -1,7 +1,7 @@
 unit UMoBan;
 
 interface
-uses uLkJSON,SysUtils,uTranslateYouDao,UBaseMoBanObject,Classes,URangeMoBanObject,OmniXML,uxml,UTextMoBanObject,UImageMoBanObject,Math;
+uses uLkJSON,SysUtils,uTranslateYouDao,UBaseMoBanObject,Classes,URangeMoBanObject,OmniXML,uxml,UTextMoBanObject,UImageMoBanObject,Math,QDialogs,UDynamicMoBanObject,uPublic;
 type
   TMoBan = class(TObject)
   private
@@ -28,10 +28,13 @@ type
     function getInRow(obj:TBaseMoBanObject):TRangeMoBanObject;
     procedure addChild(child:TBaseMoBanObject);
     function getInCell(obj:TBaseMoBanObject;row:TRangeMoBanObject):TRangeMoBanObject;
-    procedure fromXml(aXml:String);
+    procedure fromXml(aXml:String);  //处理淘宝的xml
+    procedure fromMyXml(aXml:String);  //处理重新整理的xml
     function toHtml():String;
+    function toXml():String;
     function toTableHtml():String;
-
+    //处理原始xml生成flash用的xml
+    function convertToMyXml(aXml:String;bgImg:String):String;
   end;
 implementation
 
@@ -62,7 +65,6 @@ implementation
        result:=root.childs[i] as TRangeMoBanObject;
        exit;
      end;
-
    end;
  end;
 
@@ -141,8 +143,6 @@ implementation
    result:=maxRight;
  end;
 
-
-
  procedure resizeCell(cell:TRangeMoBanObject);
  var
    minLeft,minTop,maxRight,maxBottom:integer;
@@ -161,10 +161,10 @@ implementation
  end;
 
 
- procedure resizeRow(row:TRangeMoBanObject);
- var
-   minLeft,minTop,maxRight,maxBottom:integer;
- begin
+procedure resizeRow(row:TRangeMoBanObject);
+var
+  minLeft,minTop,maxRight,maxBottom:integer;
+begin
    if(row.childs.Count>1) then
    begin
      minLeft:=getMinLeft(row.childs);
@@ -176,8 +176,7 @@ implementation
      //row.width:=maxRight-minLeft;
      row.height:=maxBottom-minTop;
    end;
- end;
-
+end;
 
 function textMobanObjectFromXml(node:IXMLNode):TTextMoBanObject;
 var
@@ -190,6 +189,10 @@ begin
   result:=TTextMoBanObject.Create;
   result.x:=x-(w div 2);
   result.y:=y-(h div 2);
+  if(result.x<0) then
+    result.x:=0;
+  if(result.y<0) then
+    result.y:=0;
   result.width:=w;
   result.height:=h;
   result.text:=getNodeAttibute(node.FirstChild,'f_t');
@@ -203,26 +206,85 @@ begin
   result.flag:=FLAG_TXET;
 end;
 
+
+function dynamicMobanObjectFromXml(node:IXMLNode):TDynamicMoBanObject;
+var
+  x,y,w,h:integer;
+  nodeList:IXMLNodelist;
+  i:integer;
+  oneNode:IXMLNode;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  result:=TDynamicMoBanObject.Create;
+  result.x:=x-(w div 2);
+  result.y:=y-(h div 2);
+  if(result.x<0) then
+    result.x:=0;
+  if(result.y<0) then
+    result.y:=0;
+  result.width:=w;
+  result.height:=h;
+  nodeList:=node.FirstChild.FirstChild.ChildNodes;
+  result.images:=TStringList.Create;
+  for i:=0 to nodeList.Length-1 do
+  begin
+    oneNode:= nodeList.Item[i];
+    result.images.Add(getNodeAttibute(oneNode,'url'));
+  end;
+  oneNode:=node.FirstChild.ChildNodes.Item[2].FirstChild.ChildNodes.Item[2];
+  getNodeAttibute(oneNode,'c');
+  getNodeAttibute(oneNode,'onc');
+  result.flag:=FLAG_DYNAMIC;
+end;
+
+
 function imageMobanObjectFromXml(node:IXMLNode):TImageMoBanObject;
 var
   x,y,w,h:integer;
 begin
   x:=strtoint(getNodeAttibute(node,'x'));
   y:=strtoint(getNodeAttibute(node,'y'));
+
   w:=strtoint(getNodeAttibute(node,'w'));
   h:=strtoint(getNodeAttibute(node,'h'));
   result:=TImageMoBanObject.Create;
   result.x:=x-(w div 2);
   result.y:=y-(h div 2);
+
+  if(result.x<0) then
+    result.x:=0;
+  if(result.y<0) then
+    result.y:=0;
+
   result.width:=w;
   result.height:=h;
   result.url:=getNodeAttibute(node.FirstChild,'url');
   result.flag:=FLAG_IMAGE;
 end;
 
+function CompareYX(Item1, Item2: TObject): Integer;
+var
+  tmp,y1,y2,x1,x2:integer;
+begin
+  //Item1
+  y1:=(Item1 as TBaseMoBanObject).y;
+  y2:=(Item2 as TBaseMoBanObject).y;
+  x1:=(Item1 as TBaseMoBanObject).x;
+  x2:=(Item2 as TBaseMoBanObject).x;
 
- //根据xml生成行列
-procedure TMoBan.fromXml(aXml:String);
+  tmp:= CompareValue(y1,y2);
+  if (tmp=0) then
+    tmp := CompareValue(x1,x2);
+  result:=tmp;
+  //result := CompareValue((Item1^ as TBaseMoBanObject).y, (Item2^ as TBaseMoBanObject).y);
+end;
+
+
+
+procedure TMoBan.fromMyXml(aXml:String);  //处理重新整理过的xml
 var
   i,j:integer;
   doc :IXMLDocument;
@@ -234,6 +296,7 @@ var
   imagemagickcmd:String;
   tmpMoBanObject:TBaseMoBanObject;
   isFirstImage:boolean;
+  tmpObjectList:TMoBanObjectList;
 begin
   doc:=CreateXMLDoc;
   doc.PreserveWhiteSpace:=false;
@@ -250,25 +313,364 @@ begin
      width:=strtoint(getNodeAttibute(root,'w'));
   height:=strtoint(getNodeAttibute(root,'h'));
   root:=root.ChildNodes.Item[0];
+  tmpObjectList:=TMoBanObjectList.Create;
+
   for i:=0 to root.ChildNodes.Length-1 do
   begin
     tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
     //商品图片
     if(tmpType='tw_img') then
     begin
-      addchild(imageMobanObjectFromXml(root.ChildNodes.Item[i]));
+      tmpObjectList.Add(imageMobanObjectFromXml(root.ChildNodes.Item[i]));
     end;
     //模版文字
     if(tmpType='s_txt') then
     begin
-      addchild(textMobanObjectFromXml(root.ChildNodes.Item[i]));
+      tmpObjectList.Add(textMobanObjectFromXml(root.ChildNodes.Item[i]));
     end;
     //商品文字描述
     if(tmpType='tw_txt') then
     begin
-      addchild(textMobanObjectFromXml(root.ChildNodes.Item[i]));
+      tmpObjectList.Add(textMobanObjectFromXml(root.ChildNodes.Item[i]));
     end;
-  end;   
+  end;
+  tmpObjectList.Sort(@CompareYX);
+  for i:=0 to tmpObjectList.Count-1 do
+  begin
+    addchild(tmpObjectList.Items[i] as TBaseMoBanObject);
+  end;
+end;
+
+
+function writeTxtNode(myDoc :IXMLDocument;node:IXMLNode):IXMLNode;
+var
+  x,y,w,h:integer;
+  imgNode:IXMLNode;
+  sTemp:String;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  x:=x-(w div 2);
+  y:=y-(h div 2);
+  if(x<0) then
+    x:=0;
+  if(y<0) then
+    y:=0;
+  result:=addElement(myDoc,myDoc.DocumentElement,'item');
+  setNodeAttibute(myDoc,result,'type','text');
+  setNodeAttibute(myDoc,result,'w',inttostr(w));
+  setNodeAttibute(myDoc,result,'h',inttostr(w));
+  setNodeAttibute(myDoc,result,'x',inttostr(x));
+  setNodeAttibute(myDoc,result,'y',inttostr(y));
+
+  sTemp:=getNodeAttibute(node.FirstChild,'f_c');
+  if(sTemp='') then
+  begin
+    sTemp:='#000000';
+  end;
+  setNodeAttibute(myDoc,result,'fcolor',sTemp);
+  //sTemp:=getNodeAttibute(node.FirstChild,'f_n');
+  sTemp:='微软雅黑';
+  setNodeAttibute(myDoc,result,'fname',sTemp);
+  sTemp:=getNodeAttibute(node.FirstChild,'f_t');
+  //sTemp:=HexUtf8ToString(sTemp);
+  setNodeAttibute(myDoc,result,'ftext',sTemp);
+  setNodeAttibute(myDoc,result,'fsize','12');
+  setNodeAttibute(myDoc,result,'fisbold','false');
+  setNodeAttibute(myDoc,result,'fisitalic','false');
+  setNodeAttibute(myDoc,result,'fisnetfont','false');
+end;
+
+function writeImgNode(myDoc :IXMLDocument;node:IXMLNode):IXMLNode;
+var
+  x,y,w,h:integer;
+  imgNode:IXMLNode;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  x:=x-(w div 2);
+  y:=y-(h div 2);
+  if(x<0) then
+    x:=0;
+  if(y<0) then
+    y:=0;
+  result:=addElement(myDoc,myDoc.DocumentElement,'item');
+  setNodeAttibute(myDoc,result,'type','image');
+  setNodeAttibute(myDoc,result,'w',inttostr(w));
+  setNodeAttibute(myDoc,result,'h',inttostr(w));
+  setNodeAttibute(myDoc,result,'x',inttostr(x));
+  setNodeAttibute(myDoc,result,'y',inttostr(y));
+  setNodeAttibute(myDoc,result,'url',getNodeAttibute(node.FirstChild,'url'));
+end;
+
+function writeDynamicNode(myDoc :IXMLDocument;node:IXMLNode):IXMLNode;
+var
+  i,x,y,w,h:integer;
+  imgNode:IXMLNode;
+  tmpNode,tmpMyNode:IXMLNode;
+  strLabels:String;
+  labelList:TStringArray;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  x:=x-(w div 2);
+  y:=y-(h div 2);
+  if(x<0) then
+    x:=0;
+  if(y<0) then
+    y:=0;
+  result:=addElement(myDoc,myDoc.DocumentElement,'item');
+  setNodeAttibute(myDoc,result,'type','dynamic');
+  setNodeAttibute(myDoc,result,'w',inttostr(w));
+  setNodeAttibute(myDoc,result,'h',inttostr(w));
+  setNodeAttibute(myDoc,result,'x',inttostr(x));
+  setNodeAttibute(myDoc,result,'y',inttostr(y));
+  //result.
+
+  if(node.FirstChild.ChildNodes.Length=3) then
+  begin
+    if(node.FirstChild.ChildNodes.Item[2].FirstChild<>nil) then
+    begin
+      if(node.FirstChild.ChildNodes.Item[2].FirstChild.childnodes.Length=3) then
+      begin
+        tmpNode:=node.FirstChild.ChildNodes.Item[2].FirstChild.childnodes.item[2];
+        strLabels:=HexUtf8ToString(getNodeAttibute(tmpNode,'c'));
+        labelList:=SplitStringToArray(strLabels,',');
+      end;
+    end;
+  end;
+  //strLabels
+  for i:=0 to node.FirstChild.FirstChild.ChildNodes.Length-1 do
+  begin
+    tmpNode:=node.FirstChild.FirstChild.ChildNodes.Item[i];
+    tmpMyNode:=addNode(myDoc,result ,'img');
+    setNodeAttibute(myDoc,tmpMyNode,'url',getNodeAttibute(tmpNode,'url'));
+    if(length(labelList)>0) then
+      setNodeAttibute(myDoc,tmpMyNode,'label',labelList[i]);
+  end;
+end;
+
+function writeWangWangNode(myDoc :IXMLDocument;node:IXMLNode):IXMLNode;
+var
+  i,x,y,w,h:integer;
+  imgNode:IXMLNode;
+  tmpNode,tmpMyNode:IXMLNode;
+  strLabels:String;
+  labelList:TStringArray;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  x:=x-(w div 2);
+  y:=y-(h div 2);
+  if(x<0) then
+    x:=0;
+  if(y<0) then
+    y:=0;
+  result:=addElement(myDoc,myDoc.DocumentElement,'item');
+  setNodeAttibute(myDoc,result,'type','wangwang');
+  setNodeAttibute(myDoc,result,'w',inttostr(w));
+  setNodeAttibute(myDoc,result,'h',inttostr(w));
+  setNodeAttibute(myDoc,result,'x',inttostr(x));
+  setNodeAttibute(myDoc,result,'y',inttostr(y));
+end;
+
+function writeTimerNode(myDoc :IXMLDocument;node:IXMLNode):IXMLNode;
+var
+  i,x,y,w,h:integer;
+  imgNode:IXMLNode;
+  tmpNode,tmpMyNode:IXMLNode;
+  strLabels:String;
+  labelList:TStringArray;
+begin
+  x:=strtoint(getNodeAttibute(node,'x'));
+  y:=strtoint(getNodeAttibute(node,'y'));
+  w:=strtoint(getNodeAttibute(node,'w'));
+  h:=strtoint(getNodeAttibute(node,'h'));
+  x:=x-(w div 2);
+  y:=y-(h div 2);
+  if(x<0) then
+    x:=0;
+  if(y<0) then
+    y:=0;
+  result:=addElement(myDoc,myDoc.DocumentElement,'item');
+  setNodeAttibute(myDoc,result,'type','timer');
+  setNodeAttibute(myDoc,result,'w',inttostr(w));
+  setNodeAttibute(myDoc,result,'h',inttostr(w));
+  setNodeAttibute(myDoc,result,'x',inttostr(x));
+  setNodeAttibute(myDoc,result,'y',inttostr(y));
+  setNodeAttibute(myDoc,result,'s_time',getNodeAttibute(node.FirstChild.FirstChild,'s_time'));
+  setNodeAttibute(myDoc,result,'e_time',getNodeAttibute(node.FirstChild.FirstChild,'e_time'));
+  setNodeAttibute(myDoc,result,'s_unit',getNodeAttibute(node.FirstChild.FirstChild,'s_unit'));
+  setNodeAttibute(myDoc,result,'n_type',getNodeAttibute(node.FirstChild.FirstChild,'n_type'));
+  setNodeAttibute(myDoc,result,'e_unit',getNodeAttibute(node.FirstChild.FirstChild,'e_unit'));
+  setNodeAttibute(myDoc,result,'color',getNodeAttibute(node.FirstChild.FirstChild,'color'));
+  setNodeAttibute(myDoc,result,'start_desc',HexUtf8ToString(getNodeAttibute(node.FirstChild.ChildNodes.Item[1],'start')));
+  setNodeAttibute(myDoc,result,'now_desc',HexUtf8ToString(getNodeAttibute(node.FirstChild.ChildNodes.Item[1],'now')));
+  setNodeAttibute(myDoc,result,'end_desc',HexUtf8ToString(getNodeAttibute(node.FirstChild.ChildNodes.Item[1],'end')));
+end;
+
+
+//处理原始xml生成flash用的xml
+function TMoBan.convertToMyXml(aXml:String;bgImg:String):String;
+var
+  i,j:integer;
+  doc,myDoc :IXMLDocument;
+  root,myRoot:IXMLNode;
+  tmpType:String;
+  bannerVersion:String;
+  tmpUrl,tmpFileName:String;
+  w,h:integer;
+  imagemagickcmd:String;
+  tmpMoBanObject:TBaseMoBanObject;
+  isFirstImage:boolean;
+  tmpObjectList:TMoBanObjectList;
+begin
+  doc:=CreateXMLDoc;
+  myDoc:=createRoot('xiumoban');
+  doc.PreserveWhiteSpace:=false;
+  doc.LoadXML(aXml);
+  root:=doc.DocumentElement;
+  bannerVersion:=getNodeAttibute(root,'v');
+  if(bannerVersion<>'3.0') then
+  begin
+    exit;
+  end;
+  if(getNodeAttibute(root,'w')='') then
+     width:=950
+  else
+     width:=strtoint(getNodeAttibute(root,'w'));
+  height:=strtoint(getNodeAttibute(root,'h'));
+  root:=root.ChildNodes.Item[0];
+
+  myRoot:=myDoc.DocumentElement;
+  setNodeAttibute(myDoc,myRoot,'w',inttostr(width));
+  setNodeAttibute(myDoc,myRoot,'h',inttostr(height));
+  setNodeAttibute(myDoc,myRoot,'v','1.0');
+  setNodeAttibute(myDoc,myRoot,'bgimg',bgImg);
+  tmpObjectList:=TMoBanObjectList.Create;
+
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
+    //商品图片
+    if(tmpType='tw_img') then
+    begin
+      writeImgNode(myDoc,root.ChildNodes.Item[i]);
+    end;
+    //模版文字
+    if(tmpType='s_txt') then
+    begin
+      writeTxtNode(myDoc,root.ChildNodes.Item[i]);
+    end;
+    //商品文字描述
+    if(tmpType='tw_txt') then
+    begin
+      writeTxtNode(myDoc,root.ChildNodes.Item[i]);
+    end;
+
+    //动态模版
+    if(tmpType='dynamic') then
+    begin
+      writeDynamicNode(myDoc,root.ChildNodes.Item[i]);
+    end;
+
+    //旺旺
+    if(tmpType='wangwang') then
+    begin
+      writeWangWangNode(myDoc,root.ChildNodes.Item[i]);
+    end;
+
+    //timer
+    if(tmpType='timer') then
+    begin
+      writeTimerNode(myDoc,root.ChildNodes.Item[i]);
+    end;
+  end;
+  result:=myDoc.XML;
+end;
+
+
+
+
+
+
+
+
+
+ //根据xml生成行列
+procedure TMoBan.fromXml(aXml:String);
+var
+  i,j:integer;
+  doc :IXMLDocument;
+  root:IXMLNode;
+  tmpType:String;
+  bannerVersion:String;
+  tmpUrl,tmpFileName:String;
+  w,h:integer;
+  imagemagickcmd:String;
+  tmpMoBanObject:TBaseMoBanObject;
+  isFirstImage:boolean;
+  tmpObjectList:TMoBanObjectList;
+begin
+  doc:=CreateXMLDoc;
+  doc.PreserveWhiteSpace:=false;
+  doc.LoadXML(aXml);
+  root:=doc.DocumentElement;
+  bannerVersion:=getNodeAttibute(root,'v');
+  if(bannerVersion<>'3.0') then
+  begin
+    exit;
+  end;
+  if(getNodeAttibute(root,'w')='') then
+     width:=950
+  else
+     width:=strtoint(getNodeAttibute(root,'w'));
+  height:=strtoint(getNodeAttibute(root,'h'));
+  root:=root.ChildNodes.Item[0];
+  tmpObjectList:=TMoBanObjectList.Create;
+
+  for i:=0 to root.ChildNodes.Length-1 do
+  begin
+    tmpType:=getNodeAttibute(root.ChildNodes.Item[i],'type');
+    //商品图片
+    if(tmpType='tw_img') then
+    begin
+      tmpObjectList.Add(imageMobanObjectFromXml(root.ChildNodes.Item[i]));
+    end;
+    //模版文字
+    if(tmpType='s_txt') then
+    begin
+      tmpObjectList.Add(textMobanObjectFromXml(root.ChildNodes.Item[i]));
+    end;
+    //商品文字描述
+    if(tmpType='tw_txt') then
+    begin
+      tmpObjectList.Add(textMobanObjectFromXml(root.ChildNodes.Item[i]));
+    end;
+
+    //幻灯展示
+    if(tmpType='dynamic') then
+    begin
+      tmpObjectList.Add(textMobanObjectFromXml(root.ChildNodes.Item[i]));
+    end;
+
+
+  end;
+  tmpObjectList.Sort(@CompareYX);
+
+
+  for i:=0 to tmpObjectList.Count-1 do
+  begin
+    addchild(tmpObjectList.Items[i] as TBaseMoBanObject);
+  end;
 end;
 
 function getDiv(w,h,marginLeft,marginTop:integer;backgroundImg:String;isFloat:boolean):String;
@@ -303,6 +705,11 @@ begin
   result := CompareValue(y1,y2);
   //result := CompareValue((Item1^ as TBaseMoBanObject).y, (Item2^ as TBaseMoBanObject).y);
 end;
+
+
+
+
+
 function CompareX(Item1, Item2: TObject): Integer;
 var
   x1,x2:integer;
@@ -406,7 +813,7 @@ begin
   end else if(cell is TTextMoBanObject) then
   begin
     tmpTextMoBanObject:=cell as TTextMoBanObject;
-    result:='<span style="valign:middle;color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</span>';
+    result:='<div style="valign:middle;color:'+tmpTextMoBanObject.fontColor+';font-size:'+inttostr(tmpTextMoBanObject.fontSize)+';font-name:'+ tmpTextMoBanObject.fontName+'">'+tmpTextMoBanObject.text+'</div>';
   end;
 end;
 
@@ -440,7 +847,7 @@ end;
 
 function getEmptyDiv(width,height:integer):String ;
 begin
-  result:='<span style="width:'+inttostr(width)+'px;height:'+inttostr(height)+'px"></span>';
+  result:='<div style="overflow:hidden;width:'+inttostr(width)+'px;height:'+inttostr(height)+'px"></div>';
 end;
 
 
@@ -464,6 +871,7 @@ var
   maxMianJi:integer;
 begin
   maxMianJi:=0;
+
   for i:=0 to cell.childs.Count-1 do
   begin
     if((cell.childs[i] as TBaseMoBanObject).width*(cell.childs[i] as TBaseMoBanObject).height>maxMianJi) then
@@ -525,7 +933,7 @@ var
   tmpCell,tmpCell2,tmpRow,tmpRow2:TRangeMoBanObject;
 begin
   sortRows();
-  html:=html+getTable(width,height,'background.jpg',allTds);
+  html:=html+getTable(width,height,'background.png',allTds);
   baseY:=0;
   for i:=0 to root.childs.Count-1 do
   begin
@@ -554,9 +962,59 @@ begin
   end;
   html:=html+'</table>';
   result:=html;
-   //FRoot.width;
+  //FRoot.width;
 end;
 
+
+function writeMoBanObjectXml(tmpObject:TBaseMoBanObject):String;
+var
+  xml:String;
+begin
+  xml:='';
+  xml:=xml+'<obj width="'+inttostr(tmpObject.width)+'" heigth="'+inttostr(tmpObject.height)+'" x="'+inttostr(tmpObject.x)+'" y="'+inttostr(tmpObject.y)+'"';
+  if(tmpObject is TImageMoBanObject) then
+  begin
+    xml:=xml+' type="image" url="'+ (tmpObject as TImageMoBanObject).url+'">';
+  end;
+  if(tmpObject is TTextMoBanObject) then
+  begin
+    xml:=xml+' type="text" text="'+ (tmpObject as TTextMoBanObject).text+'" fontcolor="'+(tmpObject as TTextMoBanObject).fontColor+'" fontstyle="'+(tmpObject as TTextMoBanObject).fontStyle+'" fontname="'+(tmpObject as TTextMoBanObject).fontName+'">';
+  end;
+  result:=xml;
+end;
+
+
+function TMoBan.toXml():String;
+var
+  i,j,n:integer;
+  xml:String;
+  tmpObject:TBaseMoBanObject;
+  tmpCell,tmpCell2,tmpRow,tmpRow2:TRangeMoBanObject;
+begin
+  sortRows();
+  xml:='<?xml version="1.0" encoding="gbk" ?><rows>';
+  for i:=0 to root.childs.Count-1 do
+  begin
+    tmpRow:=root.childs[i] as TRangeMoBanObject;
+    xml:=xml+'<row width="'+inttostr(tmpRow.width)+'" heigth="'+inttostr(tmpRow.height)+'" x="'+inttostr(tmpRow.x)+'" y="'+inttostr(tmpRow.y)+'">' ;
+    for j:=0 to tmpRow.childs.Count-1 do
+    begin
+      tmpCell:= tmpRow.childs[j] as TRangeMoBanObject;
+      xml:=xml+'<col width="'+inttostr(tmpCell.width)+'" heigth="'+inttostr(tmpCell.height)+'" x="'+inttostr(tmpCell.x)+'" y="'+inttostr(tmpCell.y)+'" childs="'+inttostr(tmpCell.childs.Count)+'">';
+      for n:=0 to tmpCell.childs.Count-1 do
+      begin
+        tmpObject:= tmpCell.childs[n] as TBaseMoBanObject;
+        //xml:=xml+'<obj width="'+inttostr(tmpObject.width)+'" heigth="'+inttostr(tmpObject.height)+'" x="'+inttostr(tmpObject.x)+'" y="'+inttostr(tmpObject.y)+'">';
+        xml:=xml+writeMoBanObjectXml(tmpObject);
+        xml:=xml+'</obj>';
+      end;
+      xml:=xml+'</col>';
+    end;
+    xml:=xml+'</row>';
+  end;
+  xml:=xml+'</rows>';
+  result:=xml;
+end;
 
 
 function TMoBan.toHtml():String;
@@ -566,10 +1024,7 @@ var
   tmpCell,tmpCell2,tmpRow,tmpRow2:TRangeMoBanObject;
 begin
   sortRows();
-
-
   html:=getPubStyle();
-
   html:=html+getDiv(width,height,0,0,'background.jpg',false);
   for i:=0 to root.childs.Count-1 do
   begin
